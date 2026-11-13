@@ -41,6 +41,9 @@ for name in "${names[@]}"; do
 	printf 'Paste the value for %s (input is hidden), then press Return: ' "$name"
 	IFS= read -rs value
 	echo
+	# Remove terminal escape codes (for example an arrow key pressed while pasting)
+	# and any other non-printable characters.
+	value="$(printf '%s' "$value" | perl -pe 's/\e\[[0-9;?]*[A-Za-z~]//g; s/[^\x20-\x7E]//g')"
 	value="${value#"${value%%[![:space:]]*}"}"   # trim leading spaces
 	value="${value%"${value##*[![:space:]]}"}"   # trim trailing spaces
 	if [ -z "$value" ]; then
