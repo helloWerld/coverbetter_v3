@@ -19,9 +19,7 @@
 		{
 			"binding": "DB",
 			"database_name": "coverbetter",
-			// TODO: replace with the real ID from `wrangler d1 create coverbetter`.
-			// Local dev (`--local`) ignores this value.
-			"database_id": "00000000-0000-0000-0000-000000000000",
+			"database_id": "2d5d20e8-4ec6-4ee6-a7f0-7a7775084372",
 			"migrations_dir": "drizzle"
 		}
 	],
