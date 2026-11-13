@@ -10,7 +10,7 @@ const sections: LegalSection[] = [
 	{
 		heading: 'What we collect',
 		body: [
-			'Account: your email address, and your name if you sign in with Google. We do not see your password.',
+			'Account: your email address, and your name if you sign in with Google or LinkedIn. We do not see your password.',
 			'Your content: the resumes you upload or paste, the job posts you paste, and the letters we write for you.',
 			'Payments: Stripe handles your card details. We store only your Stripe customer ID, your plan, and your credit balance. We never see your card number.',
 			'Usage: basic technical data such as your IP address, browser type, and the pages you visit, so that we can run and protect the service.',
@@ -27,7 +27,7 @@ const sections: LegalSection[] = [
 		heading: 'Who handles your data',
 		body: [
 			'Cloudflare hosts the app and stores your database records and your uploaded resume files.',
-			'Clerk handles sign-in. You sign in with Google or with an email code.',
+			'Clerk handles sign-in. You sign in with Google, LinkedIn, or an email code.',
 			'Stripe handles payments.',
 			'Anthropic and OpenAI write your letters. We send your resume text and the job text to one of them only when you ask for a letter. Claude by Anthropic is the main model, and OpenAI is the backup.',
 			'We do not share your data with anyone else, unless the law requires it.',

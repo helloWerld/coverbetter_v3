@@ -17,7 +17,7 @@ const sections: LegalSection[] = [
 	{
 		heading: 'Your account',
 		body: [
-			'You sign in with Google or with an email code. Keep your account secure. You are responsible for what happens under your account.',
+			'You sign in with Google, LinkedIn, or an email code. Keep your account secure. You are responsible for what happens under your account.',
 		],
 	},
 	{

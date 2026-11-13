@@ -15,6 +15,11 @@
 		}
 	],
 	"observability": { "enabled": true },
+	"workers_dev": true,
+	"routes": [
+		{ "pattern": "coverbetter.io", "custom_domain": true },
+		{ "pattern": "www.coverbetter.io", "custom_domain": true }
+	],
 	"d1_databases": [
 		{
 			"binding": "DB",
