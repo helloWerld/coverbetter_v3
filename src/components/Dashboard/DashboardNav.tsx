@@ -1,0 +1,158 @@
+'use client';
+
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import {
+	FaBars,
+	FaXmark,
+	FaPenNib,
+	FaEnvelopeOpenText,
+	FaFileLines,
+	FaCreditCard,
+	FaUser,
+} from 'react-icons/fa6';
+import { UserButton } from '@clerk/nextjs';
+import { MAIN_NAV, type NavIcon } from './nav';
+import { SOON_FEATURES } from '@/lib/soon';
+
+// Each icon matches its page: pen for writing, letter for letters, file for resumes,
+// card for billing, person for account.
+const ICONS: Record<NavIcon, React.ComponentType<{ className?: string }>> = {
+	generate: FaPenNib,
+	letters: FaEnvelopeOpenText,
+	resumes: FaFileLines,
+	billing: FaCreditCard,
+	account: FaUser,
+};
+
+const linkBase =
+	'flex min-h-11 items-center gap-3 rounded-lg px-3 py-2 text-sm transition duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral';
+
+export default function DashboardNav() {
+	const pathname = usePathname();
+	const [open, setOpen] = useState(false);
+
+	// Close the mobile menu after a navigation.
+	useEffect(() => setOpen(false), [pathname]);
+
+	// Close the mobile menu with Escape.
+	useEffect(() => {
+		if (!open) return;
+		const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(false);
+		window.addEventListener('keydown', onKey);
+		return () => window.removeEventListener('keydown', onKey);
+	}, [open]);
+
+	const isActive = (href: string) =>
+		href === '/dashboard' ? pathname === href : pathname.startsWith(href);
+
+	return (
+		<>
+			{/* Top bar on mobile */}
+			<header className="sticky top-0 z-40 flex h-14 items-center justify-between border-b border-base-100/10 bg-base-300 px-2 md:hidden">
+				<button
+					type="button"
+					onClick={() => setOpen((v) => !v)}
+					aria-expanded={open}
+					aria-controls="dashboard-menu"
+					aria-label={open ? 'Close menu' : 'Open menu'}
+					className="flex h-11 w-11 items-center justify-center rounded-lg text-base-100 hover:bg-base-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-neutral"
+				>
+					{open ? (
+						<FaXmark className="text-xl" aria-hidden="true" />
+					) : (
+						<FaBars className="text-xl" aria-hidden="true" />
+					)}
+				</button>
+				<Link
+					href="/"
+					className="text-xl text-base-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-neutral"
+				>
+					CoverBetter
+				</Link>
+				<div className="flex h-11 w-11 items-center justify-center">
+					<UserButton />
+				</div>
+			</header>
+
+			<aside
+				id="dashboard-menu"
+				className={`${
+					open ? 'flex' : 'hidden'
+				} fixed inset-x-0 bottom-0 top-14 z-30 flex-col overflow-y-auto bg-base-300 p-4 md:static md:z-auto md:flex md:min-h-screen md:w-64 md:shrink-0 md:border-r md:border-base-100/10 md:top-0`}
+			>
+				<Link
+					href="/"
+					className="mb-6 hidden px-3 text-2xl text-base-100 md:block focus-visible:outline focus-visible:outline-2 focus-visible:outline-neutral"
+				>
+					CoverBetter
+				</Link>
+				<nav aria-label="Dashboard">
+					<ul className="flex flex-col gap-1">
+						{MAIN_NAV.map((item) => {
+							const Icon = ICONS[item.icon];
+							const active = isActive(item.href);
+							return (
+								<li key={item.href}>
+									<Link
+										href={item.href}
+										aria-current={active ? 'page' : undefined}
+										className={`${linkBase} ${
+											active
+												? 'bg-secondary text-base-100'
+												: 'text-base-100/70 hover:bg-base-200 hover:text-base-100'
+										}`}
+									>
+										<Icon className="text-base" aria-hidden="true" />
+										{item.label}
+									</Link>
+								</li>
+							);
+						})}
+					</ul>
+				</nav>
+
+				<div className="divider my-4 opacity-10" />
+
+				<nav aria-labelledby="soon-heading">
+					<h2
+						id="soon-heading"
+						className="mb-2 px-3 text-xs font-semibold text-base-100/70"
+					>
+						Coming soon
+					</h2>
+					<ul className="flex flex-col gap-1">
+						{SOON_FEATURES.map((f) => {
+							const href = `/dashboard/soon/${f.slug}`;
+							const active = pathname === href;
+							return (
+								<li key={f.slug}>
+									<Link
+										href={href}
+										aria-current={active ? 'page' : undefined}
+										className={`${linkBase} justify-between ${
+											active
+												? 'bg-base-200 text-base-100'
+												: 'text-base-100/70 hover:bg-base-200 hover:text-base-100'
+										}`}
+									>
+										<span>{f.name}</span>
+										<span className="badge badge-accent badge-sm shrink-0 font-medium">
+											Soon
+										</span>
+									</Link>
+								</li>
+							);
+						})}
+					</ul>
+				</nav>
+
+				<div className="mt-auto hidden items-center gap-3 px-3 pt-6 md:flex">
+					<UserButton />
+					<span className="text-xs text-base-100/70">Signed in</span>
+				</div>
+			</aside>
+		</>
+	);
+}
