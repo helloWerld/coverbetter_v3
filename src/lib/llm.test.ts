@@ -47,7 +47,9 @@ describe('generateLetter', () => {
 		const body = JSON.parse(init.body);
 		expect(body).toMatchObject({
 			model: ANTHROPIC_MODEL,
-			max_tokens: 1200,
+			max_tokens: 2000,
+			// Thinking before the answer used the whole token budget and cut letters off.
+			thinking: { type: 'between_tools' },
 			system: 'SYS',
 			messages: [{ role: 'user', content: 'USR' }],
 		});
@@ -128,5 +130,37 @@ describe('generateLetter', () => {
 		vi.stubGlobal('fetch', f);
 		// An empty primary answer counts as a failure and triggers the fallback.
 		expect((await generateLetter(gatewayEnv, prompt)).text).toBe('Letter O');
+	});
+
+	it('never returns a letter that was cut off at the token limit', async () => {
+		const cut = new Response(
+			JSON.stringify({
+				stop_reason: 'max_tokens',
+				content: [{ type: 'text', text: 'JOB: X | COMPANY: Y\n---\nDear Hiring' }],
+			}),
+			{ status: 200 },
+		);
+		const f = vi.fn().mockResolvedValueOnce(cut).mockResolvedValueOnce(openaiOk());
+		vi.stubGlobal('fetch', f);
+		expect((await generateLetter(gatewayEnv, prompt)).text).toBe('Letter O');
+	});
+
+	it('rejects a cut-off OpenAI answer too', async () => {
+		const cut = new Response(
+			JSON.stringify({
+				stop_reason: 'max_tokens',
+				content: [{ type: 'text', text: 'partial' }],
+			}),
+			{ status: 200 },
+		);
+		const openaiCut = new Response(
+			JSON.stringify({
+				choices: [{ finish_reason: 'length', message: { content: 'partial' } }],
+			}),
+			{ status: 200 },
+		);
+		const f = vi.fn().mockResolvedValueOnce(cut).mockResolvedValueOnce(openaiCut);
+		vi.stubGlobal('fetch', f);
+		await expect(generateLetter(gatewayEnv, prompt)).rejects.toThrow();
 	});
 });

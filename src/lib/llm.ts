@@ -2,7 +2,8 @@ export const ANTHROPIC_MODEL = 'claude-sonnet-5-5';
 // TODO: verify the exact model ID in the OpenAI docs before launch.
 export const OPENAI_FALLBACK_MODEL = 'gpt-6.1-sol';
 
-const MAX_TOKENS = 1200;
+// The letter is about 300 to 700 output tokens. 2000 leaves room for long letters.
+const MAX_TOKENS = 2000;
 const TIMEOUT_MS = 60_000;
 
 type Env = Pick<
@@ -65,10 +66,17 @@ async function callAnthropic(env: Env, p: { system: string; user: string }) {
 		{
 			model: ANTHROPIC_MODEL,
 			max_tokens: MAX_TOKENS,
+			// No thinking before the answer. With thinking on, the model spent the
+			// whole token budget thinking and returned a cut-off letter.
+			thinking: { type: 'between_tools' },
 			system: p.system,
 			messages: [{ role: 'user', content: p.user }],
 		},
-	)) as { content?: { type: string; text?: string }[] };
+	)) as { stop_reason?: string; content?: { type: string; text?: string }[] };
+	// A letter cut off at the token limit is never returned. The fallback runs instead.
+	if (data.stop_reason === 'max_tokens') {
+		throw new RetryableError('Anthropic answer was cut off at the token limit');
+	}
 	const text = (data.content ?? [])
 		.filter((b) => b.type === 'text')
 		.map((b) => b.text ?? '')
@@ -91,7 +99,10 @@ async function callOpenAI(env: Env, p: { system: string; user: string }) {
 				{ role: 'user', content: p.user },
 			],
 		},
-	)) as { choices?: { message?: { content?: string } }[] };
+	)) as { choices?: { finish_reason?: string; message?: { content?: string } }[] };
+	if (data.choices?.[0]?.finish_reason === 'length') {
+		throw new Error('OpenAI answer was cut off at the token limit');
+	}
 	const text = data.choices?.[0]?.message?.content?.trim() ?? '';
 	if (!text) throw new Error('Empty answer from OpenAI');
 	return text;
