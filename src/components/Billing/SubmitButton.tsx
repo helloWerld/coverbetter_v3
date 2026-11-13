@@ -18,7 +18,7 @@ export default function SubmitButton({
 	return (
 		<button
 			type="submit"
-			className={`${className} min-h-11 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral`}
+			className={`${className} min-h-11 disabled:!border-base-100/10 disabled:!bg-base-200 disabled:!bg-none disabled:!text-base-100/60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral`}
 			disabled={disabled || pending}
 		>
 			{pending ? pendingLabel : children}
