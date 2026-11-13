@@ -1,0 +1,111 @@
+export const ANTHROPIC_MODEL = 'claude-sonnet-5-5';
+// TODO: verify the exact model ID in the OpenAI docs before launch.
+export const OPENAI_FALLBACK_MODEL = 'gpt-6.1-sol';
+
+const MAX_TOKENS = 1200;
+const TIMEOUT_MS = 60_000;
+
+type Env = Pick<
+	CloudflareEnv,
+	| 'ANTHROPIC_API_KEY'
+	| 'OPENAI_API_KEY'
+	| 'CF_AIG_ACCOUNT_ID'
+	| 'CF_AIG_GATEWAY_ID'
+	| 'CF_AIG_TOKEN'
+>;
+
+export type LlmResult = { text: string; model: string };
+
+/** An error the fallback may recover from. */
+class RetryableError extends Error {}
+
+function base(env: Env, provider: 'anthropic' | 'openai') {
+	if (env.CF_AIG_ACCOUNT_ID) {
+		return `https://gateway.ai.cloudflare.com/v1/${env.CF_AIG_ACCOUNT_ID}/${env.CF_AIG_GATEWAY_ID}/${provider}`;
+	}
+	return provider === 'anthropic'
+		? 'https://api.anthropic.com'
+		: 'https://api.openai.com/v1';
+}
+
+function gatewayHeaders(env: Env): Record<string, string> {
+	return env.CF_AIG_ACCOUNT_ID && env.CF_AIG_TOKEN
+		? { 'cf-aig-authorization': `Bearer ${env.CF_AIG_TOKEN}` }
+		: {};
+}
+
+async function post(url: string, headers: Record<string, string>, body: unknown) {
+	let res: Response;
+	try {
+		res = await fetch(url, {
+			method: 'POST',
+			headers: { 'content-type': 'application/json', ...headers },
+			body: JSON.stringify(body),
+			signal: AbortSignal.timeout(TIMEOUT_MS),
+		});
+	} catch (e) {
+		// Network error or timeout.
+		throw new RetryableError(`Request failed: ${(e as Error).message}`);
+	}
+	if (res.status === 429 || res.status >= 500) {
+		throw new RetryableError(`Provider returned ${res.status}`);
+	}
+	if (!res.ok) throw new Error(`Provider returned ${res.status}`);
+	return res.json() as Promise<unknown>;
+}
+
+async function callAnthropic(env: Env, p: { system: string; user: string }) {
+	const data = (await post(
+		`${base(env, 'anthropic')}/v1/messages`,
+		{
+			'x-api-key': env.ANTHROPIC_API_KEY,
+			'anthropic-version': '2023-06-01',
+			...gatewayHeaders(env),
+		},
+		{
+			model: ANTHROPIC_MODEL,
+			max_tokens: MAX_TOKENS,
+			system: p.system,
+			messages: [{ role: 'user', content: p.user }],
+		},
+	)) as { content?: { type: string; text?: string }[] };
+	const text = (data.content ?? [])
+		.filter((b) => b.type === 'text')
+		.map((b) => b.text ?? '')
+		.join('')
+		.trim();
+	// An empty answer is treated like an outage.
+	if (!text) throw new RetryableError('Empty answer from Anthropic');
+	return text;
+}
+
+async function callOpenAI(env: Env, p: { system: string; user: string }) {
+	const data = (await post(
+		`${base(env, 'openai')}/chat/completions`,
+		{ Authorization: `Bearer ${env.OPENAI_API_KEY}`, ...gatewayHeaders(env) },
+		{
+			model: OPENAI_FALLBACK_MODEL,
+			max_completion_tokens: MAX_TOKENS,
+			messages: [
+				{ role: 'system', content: p.system },
+				{ role: 'user', content: p.user },
+			],
+		},
+	)) as { choices?: { message?: { content?: string } }[] };
+	const text = data.choices?.[0]?.message?.content?.trim() ?? '';
+	if (!text) throw new Error('Empty answer from OpenAI');
+	return text;
+}
+
+/** Anthropic first. OpenAI on a network error, 429, 5xx, timeout, or empty answer. */
+export async function generateLetter(
+	env: Env,
+	prompt: { system: string; user: string },
+): Promise<LlmResult> {
+	try {
+		return { text: await callAnthropic(env, prompt), model: ANTHROPIC_MODEL };
+	} catch (e) {
+		if (!(e instanceof RetryableError)) throw e;
+	}
+	return { text: await callOpenAI(env, prompt), model: OPENAI_FALLBACK_MODEL };
+}
