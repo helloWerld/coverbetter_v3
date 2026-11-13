@@ -167,6 +167,15 @@ export function toLetterDoc(body: string, today: Date): LetterDoc {
 	}
 
 	// 2. Closing: "Sincerely," then the name, then optional contact line.
+	// Models often put a blank line after "Sincerely,". Join those two parts.
+	if (
+		paragraphs.length >= 2 &&
+		CLOSING.test(paragraphs[paragraphs.length - 2]) &&
+		!paragraphs[paragraphs.length - 2].includes('\n')
+	) {
+		const signature = paragraphs.pop() as string;
+		paragraphs[paragraphs.length - 1] += `\n${signature}`;
+	}
 	const lastIdx = paragraphs.length - 1;
 	if (lastIdx >= 0) {
 		const lines = paragraphs[lastIdx].split('\n');

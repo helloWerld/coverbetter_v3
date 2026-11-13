@@ -26,24 +26,24 @@ You will:
 You have 2 or more years in marketing, strong writing, and a love of the outdoors.`,
 };
 
-// TODO: replace SAMPLE_LETTER with a real Claude Sonnet 5.5 output once API keys exist
-export const SAMPLE_LETTER = `Maya Lindqvist
-maya.lindqvist@example.com | 555-014-2290
+// Real output from claude-sonnet-5-5 (professional tone, standard length), generated 2026-11-13.
+export const SAMPLE_LETTER = `Dear Hiring Manager,
 
-Dear Northwind Outdoor Co. hiring team,
+I am writing to apply for the Marketing Coordinator position at Northwind Outdoor Co. Your role centers on email, social media, and community events for an outdoor gear retailer, which closely matches the work I have done for the past three years.
 
-I am applying for the Marketing Coordinator role. For the past three years I have run email and social media for Cedar & Pine Outfitters, a small outdoor gear shop, and your posting describes the same work I do every week.
+From 2023 to 2026, I worked as a Marketing Assistant at Cedar & Pine Outfitters. There I wrote and scheduled four email campaigns a month for a list of 12,000 subscribers. Your posting calls for weekly email campaigns, and I am accustomed to planning, writing, and sending on a steady schedule for a large audience.
 
-Email is the first match. At Cedar & Pine I write and schedule four campaigns a month for a list of 12,000 subscribers. You want weekly campaigns, and I already work to a steady calendar like that.
+On social media, I grew the company's Instagram account from 3,100 to 7,800 followers by publishing a weekly trail photo series. The approach was simple: consistent posting, content drawn from real time outdoors, and attention to what readers responded to. I would bring the same discipline to your Instagram and Facebook channels.
 
-Social media is the second match. I grew our Instagram account from 3,100 to 7,800 followers with a weekly trail photo series. I also read and answer comments, so I know how a gear brand sounds when it talks with people instead of at them.
+I have also helped plan community events. At Cedar & Pine, I ran a spring gear swap with six local shops, and about 400 people attended. That project taught me how to coordinate with outside partners and turn an idea into an event people show up for. It is relevant to the in-store and community events you describe.
 
-The third match is events. I organized a spring gear swap with six local shops, and about 400 people came. I would bring the same hands-on approach to your store and community events.
+I hold a B.A. in Communications from Oregon State University, which I completed in 2023. My coursework and my professional writing have given me a clear, practical style that suits both email copy and social posts. I also enjoy the outdoors, and that interest shapes the content I create.
 
-I studied Communications at Oregon State University and I spend most weekends on trails in the Cascades. I would like to bring that knowledge of the people you sell to into your marketing.
-
-Thank you for your time. I would be glad to share my campaign reports and talk about how I could help Northwind.
+I would welcome the opportunity to discuss how my experience could support Northwind Outdoor Co. Thank you for your time and consideration.
 
 Sincerely,
+
 Maya Lindqvist
-maya.lindqvist@example.com | 555-014-2290`;
+maya.lindqvist@example.com
+555-014-2290
+Portland, OR`;

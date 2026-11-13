@@ -38,6 +38,20 @@ describe('toLetterDoc', () => {
 		expect(doc.paragraphs.at(-1)).toBe('Sincerely,\nJohn Smith');
 	});
 
+	it('reads a closing split by a blank line with contact details on separate lines', () => {
+		// Shape of real claude-sonnet-5-5 output.
+		const body =
+			'Dear Hiring Manager,\n\nBody text here.\n\nSincerely,\n\nMaya Lindqvist\nmaya@example.com\n555-014-2290\nPortland, OR';
+		const doc = toLetterDoc(body, TODAY);
+		expect(doc.name).toBe('Maya Lindqvist');
+		expect(doc.contactLine).toBe('maya@example.com | 555-014-2290 | Portland, OR');
+		expect(doc.paragraphs).toEqual([
+			'Dear Hiring Manager,',
+			'Body text here.',
+			'Sincerely,\nMaya Lindqvist',
+		]);
+	});
+
 	it('falls back to body only when nothing is found', () => {
 		const doc = toLetterDoc('Dear Team,\n\nI like the job.', TODAY);
 		expect(doc.name).toBe('');
