@@ -53,7 +53,7 @@ const Hero = () => {
 			<div className="hero-content text-center">
 				<div className="flex flex-col justify-center items-center max-w-5xl -mt-20">
 					<Link
-						href="/generate"
+						href="/sign-up"
 						className=" border border-base-100/10 relative group flex flex-row items-center rounded-full bg-base-300 mb-4 gap-1 p-1"
 					>
 						<div className="transition duration-500 absolute left-1 group-hover:translate-x-[182px] badge badge-secondary p-2 bg-gradient-to-br from-secondary to-purple-900">
@@ -73,7 +73,7 @@ const Hero = () => {
 						guide.
 					</p>
 					<div className="flex flex-row gap-4">
-						<Link href="/login" className="btn btn-secondary md:btn-wide ">
+						<Link href="/sign-up" className="btn btn-secondary md:btn-wide ">
 							Try It For Free
 						</Link>
 						<button className="btn btn-base-100 btn-outline border-base-100 hover:border-base-100 text-base-100 md:btn-wide ">

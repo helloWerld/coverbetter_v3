@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import React from 'react';
-import UserDropdown from './UserDropdown';
+import { Show, UserButton } from '@clerk/nextjs';
 
 const navLinks = [
 	{
@@ -37,10 +37,7 @@ const HomePageNavbar = () => {
 			<div className="navbar">
 				<div className="navbar-start">
 					<div className="btn btn-ghost text-xl text-base-100">
-						CoverBetter{' '}
-						<span className="text-secondary text-sm mt-1 -ml-1 font-bold">
-							v2
-						</span>
+						CoverBetter
 					</div>
 				</div>
 				<div className="navbar-center hidden lg:flex">
@@ -58,7 +55,28 @@ const HomePageNavbar = () => {
 				</div>
 
 				<div className="navbar-end ">
-					<UserDropdown />
+					<Show when="signed-out">
+						<Link
+							href="/sign-in"
+							className="btn btn-ghost min-h-11 text-base-100 mr-1"
+						>
+							Sign in
+						</Link>
+						<Link href="/sign-up" className="btn btn-secondary min-h-11 mr-2">
+							Try it free
+						</Link>
+					</Show>
+					<Show when="signed-in">
+						<Link
+							href="/dashboard"
+							className="btn btn-ghost min-h-11 text-base-100 mr-2"
+						>
+							Dashboard
+						</Link>
+						<div className="mr-3">
+							<UserButton />
+						</div>
+					</Show>
 				</div>
 			</div>
 			<div className="divider divider-primary opacity-10 w-11/12 mx-auto -mt-1"></div>

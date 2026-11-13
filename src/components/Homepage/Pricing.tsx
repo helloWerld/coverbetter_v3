@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 
 const Pricing = () => {
 	return (
@@ -29,7 +30,9 @@ const Pricing = () => {
 							<li>Chrome Extension</li>
 							<li>AI Job Fit Score</li>
 						</ul>
-						<button className="btn btn-primary w-full mt-6">Try It Free</button>
+						<Link href="/sign-up" className="btn btn-primary w-full mt-6">
+							Try It Free
+						</Link>
 					</div>
 				</div>
 				<div className="w-80 h-fit scale-105 md:hover:scale-110 transition ease-in-out duration-500 rounded-lg border border-secondary text-center bg-base-300">

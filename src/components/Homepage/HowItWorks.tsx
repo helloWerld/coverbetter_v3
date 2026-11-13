@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 import {
 	FaHandshake,
 	FaPaste,
@@ -93,9 +94,9 @@ const HowItWorks = () => {
 				</ul>
 			</div>
 			<div className="flex flex-col md:flex-row items-center gap-4 mt-12 z-20">
-				<button className="btn btn-secondary md:btn-wide ">
+				<Link href="/sign-up" className="btn btn-secondary md:btn-wide ">
 					Try It For Free
-				</button>
+				</Link>
 				<button className="btn btn-base-100 btn-outline border-base-100 hover:border-base-100 text-base-100 md:btn-wide">
 					<FaRegCirclePlay className="text-lg" />
 					Watch a demo
