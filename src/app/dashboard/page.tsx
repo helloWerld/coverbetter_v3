@@ -1,18 +1,26 @@
-import PageShell, { Card } from '@/components/Dashboard/PageShell';
+import { desc, eq } from 'drizzle-orm';
+import { resumes } from '@/db/schema';
+import PageShell from '@/components/Dashboard/PageShell';
+import GenerateForm from '@/components/Generate/GenerateForm';
+import { letterStatus } from '@/components/Generate/status';
+import { getDb } from '@/lib/cf';
+import { requireUser } from '@/lib/user';
 
-export default function GeneratePage() {
+export default async function GeneratePage() {
+	const user = await requireUser();
+	const rows = await getDb()
+		.select({ id: resumes.id, title: resumes.title, text: resumes.text })
+		.from(resumes)
+		.where(eq(resumes.userId, user.id))
+		.orderBy(desc(resumes.createdAt));
+	const { text, empty } = letterStatus(user);
+
 	return (
 		<PageShell
 			title="Generate a cover letter"
 			intro="Pick a resume, paste the job post, choose a tone and a length."
 		>
-			<Card title="Coming here">
-				<ul className="list-disc space-y-1 pl-5">
-					<li>Resume: pick a saved resume, upload a file, or paste text.</li>
-					<li>Job description, tone, and length.</li>
-					<li>A Generate button with a progress bar.</li>
-				</ul>
-			</Card>
+			<GenerateForm resumes={rows} status={text} empty={empty} />
 		</PageShell>
 	);
 }
