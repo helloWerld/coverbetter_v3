@@ -1,0 +1,32 @@
+Main features:
+
+- Homepage w/ explanation of features
+- Custom Cover Letter Generator
+- Editor Page with PDF exports
+- Payments (One Time and Subscription)
+- Dashboard
+  -> Profile Information
+  -> Payments and Cancellation
+  -> Generated Cover Letters
+
+
+#### SCREENS
+
+1. Homepage
+
+2. Auth Screens (login)
+
+3. Dashboard
+
+4. Generate Cover Letter
+
+5. Cover Letter Editor
+
+6. Purchase Credits
+
+
+
+
+
+
+

@@ -1,0 +1,86 @@
+export const testimonials = [
+	{
+		id: 0,
+		name: '@Moonphroggy',
+		text: `After reading the comments, I gave your site a try and it delivered!! I've been putting off writing my cover letter for ages and now I have a great foundation to go by. Thank you so much!! 😁`,
+		stars: 5,
+	},
+	{
+		id: 1,
+		name: '@Grand_Ad_9953',
+		text: `I just used your cover letter generator and all I have to say is THANK YOU SO F*CKING MUCH!!! This was so so helpful is trying to tie together my experiences / skills / education with certain responsibilities and qualities the job is looking for.`,
+		stars: 5,
+	},
+	{
+		id: 2,
+		name: '@The_IcedTea_Guy',
+		text: `Just used it and was definitely shocked at how good it is. I did not expect it to seamlessly relate my skills and experiences with the job description. I hate writing cover letters due to having to tailor them each time I apply for a role but this is an absolute game changer.`,
+		stars: 5,
+	},
+	{
+		id: 3,
+		name: '@No_Seaworthiness2044',
+		text: `I was impressed with how well this program generated a cover letter, there was no editing or rephrasing needed. Everything came out sounding perfect and professional!`,
+		stars: 5,
+	},
+	{
+		id: 4,
+		name: '@Whitelotuslover',
+		text: `I just used this and love it! I’ve been avoiding my cover letter for weeks and 5 mins after using the generator, I had my cover letter.`,
+		stars: 5,
+	},
+	{
+		id: 5,
+		name: '@Who-is-Brando',
+		text: `Each one uses your resume and skills and adapts to any job description articulating to the employer that you read the description and have the applicable skills... Well done, this is a great tool and I will gladly pay for this!`,
+		stars: 5,
+	},
+	{
+		id: 6,
+		name: '@Temporary-Cap-5520',
+		text: `I tried your service for free. It was quite incredible how you were able to extrapolate information from both the resume and the job description to populate a cogent, professional and thorough Cover Letter.`,
+		stars: 5,
+	},
+	{
+		id: 7,
+		name: '@HeftyWeekend9714',
+		text: `Amazing, You are a lifesaver.`,
+		stars: 5,
+	},
+	{
+		id: 8,
+		name: '@MajorRaisin6975',
+		text: `This thing is insane! Thank you so much for creating such a useful tool!`,
+		stars: 5,
+	},
+	{
+		id: 9,
+		name: '@Specific-Bed',
+		text: `I just used your service and it was fantastic! It has been a very long time since i wrote a cover letter and your site made it much easier.`,
+		stars: 5,
+	},
+	{
+		id: 10,
+		name: '@19kbstjbevr',
+		text: `Dude! This is incredible, using my words, the jobs words feels so much more organic than some AI generated text, this is awesome and cheap for what you get, thank you!!`,
+		stars: 5,
+	},
+	{
+		id: 11,
+		name: '@PerfectRemove2846',
+		text: `Your app is awesome definitely would recommend!`,
+		stars: 5,
+	},
+	{
+		id: 12,
+		name: '@Horror_System1366',
+		text: `Thank you so so much for building this fantastic tool!!`,
+		stars: 5,
+	},
+	{
+		id: 13,
+		name: '@numphai',
+		text: `Wow, this was better than I expected, thanks a million for real. 🙏`,
+		stars: 5,
+	},
+];

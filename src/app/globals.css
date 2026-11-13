@@ -1,0 +1,83 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+	@apply scroll-smooth;
+}
+
+a:focus {
+	@apply !text-base-100;
+}
+
+.page {
+	@apply min-h-screen;
+}
+
+.page-section {
+	@apply max-w-screen-2xl mx-auto min-h-screen md:min-h-[900px] flex flex-col items-center justify-center px-4 py-12;
+}
+
+.homepage-title {
+	@apply text-base-100 text-3xl md:text-5xl font-extralight w-11/12 md:w-1/2 text-center;
+}
+
+.homepage-subtitle {
+	@apply text-base md:text-xl font-extralight w-11/12 md:w-1/2 text-center mt-4 text-base-100/50;
+}
+
+.btn-secondary {
+	@apply bg-gradient-to-br from-secondary to-purple-950;
+}
+
+.gradient-text {
+	@apply bg-gradient-to-br from-base-100 from-40% to-secondary bg-clip-text text-transparent;
+}
+
+.gradient-background {
+	@apply bg-gradient-to-br from-secondary to-purple-900;
+}
+
+/* Root variables */
+:root {
+	--slide-height: 40rem;
+	--slide-spacing: 1rem;
+	--slide-size: 50%;
+}
+
+/* Embla styles */
+.embla {
+	@apply max-w-2xl mx-auto;
+}
+
+.embla__viewport {
+	@apply overflow-hidden;
+}
+
+.embla__container {
+	@apply flex flex-col;
+	touch-action: pan-x pinch-zoom;
+	margin-top: calc(var(--slide-spacing) * -1);
+	height: calc(var(--slide-spacing) + var(--slide-height));
+}
+
+.embla__slide {
+	@apply flex-none mb-4 border border-neutral-content/50 rounded-xl min-h-0 p-12;
+	flex: 0 0 var(--slide-size);
+}
+
+/* History Table */
+
+.table-zebra tbody tr:nth-child(even) {
+	@apply !bg-base-300;
+}
+
+/* Dashboard Styles */
+
+.dashboard {
+	@apply bg-base-300 min-h-screen w-full p-12 text-primary-content;
+}
+
+.dashboard-section {
+	@apply max-w-screen-lg mx-auto;
+}
