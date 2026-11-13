@@ -26,7 +26,12 @@ const navLinks = [
 	{
 		id: 4,
 		path: '/#faqs',
-		title: 'FAQs',
+		title: 'FAQ',
+	},
+	{
+		id: 5,
+		path: '/sample',
+		title: 'Sample',
 	},
 ];
 
@@ -36,9 +41,9 @@ const HomePageNavbar = () => {
 		<div className="h-fit absolute top-0 w-full max-w-full z-[100]">
 			<div className="navbar">
 				<div className="navbar-start">
-					<div className="btn btn-ghost text-xl text-base-100">
+					<Link href="/" className="btn btn-ghost text-xl text-base-100">
 						CoverBetter
-					</div>
+					</Link>
 				</div>
 				<div className="navbar-center hidden lg:flex">
 					<ul className="menu menu-horizontal px-1">

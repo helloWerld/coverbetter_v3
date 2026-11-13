@@ -1,90 +1,93 @@
-import Image from 'next/image';
-import gradient from '../../../public/purple-gradient.png';
-import React from 'react';
-import { FaRegCirclePlay, FaArrowRight, FaStar } from 'react-icons/fa6';
-import Link from 'next/link';
+import Image from "next/image";
+import gradient from "../../../public/purple-gradient.png";
+import React from "react";
+import { FaRegCirclePlay, FaArrowRight, FaStar } from "react-icons/fa6";
+import Link from "next/link";
 
 const Hero = () => {
-	return (
-		<div className="hero bg-primary min-h-screen md:min-h-[1000px] flex flex-col items-center justify-center relative overflow-y-clip">
-			<Image
-				src={gradient}
-				height={500}
-				width={500}
-				alt="purple gradient"
-				priority
-				className="absolute -bottom-[200px] md:-bottom-[400px] xl:-bottom-[800px] w-3/4 animate-slow-pulse"
-			/>
-			<div className="absolute bottom-4 w-full flex items-center justify-between">
-				<div className="scale-75 md:scale-100 flex flex-row gap-2">
-					<div className="stat">
-						<div className="stat-value">18k+</div>
-						<div className="stat-title  text-primary-content/50">
-							Satisfied customers
-						</div>
-					</div>
-					<div className="stat">
-						<div className="stat-value">100k+</div>
-						<div className="stat-title text-primary-content/50">
-							Cover Letters Generated
-						</div>
-					</div>
-				</div>
-				<Link
-					href="/#testimonials"
-					className="hidden group btn md:flex flex-col h-fit py-3 px-4 gap-0 items-center justify-center text-center text-base-100 rounded-2xl mr-4 w-fit bg-gradient-to-br from-secondary via-purple-950 to-primary mb-2 hover:scale-105"
-				>
-					<div className="flex flex-row gap-1">
-						<FaStar className="group-hover:text-yellow-300 text-accent text-xl" />
-						<FaStar className="group-hover:text-yellow-300 text-accent text-xl" />
-						<FaStar className="group-hover:text-yellow-300 text-accent text-xl" />
-						<FaStar className="group-hover:text-yellow-300 text-accent text-xl" />
-						<FaStar className="group-hover:text-yellow-300 text-accent text-xl" />
-					</div>
-					<p className="font-semibold text-lg mt-1 italic">
-						Raving Five Star Reviews!
-					</p>
-					<p className="text-xs font-light text-base-100/50">
-						Read our customer testimonials
-					</p>
-				</Link>
-			</div>
+  return (
+    <div className="hero bg-primary min-h-screen md:min-h-[1000px] flex flex-col items-center justify-center relative overflow-y-clip">
+      <Image
+        src={gradient}
+        height={500}
+        width={500}
+        alt=""
+        priority
+        className="absolute -bottom-[200px] md:-bottom-[400px] xl:-bottom-[800px] w-3/4 animate-slow-pulse"
+      />
+      <div className="absolute bottom-4 w-full flex items-center justify-between">
+        <div className="scale-75 md:scale-100 flex flex-row gap-2">
+          <div className="stat">
+            <div className="stat-value">18k+</div>
+            <div className="stat-title  text-primary-content/50">
+              Satisfied customers
+            </div>
+          </div>
+          <div className="stat">
+            <div className="stat-value">100k+</div>
+            <div className="stat-title text-primary-content/50">
+              Cover Letters Generated
+            </div>
+          </div>
+        </div>
+        <Link
+          href="/#testimonials"
+          className="hidden group btn md:flex flex-col h-fit py-3 px-4 gap-0 items-center justify-center text-center text-base-100 rounded-2xl mr-4 w-fit bg-gradient-to-br from-secondary via-purple-950 to-primary mb-2 hover:scale-105"
+        >
+          <div className="flex flex-row gap-1">
+            <FaStar className="group-hover:text-yellow-300 text-accent text-xl" />
+            <FaStar className="group-hover:text-yellow-300 text-accent text-xl" />
+            <FaStar className="group-hover:text-yellow-300 text-accent text-xl" />
+            <FaStar className="group-hover:text-yellow-300 text-accent text-xl" />
+            <FaStar className="group-hover:text-yellow-300 text-accent text-xl" />
+          </div>
+          <p className="font-semibold text-lg mt-1 italic">
+            Raving Five Star Reviews!
+          </p>
+          <p className="text-xs font-light text-base-100/50">
+            Read our customer testimonials
+          </p>
+        </Link>
+      </div>
 
-			<div className="hero-content text-center">
-				<div className="flex flex-col justify-center items-center max-w-5xl -mt-20">
-					<Link
-						href="/sign-up"
-						className=" border border-base-100/10 relative group flex flex-row items-center rounded-full bg-base-300 mb-4 gap-1 p-1"
-					>
-						<div className="transition duration-500 absolute left-1 group-hover:translate-x-[182px] badge badge-secondary p-2 bg-gradient-to-br from-secondary to-purple-900">
-							New
-						</div>
-						<p className="transition duration-500 text-sm ml-14 group-hover:ml-2 group-hover:mr-14">
-							Try out the latest features
-						</p>
-						<FaArrowRight />
-					</Link>
-					<h1 className="bg-gradient-to-br from-base-100 from-30% to-secondary bg-clip-text text-transparent text-3xl sm:text-5xl md:text-8xl font-semibold text-base-100">
-						Create Job-Winning Cover Letters with AI.
-					</h1>
-					<p className="py-6 text-sm sm:text-lg md:text-xl max-w-4xl">
-						Generate a custom cover letter in under 30 seconds with AI—tailored
-						to match your skills and the job description using your resume as a
-						guide.
-					</p>
-					<div className="flex flex-row gap-4">
-						<Link href="/sign-up" className="btn btn-secondary md:btn-wide ">
-							Try It For Free
-						</Link>
-						<button className="btn btn-base-100 btn-outline border-base-100 hover:border-base-100 text-base-100 md:btn-wide ">
-							<FaRegCirclePlay className="text-lg" />
-							See How It Works
-						</button>
-					</div>
-				</div>
-			</div>
-		</div>
-	);
+      <div className="hero-content text-center">
+        <div className="flex flex-col justify-center items-center max-w-5xl -mt-20">
+          <Link
+            href="/#features"
+            className=" border border-base-100/10 relative group flex flex-row items-center rounded-full bg-base-300 mb-4 gap-1 p-1"
+          >
+            <div className="transition duration-500 absolute left-1 group-hover:translate-x-[182px] badge badge-secondary p-2 bg-gradient-to-br from-secondary to-purple-900">
+              New
+            </div>
+            <p className="transition duration-500 text-sm ml-14 group-hover:ml-2 group-hover:mr-14">
+              Try out the latest features
+            </p>
+            <FaArrowRight />
+          </Link>
+          <h1 className="bg-gradient-to-br from-base-100 from-30% to-secondary bg-clip-text text-transparent text-3xl sm:text-5xl md:text-8xl font-semibold text-base-100">
+            Create Job-Winning Cover Letters with AI.
+          </h1>
+          <p className="py-6 text-sm sm:text-lg md:text-xl max-w-4xl">
+            Generate a custom cover letter in under 30 seconds with AI—tailored
+            to match your skills and the job description using your resume as a
+            guide.
+          </p>
+          <div className="flex flex-row gap-4">
+            <Link href="/sign-up" className="btn btn-secondary md:btn-wide ">
+              Try It For Free
+            </Link>
+            <Link
+              href="/sample"
+              className="btn btn-base-100 btn-outline border-base-100 hover:border-base-100 text-base-100 md:btn-wide "
+            >
+              <FaRegCirclePlay className="text-lg" aria-hidden="true" />
+              Try a sample
+            </Link>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default Hero;

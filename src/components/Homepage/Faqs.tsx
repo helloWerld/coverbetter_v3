@@ -1,151 +1,216 @@
-import React from 'react';
+import React from "react";
 
 const Faqs = () => {
-	return (
-		<div id="faqs" className="page-section">
-			<div className=" flex flex-col xl:!flex-row items-start gap-12 xl:gap-2 w-full px-24">
-				<div className=" w-full xl:w-1/2 ">
-					<h2 className="homepage-title !w-full">Frequently Asked Questions</h2>
-				</div>
-				<div className="flex flex-col gap-4 w-full xl:w-1/2">
-					<div className="collapse border border-neutral-content/50 bg-base-300">
-						<input type="radio" name="my-accordion-1" defaultChecked />
-						<div className="collapse-title text-xl font-medium">
-							What is CoverBetter.io, and how does it work?
-						</div>
-						<div className="collapse-content">
-							<p>
-								CoverBetter.io is an AI-powered platform that creates
-								personalized, professional cover letters tailored to your resume
-								and the specific job description you provide. Simply upload your
-								resume and paste the job description, and the app generates a
-								cover letter in seconds.
-							</p>
-						</div>
-					</div>
-					<div className="collapse border border-neutral-content/50 bg-base-300">
-						<input type="radio" name="my-accordion-1" />
-						<div className="collapse-title text-xl font-medium">
-							Is the generated cover letter guaranteed to land me an interview?
-						</div>
-						<div className="collapse-content">
-							<p>
-								While CoverBetter.io optimizes your cover letter for clarity,
-								professionalism, and relevance to the job description, success
-								ultimately depends on the job market, your resume, and how well
-								you meet the job qualifications.
-							</p>
-						</div>
-					</div>
-					<div className="collapse border border-neutral-content/50 bg-base-300">
-						<input type="radio" name="my-accordion-1" />
-						<div className="collapse-title text-xl font-medium">
-							How secure is my data?
-						</div>
-						<div className="collapse-content">
-							<p>
-								We prioritize your privacy and security. Uploaded resumes and
-								job descriptions are not stored permanently, and we use
-								industry-standard encryption to protect your data.
-							</p>
-						</div>
-					</div>
-					<div className="collapse border border-neutral-content/50 bg-base-300">
-						<input type="radio" name="my-accordion-1" />
-						<div className="collapse-title text-xl font-medium">
-							Can I customize the tone or format of the generated cover letter?
-						</div>
-						<div className="collapse-content">
-							<p>
-								Yes, you can specify the tone, such as formal, enthusiastic, or
-								neutral, and the platform ensures that the formatting aligns
-								with professional standards.
-							</p>
-						</div>
-					</div>
-					<div className="collapse border border-neutral-content/50 bg-base-300">
-						<input type="radio" name="my-accordion-1" />
-						<div className="collapse-title text-xl font-medium">
-							Does CoverBetter.io support all industries and job roles?
-						</div>
-						<div className="collapse-content">
-							<p>
-								Yes, CoverBetter.io is designed to handle a wide variety of
-								industries and job roles. It analyzes the specific keywords and
-								skills in the job description to create a relevant cover letter.
-							</p>
-						</div>
-					</div>
-					<div className="collapse border border-neutral-content/50 bg-base-300">
-						<input type="radio" name="my-accordion-1" />
-						<div className="collapse-title text-xl font-medium">
-							Can I preview or edit the cover letter before downloading it?
-						</div>
-						<div className="collapse-content">
-							<p>
-								Absolutely. You can review the generated cover letter and make
-								any changes using our built-in editor before downloading it.
-							</p>
-						</div>
-					</div>
-					<div className="collapse border border-neutral-content/50 bg-base-300">
-						<input type="radio" name="my-accordion-1" />
-						<div className="collapse-title text-xl font-medium">
-							What file formats are supported for resume uploads?
-						</div>
-						<div className="collapse-content">
-							<p>
-								Currently, CoverBetter.io supports PDF and DOCX file formats for
-								uploading resumes.
-							</p>
-						</div>
-					</div>
-					<div className="collapse border border-neutral-content/50 bg-base-300">
-						<input type="radio" name="my-accordion-1" />
-						<div className="collapse-title text-xl font-medium">
-							Do I need a subscription to use CoverBetter.io?
-						</div>
-						<div className="collapse-content">
-							<p>
-								We offer both free and premium plans. The free plan provides
-								basic functionality, while the premium plan unlocks advanced
-								features, including unlimited revisions, enhanced customization,
-								and priority support.
-							</p>
-						</div>
-					</div>
-					<div className="collapse border border-neutral-content/50 bg-base-300">
-						<input type="radio" name="my-accordion-1" />
-						<div className="collapse-title text-xl font-medium">
-							How does CoverBetter.io ensure the cover letter matches the job
-							description?
-						</div>
-						<div className="collapse-content">
-							<p>
-								Our AI analyzes the keywords, skills, and responsibilities
-								outlined in the job description and matches them with relevant
-								details from your resume to craft a tailored and compelling
-								cover letter.
-							</p>
-						</div>
-					</div>
-					<div className="collapse border border-neutral-content/50 bg-base-300">
-						<input type="radio" name="my-accordion-1" />
-						<div className="collapse-title text-xl font-medium">
-							What support options are available if I encounter an issue?
-						</div>
-						<div className="collapse-content">
-							<p>
-								Our customer support team is available to assist you via email.
-								We also have a comprehensive FAQ and troubleshooting guide
-								available on our website.
-							</p>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	);
+  return (
+    <div id="faqs" className="page-section">
+      <div className=" flex flex-col xl:!flex-row items-start gap-12 xl:gap-2 w-full px-6 md:px-24">
+        <div className=" w-full xl:w-1/2 ">
+          <h2 className="homepage-title !w-full">Frequently Asked Questions</h2>
+        </div>
+        <div className="flex flex-col gap-4 w-full xl:w-1/2">
+          <div className="collapse border border-neutral-content/50 bg-base-300">
+            <input
+              type="radio"
+              name="faq-accordion"
+              aria-label={"What is CoverBetter, and how does it work?"}
+              defaultChecked
+            />
+            <div className="collapse-title text-xl font-medium">
+              What is CoverBetter, and how does it work?
+            </div>
+            <div className="collapse-content">
+              <p>
+                CoverBetter writes a cover letter for one job at a time. You add
+                your resume, paste the job post, and pick a tone and a length.
+                The AI writes a letter that uses facts from your resume. You can
+                then edit the letter and export it.
+              </p>
+            </div>
+          </div>
+          <div className="collapse border border-neutral-content/50 bg-base-300">
+            <input
+              type="radio"
+              name="faq-accordion"
+              aria-label={"Which AI writes my letter?"}
+            />
+            <div className="collapse-title text-xl font-medium">
+              Which AI writes my letter?
+            </div>
+            <div className="collapse-content">
+              <p>
+                Claude, made by Anthropic, writes your letter. If Claude is not
+                available, a backup model from OpenAI writes it instead.
+              </p>
+            </div>
+          </div>
+          <div className="collapse border border-neutral-content/50 bg-base-300">
+            <input
+              type="radio"
+              name="faq-accordion"
+              aria-label={"Is my resume private?"}
+            />
+            <div className="collapse-title text-xl font-medium">
+              Is my resume private?
+            </div>
+            <div className="collapse-content">
+              <p>
+                We store your resumes and letters on Cloudflare. We send your
+                resume and the job text to the AI provider only to write your
+                letter. We never sell your data. You can delete your resumes,
+                your letters, or your whole account at any time from the Account
+                page.
+              </p>
+            </div>
+          </div>
+          <div className="collapse border border-neutral-content/50 bg-base-300">
+            <input
+              type="radio"
+              name="faq-accordion"
+              aria-label={
+                "Is the generated cover letter guaranteed to land me an interview?"
+              }
+            />
+            <div className="collapse-title text-xl font-medium">
+              Is the generated cover letter guaranteed to land me an interview?
+            </div>
+            <div className="collapse-content">
+              <p>
+                No. A good letter helps, but the result depends on the job
+                market, your resume, and how well you match the job. Read every
+                letter and edit it before you send it.
+              </p>
+            </div>
+          </div>
+          <div className="collapse border border-neutral-content/50 bg-base-300">
+            <input
+              type="radio"
+              name="faq-accordion"
+              aria-label={"Can I change the tone or length of the letter?"}
+            />
+            <div className="collapse-title text-xl font-medium">
+              Can I change the tone or length of the letter?
+            </div>
+            <div className="collapse-content">
+              <p>
+                Yes. Choose Professional, Friendly, Confident, or Enthusiastic.
+                Choose a short letter (about 200 words), a standard letter
+                (about 300 words), or a detailed letter (about 400 words).
+              </p>
+            </div>
+          </div>
+          <div className="collapse border border-neutral-content/50 bg-base-300">
+            <input
+              type="radio"
+              name="faq-accordion"
+              aria-label={"Can I edit the letter before I download it?"}
+            />
+            <div className="collapse-title text-xl font-medium">
+              Can I edit the letter before I download it?
+            </div>
+            <div className="collapse-content">
+              <p>
+                Yes. The editor shows a live preview in one of 3 templates:
+                Classic, Modern, or Minimal. You can copy the text or export a
+                PDF or a DOCX file.
+              </p>
+            </div>
+          </div>
+          <div className="collapse border border-neutral-content/50 bg-base-300">
+            <input
+              type="radio"
+              name="faq-accordion"
+              aria-label={"What resume files can I upload?"}
+            />
+            <div className="collapse-title text-xl font-medium">
+              What resume files can I upload?
+            </div>
+            <div className="collapse-content">
+              <p>
+                You can upload a PDF or a DOCX file up to 5 MB. You can also
+                paste the text of your resume. A scanned PDF that has no text
+                does not work, so paste the text in that case.
+              </p>
+            </div>
+          </div>
+          <div className="collapse border border-neutral-content/50 bg-base-300">
+            <input
+              type="radio"
+              name="faq-accordion"
+              aria-label={"How much does CoverBetter cost?"}
+            />
+            <div className="collapse-title text-xl font-medium">
+              How much does CoverBetter cost?
+            </div>
+            <div className="collapse-content">
+              <p>
+                You get 3 letters free. After that, Pro is $19 a month for
+                unlimited letters (fair use is 200 a month). Or you can buy
+                credit packs: 5 letters for $5 or 15 letters for $12.
+              </p>
+            </div>
+          </div>
+          <div className="collapse border border-neutral-content/50 bg-base-300">
+            <input
+              type="radio"
+              name="faq-accordion"
+              aria-label={"Do credits expire?"}
+            />
+            <div className="collapse-title text-xl font-medium">
+              Do credits expire?
+            </div>
+            <div className="collapse-content">
+              <p>No. Credits stay on your account until you use them.</p>
+            </div>
+          </div>
+          <div className="collapse border border-neutral-content/50 bg-base-300">
+            <input
+              type="radio"
+              name="faq-accordion"
+              aria-label={"Can I cancel Pro?"}
+            />
+            <div className="collapse-title text-xl font-medium">
+              Can I cancel Pro?
+            </div>
+            <div className="collapse-content">
+              <p>
+                Yes. Cancel at any time from the Billing page. You keep Pro
+                access until the end of the period you paid for.
+              </p>
+            </div>
+          </div>
+          <div className="collapse border border-neutral-content/50 bg-base-300">
+            <input
+              type="radio"
+              name="faq-accordion"
+              aria-label={"Can I get a refund?"}
+            />
+            <div className="collapse-title text-xl font-medium">
+              Can I get a refund?
+            </div>
+            <div className="collapse-content">
+              <p>
+                Credits that you used are not refundable. If something went
+                wrong with a payment, write to support@coverbetter.io.
+              </p>
+            </div>
+          </div>
+          <div className="collapse border border-neutral-content/50 bg-base-300">
+            <input
+              type="radio"
+              name="faq-accordion"
+              aria-label={"How do I get help?"}
+            />
+            <div className="collapse-title text-xl font-medium">
+              How do I get help?
+            </div>
+            <div className="collapse-content">
+              <p>Write to support@coverbetter.io. We answer by email.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default Faqs;
