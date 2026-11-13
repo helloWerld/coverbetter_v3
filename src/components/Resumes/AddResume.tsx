@@ -1,6 +1,6 @@
 'use client';
 
-import { useId, useRef, useState, useTransition } from 'react';
+import { useEffect, useId, useRef, useState, useTransition } from 'react';
 import { pasteResumeAction } from '@/app/dashboard/resumes/actions';
 import {
 	MAX_FILE_BYTES,
@@ -9,8 +9,7 @@ import {
 	MESSAGES,
 	MIN_PASTE_CHARS,
 } from '@/lib/resume-limit';
-
-type Tab = 'upload' | 'paste';
+import { tabClickAction, type ResumeTab as Tab } from './tab-click';
 
 function formatSize(bytes: number): string {
 	return bytes < 1024 * 1024
@@ -29,6 +28,13 @@ export default function AddResume({
 	const [tab, setTab] = useState<Tab>('upload');
 	const atLimit = count >= MAX_RESUMES;
 	const uid = useId();
+	const openPickerRef = useRef<() => void>(() => {});
+
+	function onTabClick(t: Tab) {
+		const action = tabClickAction(tab, t);
+		if (action === 'switch') setTab(t);
+		if (action === 'open-picker') openPickerRef.current();
+	}
 
 	function onTabKey(e: React.KeyboardEvent) {
 		if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
@@ -62,7 +68,7 @@ export default function AddResume({
 								aria-selected={tab === t}
 								aria-controls={`${uid}-panel-${t}`}
 								tabIndex={tab === t ? 0 : -1}
-								onClick={() => setTab(t)}
+								onClick={() => onTabClick(t)}
 								className={`btn min-h-11 ${tab === t ? 'btn-secondary' : 'btn-outline border-base-100/40 text-base-100'}`}
 							>
 								{t === 'upload' ? 'Upload a file' : 'Paste text'}
@@ -70,7 +76,7 @@ export default function AddResume({
 						))}
 					</div>
 					<div id={`${uid}-panel-upload`} role="tabpanel" aria-labelledby={`${uid}-tab-upload`} hidden={tab !== 'upload'}>
-						<UploadPanel onCreated={onCreated} />
+						<UploadPanel onCreated={onCreated} openPickerRef={openPickerRef} />
 					</div>
 					<div id={`${uid}-panel-paste`} role="tabpanel" aria-labelledby={`${uid}-tab-paste`} hidden={tab !== 'paste'}>
 						<PastePanel onCreated={onCreated} />
@@ -81,8 +87,17 @@ export default function AddResume({
 	);
 }
 
-function UploadPanel({ onCreated }: Readonly<{ onCreated: (id: string, fromFile: boolean) => void }>) {
+function UploadPanel({
+	onCreated,
+	openPickerRef,
+}: Readonly<{
+	onCreated: (id: string, fromFile: boolean) => void;
+	openPickerRef: React.RefObject<() => void>;
+}>) {
 	const inputRef = useRef<HTMLInputElement>(null);
+	useEffect(() => {
+		openPickerRef.current = () => inputRef.current?.click();
+	}, [openPickerRef]);
 	const [file, setFile] = useState<File | null>(null);
 	const [title, setTitle] = useState('');
 	const [dragging, setDragging] = useState(false);
@@ -165,10 +180,11 @@ function UploadPanel({ onCreated }: Readonly<{ onCreated: (id: string, fromFile:
 					dragging ? 'border-secondary bg-secondary/10' : 'border-base-100/30 hover:border-secondary'
 				}`}
 			>
-				<span className="text-base-100">
-					{file ? 'Choose a different file' : 'Drop a PDF or DOCX here, or select a file'}
-				</span>
+				<span className="text-base-100">Drop a PDF or DOCX here</span>
 				<span className="text-sm text-base-100/70">PDF or DOCX, up to 5 MB</span>
+				<span className="btn btn-secondary btn-sm pointer-events-none mt-3 min-h-11 px-5">
+					{file ? 'Choose a different file' : 'Choose file'}
+				</span>
 			</button>
 
 			{file && (
