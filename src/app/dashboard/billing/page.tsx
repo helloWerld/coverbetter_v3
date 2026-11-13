@@ -1,15 +1,25 @@
-import PageShell, { Card } from '@/components/Dashboard/PageShell';
+import PageShell from '@/components/Dashboard/PageShell';
+import PlanCard from '@/components/Billing/PlanCard';
+import PurchaseCards from '@/components/Billing/PurchaseCards';
+import StatusBanner from '@/components/Billing/StatusBanner';
+import { getEnv } from '@/lib/cf';
+import { requireUser } from '@/lib/user';
+import { isStripeConfigured } from '@/lib/billing';
 
-export default function BillingPage() {
+export default async function BillingPage({
+	searchParams,
+}: Readonly<{ searchParams: Promise<{ status?: string }> }>) {
+	const [{ status }, user] = await Promise.all([searchParams, requireUser()]);
+	const configured = isStripeConfigured(getEnv());
+
 	return (
 		<PageShell title="Billing" intro="Your plan and your letters.">
-			<Card title="Coming here">
-				<ul className="list-disc space-y-1 pl-5">
-					<li>Your plan and the number of letters you have left.</li>
-					<li>Buy a letter pack with Stripe Checkout.</li>
-					<li>Start Pro, or manage it in the Stripe portal.</li>
-				</ul>
-			</Card>
+			<StatusBanner status={status} />
+			<PlanCard user={user} />
+			<PurchaseCards
+				configured={configured}
+				hasCustomer={Boolean(user.stripeCustomerId)}
+			/>
 		</PageShell>
 	);
 }
