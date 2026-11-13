@@ -1,0 +1,50 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "coverbetter",
+	"main": ".open-next/worker.js",
+	"compatibility_date": "2026-11-01",
+	"compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+	"assets": {
+		"directory": ".open-next/assets",
+		"binding": "ASSETS"
+	},
+	"services": [
+		{
+			"binding": "WORKER_SELF_REFERENCE",
+			"service": "coverbetter"
+		}
+	],
+	"observability": { "enabled": true },
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "coverbetter",
+			// TODO: replace with the real ID from `wrangler d1 create coverbetter`.
+			// Local dev (`--local`) ignores this value.
+			"database_id": "00000000-0000-0000-0000-000000000000",
+			"migrations_dir": "drizzle"
+		}
+	],
+	"r2_buckets": [
+		{
+			"binding": "RESUMES",
+			// TODO: create with `wrangler r2 bucket create coverbetter-resumes`.
+			"bucket_name": "coverbetter-resumes"
+		}
+	],
+	"ratelimits": [
+		{
+			"name": "GENERATE_LIMITER",
+			// TODO: namespace_id is any integer that is unique in the Cloudflare account.
+			"namespace_id": "1001",
+			// The Workers rate-limit binding allows a period of 10 or 60 seconds only.
+			// The plan asks for 10 letters an hour (period 3600). That is not possible here.
+			// Use 10 per 60 seconds as an abuse guard. Enforce the hourly cap in D1.
+			"simple": { "limit": 10, "period": 60 }
+		}
+	]
+	// Secrets (set with `wrangler secret put NAME`, local values in .dev.vars):
+	// CLERK_SECRET_KEY, NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY, ANTHROPIC_API_KEY, OPENAI_API_KEY,
+	// CF_AIG_ACCOUNT_ID, CF_AIG_GATEWAY_ID, CF_AIG_TOKEN, STRIPE_SECRET_KEY,
+	// STRIPE_WEBHOOK_SECRET, STRIPE_PRICE_PACK_5, STRIPE_PRICE_PACK_15, STRIPE_PRICE_PRO, APP_URL
+}
