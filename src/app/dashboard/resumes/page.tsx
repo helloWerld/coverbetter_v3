@@ -1,15 +1,22 @@
-import PageShell, { Card } from '@/components/Dashboard/PageShell';
+import PageShell from '@/components/Dashboard/PageShell';
+import ResumesManager from '@/components/Resumes/ResumesManager';
+import { listResumes } from '@/lib/resumes';
+import { requireUser } from '@/lib/user';
 
-export default function ResumesPage() {
+export default async function ResumesPage() {
+	const user = await requireUser();
+	const rows = await listResumes(user.id);
+	const resumes = rows.map((r) => ({
+		id: r.id,
+		title: r.title,
+		fileName: r.fileName,
+		text: r.text,
+		updatedAt: r.updatedAt.toISOString(),
+	}));
+
 	return (
-		<PageShell title="Resumes" intro="Save up to 5 resumes.">
-			<Card title="Coming here">
-				<ul className="list-disc space-y-1 pl-5">
-					<li>Upload a PDF or DOCX file, up to 5 MB, or paste text.</li>
-					<li>Check and correct the text that we read from your file.</li>
-					<li>Rename and delete resumes.</li>
-				</ul>
-			</Card>
+		<PageShell title="Resumes" intro="Save up to 5 resumes. Pick one when you write a letter.">
+			<ResumesManager resumes={resumes} />
 		</PageShell>
 	);
 }
