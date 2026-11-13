@@ -145,6 +145,24 @@ describe('generateLetter', () => {
 		expect((await generateLetter(gatewayEnv, prompt)).text).toBe('Letter O');
 	});
 
+	it('uses Haiku with thinking disabled when asked', async () => {
+		const f = vi.fn().mockResolvedValue(anthropicOk());
+		vi.stubGlobal('fetch', f);
+		const r = await generateLetter(gatewayEnv, prompt, 'haiku');
+		expect(r.model).toBe('claude-haiku-5-5');
+		const body = JSON.parse(f.mock.calls[0][1].body);
+		expect(body.model).toBe('claude-haiku-5-5');
+		// Haiku refuses "between_tools" and accepts "disabled".
+		expect(body.thinking).toEqual({ type: 'disabled' });
+	});
+
+	it('uses Sonnet by default', async () => {
+		const f = vi.fn().mockResolvedValue(anthropicOk());
+		vi.stubGlobal('fetch', f);
+		const r = await generateLetter(gatewayEnv, prompt);
+		expect(r.model).toBe('claude-sonnet-5-5');
+	});
+
 	it('rejects a cut-off OpenAI answer too', async () => {
 		const cut = new Response(
 			JSON.stringify({

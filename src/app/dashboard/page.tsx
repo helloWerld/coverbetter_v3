@@ -3,7 +3,8 @@ import { resumes } from '@/db/schema';
 import PageShell from '@/components/Dashboard/PageShell';
 import GenerateForm from '@/components/Generate/GenerateForm';
 import { letterStatus } from '@/components/Generate/status';
-import { getDb } from '@/lib/cf';
+import { getDb, getEnv } from '@/lib/cf';
+import { canPickModel } from '@/lib/model-access';
 import { requireUser } from '@/lib/user';
 
 export default async function GeneratePage() {
@@ -20,7 +21,12 @@ export default async function GeneratePage() {
 			title="Generate a cover letter"
 			intro="Pick a resume, paste the job post, choose a tone and a length."
 		>
-			<GenerateForm resumes={rows} status={text} empty={empty} />
+			<GenerateForm
+				resumes={rows}
+				status={text}
+				empty={empty}
+				showModelPicker={canPickModel(user.email, getEnv().MODEL_PICKER_EMAILS)}
+			/>
 		</PageShell>
 	);
 }

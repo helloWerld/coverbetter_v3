@@ -1,4 +1,13 @@
+import type { ModelKey } from './model-access';
+
 export const ANTHROPIC_MODEL = 'claude-sonnet-5-5';
+
+// Each model turns thinking off in its own way. With thinking on, the model
+// spent the token budget thinking and returned a cut-off letter.
+const ANTHROPIC_MODELS: Record<ModelKey, { id: string; thinking: { type: string } }> = {
+	sonnet: { id: ANTHROPIC_MODEL, thinking: { type: 'between_tools' } },
+	haiku: { id: 'claude-haiku-5-5', thinking: { type: 'disabled' } },
+};
 // TODO: verify the exact model ID in the OpenAI docs before launch.
 export const OPENAI_FALLBACK_MODEL = 'gpt-6.1-sol';
 
@@ -55,7 +64,11 @@ async function post(url: string, headers: Record<string, string>, body: unknown)
 	return res.json() as Promise<unknown>;
 }
 
-async function callAnthropic(env: Env, p: { system: string; user: string }) {
+async function callAnthropic(
+	env: Env,
+	p: { system: string; user: string },
+	model: (typeof ANTHROPIC_MODELS)[ModelKey],
+) {
 	const data = (await post(
 		`${base(env, 'anthropic')}/v1/messages`,
 		{
@@ -64,11 +77,9 @@ async function callAnthropic(env: Env, p: { system: string; user: string }) {
 			...gatewayHeaders(env),
 		},
 		{
-			model: ANTHROPIC_MODEL,
+			model: model.id,
 			max_tokens: MAX_TOKENS,
-			// No thinking before the answer. With thinking on, the model spent the
-			// whole token budget thinking and returned a cut-off letter.
-			thinking: { type: 'between_tools' },
+			thinking: model.thinking,
 			system: p.system,
 			messages: [{ role: 'user', content: p.user }],
 		},
@@ -112,9 +123,11 @@ async function callOpenAI(env: Env, p: { system: string; user: string }) {
 export async function generateLetter(
 	env: Env,
 	prompt: { system: string; user: string },
+	modelKey: ModelKey = 'sonnet',
 ): Promise<LlmResult> {
+	const model = ANTHROPIC_MODELS[modelKey];
 	try {
-		return { text: await callAnthropic(env, prompt), model: ANTHROPIC_MODEL };
+		return { text: await callAnthropic(env, prompt, model), model: model.id };
 	} catch (e) {
 		if (!(e instanceof RetryableError)) throw e;
 	}

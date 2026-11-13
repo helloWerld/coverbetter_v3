@@ -14,4 +14,6 @@ interface CloudflareEnv {
 	STRIPE_PRICE_PACK_15: string;
 	STRIPE_PRICE_PRO: string;
 	APP_URL: string;
+	/** Comma-separated emails that see the model dropdown on the Generate page. */
+	MODEL_PICKER_EMAILS?: string;
 }

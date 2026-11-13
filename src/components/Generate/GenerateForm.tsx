@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useId, useState } from 'react';
 import { generateLetterAction } from '@/app/dashboard/actions';
+import { MODEL_KEYS, MODEL_LABELS, type ModelKey } from '@/lib/model-access';
 import type { Length, Tone } from '@/lib/prompt';
 import GenerateProgress from './GenerateProgress';
 import SegmentedControl from './SegmentedControl';
@@ -34,7 +35,13 @@ export default function GenerateForm({
 	resumes,
 	status,
 	empty,
-}: Readonly<{ resumes: SavedResume[]; status: string; empty: boolean }>) {
+	showModelPicker = false,
+}: Readonly<{
+	resumes: SavedResume[];
+	status: string;
+	empty: boolean;
+	showModelPicker?: boolean;
+}>) {
 	const router = useRouter();
 	const id = useId();
 	const [resumeId, setResumeId] = useState(resumes[0]?.id ?? PASTE);
@@ -42,6 +49,7 @@ export default function GenerateForm({
 	const [job, setJob] = useState('');
 	const [tone, setTone] = useState<Tone>('professional');
 	const [length, setLength] = useState<Length>('standard');
+	const [model, setModel] = useState<ModelKey>('sonnet');
 	const [running, setRunning] = useState(false);
 	const [done, setDone] = useState(false);
 	const [error, setError] = useState<{ message: string; billing: boolean } | null>(
@@ -64,6 +72,7 @@ export default function GenerateForm({
 		fd.set('jobDescription', job);
 		fd.set('tone', tone);
 		fd.set('length', length);
+		if (showModelPicker) fd.set('model', model);
 
 		try {
 			const res = await generateLetterAction(fd);
@@ -194,6 +203,25 @@ export default function GenerateForm({
 						value={length}
 						onChange={setLength}
 					/>
+					{showModelPicker && (
+						<div className="md:col-span-2">
+							<label htmlFor={`${id}-model`} className="mb-2 block text-sm font-medium text-base-100">
+								Model <span className="font-normal text-base-100/60">(test only, visible to you)</span>
+							</label>
+							<select
+								id={`${id}-model`}
+								value={model}
+								onChange={(e) => setModel(e.target.value as ModelKey)}
+								className={`${field} min-h-11 md:max-w-sm`}
+							>
+								{MODEL_KEYS.map((k) => (
+									<option key={k} value={k}>
+										{MODEL_LABELS[k]}
+									</option>
+								))}
+							</select>
+						</div>
+					)}
 				</section>
 			</fieldset>
 

@@ -6,6 +6,7 @@ import { letters, resumes } from '@/db/schema';
 import { getDb, getEnv } from '@/lib/cf';
 import { checkEntitlement, consumeEntitlement } from '@/lib/entitlements';
 import { generateLetter } from '@/lib/llm';
+import { canPickModel, resolveModelKey } from '@/lib/model-access';
 import { LENGTHS, TONES, buildPrompt, parseModelOutput } from '@/lib/prompt';
 import { requireUser } from '@/lib/user';
 
@@ -102,7 +103,12 @@ export async function generateLetterAction(
 
 	let result;
 	try {
-		result = await generateLetter(env, prompt);
+		// Only allowed users may choose. Everyone else gets Sonnet.
+		const modelKey = resolveModelKey(
+			formData.get('model'),
+			canPickModel(user.email, env.MODEL_PICKER_EMAILS),
+		);
+		result = await generateLetter(env, prompt, modelKey);
 	} catch (e) {
 		console.error('generateLetter failed', e);
 		// Nothing was consumed, so the user keeps the letter.
