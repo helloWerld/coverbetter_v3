@@ -4,7 +4,7 @@ import { useActionState, useRef, useState } from 'react';
 import {
 	deleteAccountAction,
 	type DeleteState,
-} from '@/app/dashboard/account/actions';
+} from '@/app/dashboard/billing/delete-account';
 
 const focus =
 	'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral';

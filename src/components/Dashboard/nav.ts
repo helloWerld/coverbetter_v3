@@ -4,10 +4,9 @@ export const MAIN_NAV = [
 	{ href: '/dashboard/resumes', label: 'Resumes', icon: 'resumes' },
 ] as const;
 
-/** Shown at the bottom of the sidebar, above the avatar. */
+/** Shown at the bottom of the sidebar, above the avatar. The avatar opens the Clerk account dialog. */
 export const ACCOUNT_NAV = [
 	{ href: '/dashboard/billing', label: 'Billing', icon: 'billing' },
-	{ href: '/dashboard/account', label: 'Account', icon: 'account' },
 ] as const;
 
 export type NavIcon =

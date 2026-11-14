@@ -26,5 +26,8 @@ export const clerkAppearance: Appearance = {
 		card: 'border border-white/10 shadow-none',
 		footerActionLink: 'text-[#a868e4] hover:text-white',
 		formButtonPrimary: 'bg-gradient-to-br from-[#9333ea] to-purple-950',
+		// Clerk's delete removes only the sign-in. It leaves the letters, the files,
+		// and the Stripe plan. Our "Delete account" on the Billing page removes all.
+		profileSection__danger: 'hidden',
 	},
 };

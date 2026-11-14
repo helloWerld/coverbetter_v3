@@ -10,7 +10,6 @@ import {
 	FaEnvelopeOpenText,
 	FaFileLines,
 	FaCreditCard,
-	FaUser,
 } from 'react-icons/fa6';
 import { UserButton } from '@clerk/nextjs';
 import { ACCOUNT_NAV, MAIN_NAV, type NavIcon } from './nav';
@@ -18,20 +17,13 @@ import { SOON_FEATURES } from '@/lib/soon';
 import Logo from '@/components/ui/Logo';
 
 // Each icon matches its page: pen for writing, letter for letters, file for resumes,
-// card for billing, person for account.
+// card for billing.
 const ICONS: Record<NavIcon, React.ComponentType<{ className?: string }>> = {
 	generate: FaPenNib,
 	letters: FaEnvelopeOpenText,
 	resumes: FaFileLines,
 	billing: FaCreditCard,
-	account: FaUser,
 };
-
-// "Manage account" in the avatar menu opens the Account page, not a second dialog.
-const USER_BUTTON = {
-	userProfileMode: 'navigation',
-	userProfileUrl: '/dashboard/account',
-} as const;
 
 const linkBase =
 	'flex min-h-11 items-center gap-3 rounded-lg px-3 py-2 text-sm transition duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral';
@@ -79,7 +71,7 @@ export default function DashboardNav() {
 					<Logo className="h-11 w-auto" priority />
 				</Link>
 				<div className="flex h-11 w-11 items-center justify-center">
-					<UserButton {...USER_BUTTON} />
+					<UserButton />
 				</div>
 			</header>
 
@@ -134,13 +126,13 @@ export default function DashboardNav() {
 					</ul>
 				</nav>
 
-				{/* Billing and Account sit at the bottom, just above the avatar. */}
+				{/* Billing sits at the bottom, just above the avatar. */}
 				<div className="mt-auto pt-6">
-					<nav aria-label="Account">
+					<nav aria-label="Billing">
 						<NavList items={ACCOUNT_NAV} isActive={isActive} />
 					</nav>
 					<div className="mt-3 hidden items-center gap-3 border-t border-base-100/10 px-3 pt-4 md:flex">
-						<UserButton {...USER_BUTTON} />
+						<UserButton />
 						<span className="text-xs text-base-100/70">Signed in</span>
 					</div>
 				</div>
