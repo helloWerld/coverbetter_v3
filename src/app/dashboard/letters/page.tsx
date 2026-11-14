@@ -1,7 +1,9 @@
 import Link from 'next/link';
 import PageShell, { Card } from '@/components/Dashboard/PageShell';
 import DeleteLetterButton from '@/components/Letters/DeleteLetterButton';
+import { getEnv } from '@/lib/cf';
 import { listLetters } from '@/lib/letters';
+import { canPickModel, modelLabel } from '@/lib/model-access';
 import { requireUser } from '@/lib/user';
 
 const dateFmt = new Intl.DateTimeFormat('en-US', {
@@ -13,6 +15,8 @@ const dateFmt = new Intl.DateTimeFormat('en-US', {
 export default async function LettersPage() {
 	const user = await requireUser();
 	const rows = await listLetters(user.id);
+	// Model names show only to the accounts that can pick the model (test only).
+	const showModel = canPickModel(user.email, getEnv().MODEL_PICKER_EMAILS);
 
 	return (
 		<PageShell title="Letters" intro="Every letter you wrote.">
@@ -43,6 +47,12 @@ export default async function LettersPage() {
 										</time>
 										<span aria-hidden> · </span>
 										<span className="capitalize">{l.tone}</span>
+										{showModel && (
+											<>
+												<span aria-hidden> · </span>
+												<span>{modelLabel(l.model)}</span>
+											</>
+										)}
 									</p>
 								</div>
 								<p className="mt-2 line-clamp-2 whitespace-pre-line text-base-100/70">

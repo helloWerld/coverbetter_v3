@@ -9,6 +9,19 @@ export const MODEL_LABELS: Record<ModelKey, string> = {
 	haiku: 'Claude Haiku 5.5',
 };
 
+const MODEL_NAMES: Record<string, string> = {
+	'claude-sonnet-5-5': 'Claude Sonnet 5.5',
+	'claude-haiku-5-5': 'Claude Haiku 5.5',
+};
+
+/** A readable name for the model ID stored on a letter. */
+export function modelLabel(id: string): string {
+	if (!id) return 'Unknown model';
+	if (MODEL_NAMES[id]) return MODEL_NAMES[id];
+	if (id.startsWith('gpt-')) return `${id} (backup)`;
+	return id;
+}
+
 export function canPickModel(email: string, list: string | undefined): boolean {
 	if (!email || !list) return false;
 	const allowed = list

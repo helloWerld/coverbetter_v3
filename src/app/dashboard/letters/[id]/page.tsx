@@ -2,7 +2,9 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { FaArrowLeft } from 'react-icons/fa6';
 import LetterEditor from '@/components/Letters/LetterEditor';
+import { getEnv } from '@/lib/cf';
 import { getLetter } from '@/lib/letters';
+import { canPickModel, modelLabel } from '@/lib/model-access';
 import { getTemplate } from '@/lib/templates';
 import { requireUser } from '@/lib/user';
 
@@ -25,6 +27,11 @@ export default async function LetterPage({
 			<h1 className="gradient-text mb-6 text-3xl font-extralight md:text-5xl">
 				Edit letter
 			</h1>
+			{canPickModel(user.email, getEnv().MODEL_PICKER_EMAILS) && (
+				<p className="-mt-4 mb-6 text-sm text-base-100/70">
+					Written by {modelLabel(letter.model)}
+				</p>
+			)}
 			<LetterEditor
 				id={letter.id}
 				initialBody={letter.body}

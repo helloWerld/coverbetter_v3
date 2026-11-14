@@ -1,5 +1,19 @@
 import { describe, expect, it } from 'vitest';
-import { canPickModel, resolveModelKey } from './model-access';
+import { canPickModel, modelLabel, resolveModelKey } from './model-access';
+
+describe('modelLabel', () => {
+	it('names the Claude models', () => {
+		expect(modelLabel('claude-sonnet-5-5')).toBe('Claude Sonnet 5.5');
+		expect(modelLabel('claude-haiku-5-5')).toBe('Claude Haiku 5.5');
+	});
+	it('marks the OpenAI backup', () => {
+		expect(modelLabel('gpt-6.1-sol')).toBe('gpt-6.1-sol (backup)');
+	});
+	it('handles an empty or unknown value', () => {
+		expect(modelLabel('')).toBe('Unknown model');
+		expect(modelLabel('some-model')).toBe('some-model');
+	});
+});
 
 describe('canPickModel', () => {
 	it('allows an email on the list, ignoring case and spaces', () => {
