@@ -13,10 +13,12 @@ type AccessUser = {
 	credits: number;
 };
 
+export function isProActive(user: AccessUser, now: Date): boolean {
+	return user.plan === 'pro' && user.proPeriodEnd !== null && user.proPeriodEnd > now;
+}
+
 export function hasPaidFeatures(user: AccessUser, now: Date): boolean {
-	const proActive =
-		user.plan === 'pro' && user.proPeriodEnd !== null && user.proPeriodEnd > now;
-	return proActive || user.credits > 0;
+	return isProActive(user, now) || user.credits > 0;
 }
 
 /** Free users always get Professional tone and Standard length. */

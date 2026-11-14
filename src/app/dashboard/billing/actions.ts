@@ -7,6 +7,7 @@ import { getDb, getEnv } from '@/lib/cf';
 import { requireUser } from '@/lib/user';
 import { PRODUCTS, getStripe, paymentsOpenFor } from '@/lib/billing';
 import { isProductKey, parseLetterQuantity } from '@/lib/billing-plans';
+import { isProActive } from '@/lib/access';
 
 export async function startCheckoutAction(
 	product: string,
@@ -23,6 +24,10 @@ export async function startCheckoutAction(
 	const user = await requireUser();
 	if (!paymentsOpenFor(env, user.email)) {
 		redirect('/dashboard/billing?status=unavailable');
+	}
+	// No second Pro subscription while one is active.
+	if (product === 'pro' && isProActive(user, new Date())) {
+		redirect('/dashboard/billing');
 	}
 
 	const stripe = getStripe(env);

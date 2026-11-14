@@ -49,7 +49,7 @@ export default function LettersCard({
 					required
 					value={value}
 					onChange={(e) => setValue(e.target.value)}
-					className="input input-bordered mt-2 min-h-11 w-28 text-center"
+					className="input input-bordered mt-2 min-h-11 w-28 border-base-100/30 bg-base-300 text-center text-base-100 focus:border-neutral"
 				/>
 				<p className="mt-1 text-sm text-base-100/70">
 					{MIN_LETTERS} to {MAX_LETTERS} letters

@@ -5,6 +5,7 @@ import StatusBanner from '@/components/Billing/StatusBanner';
 import { getEnv } from '@/lib/cf';
 import { requireUser } from '@/lib/user';
 import { paymentsOpenFor } from '@/lib/billing';
+import { isProActive } from '@/lib/access';
 
 export default async function BillingPage({
 	searchParams,
@@ -20,6 +21,7 @@ export default async function BillingPage({
 			<PurchaseCards
 				configured={configured}
 				hasCustomer={Boolean(user.stripeCustomerId)}
+				isPro={isProActive(user, new Date())}
 			/>
 		</PageShell>
 	);

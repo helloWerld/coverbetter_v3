@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { generateOptions, hasPaidFeatures } from './access';
+import { generateOptions, hasPaidFeatures, isProActive } from './access';
 
 const now = new Date('2026-11-13T12:00:00Z');
 const later = new Date('2026-12-13T12:00:00Z');
@@ -22,6 +22,14 @@ describe('hasPaidFeatures', () => {
 	});
 	it('is true with at least 1 paid letter left', () => {
 		expect(hasPaidFeatures({ ...free, credits: 1 }, now)).toBe(true);
+	});
+});
+
+describe('isProActive', () => {
+	it('is true only for Pro with a period end in the future', () => {
+		expect(isProActive({ ...free, plan: 'pro', proPeriodEnd: later }, now)).toBe(true);
+		expect(isProActive({ ...free, plan: 'pro', proPeriodEnd: earlier }, now)).toBe(false);
+		expect(isProActive({ ...free, credits: 5 }, now)).toBe(false);
 	});
 });
 

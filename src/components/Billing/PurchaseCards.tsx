@@ -19,7 +19,8 @@ const head =
 export default function PurchaseCards({
 	configured,
 	hasCustomer,
-}: Readonly<{ configured: boolean; hasCustomer: boolean }>) {
+	isPro = false,
+}: Readonly<{ configured: boolean; hasCustomer: boolean; isPro?: boolean }>) {
 	return (
 		<div>
 			{!configured && (
@@ -46,12 +47,19 @@ export default function PurchaseCards({
 							Up to {PRO_FAIR_USE_CAP} letters a month
 						</p>
 						<p className="mt-1 text-sm text-base-100/70">Cancel any time</p>
-						<SubmitButton
-							disabled={!configured}
-							className="btn btn-secondary mt-auto w-full"
-						>
-							Start Pro
-						</SubmitButton>
+						{isPro ? (
+							// An active Pro plan cannot start a second subscription.
+							<p className="mt-auto w-full rounded-btn border border-secondary/60 py-3 text-base-100">
+								You have Pro
+							</p>
+						) : (
+							<SubmitButton
+								disabled={!configured}
+								className="btn btn-secondary mt-auto w-full"
+							>
+								Start Pro
+							</SubmitButton>
+						)}
 					</div>
 				</form>
 			</div>
