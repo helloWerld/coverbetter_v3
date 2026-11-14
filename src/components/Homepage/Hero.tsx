@@ -6,7 +6,9 @@ import Link from "next/link";
 
 const Hero = () => {
   return (
-    <div className="hero bg-primary min-h-screen md:min-h-[1000px] flex flex-col items-center justify-center relative overflow-y-clip">
+    // Exactly one screen tall (svh handles phone browser bars). The equal top and
+    // bottom padding keeps the headline centered and clear of the navbar and stats.
+    <div className="hero bg-primary min-h-svh py-24 flex flex-col items-center justify-center relative overflow-y-clip">
       <Image
         src={gradient}
         height={500}
@@ -31,7 +33,7 @@ const Hero = () => {
       </div>
 
       <div className="hero-content text-center">
-        <div className="flex flex-col justify-center items-center max-w-5xl -mt-20">
+        <div className="flex flex-col justify-center items-center max-w-5xl">
           <Link
             href="/#features"
             className=" border border-base-100/10 relative group flex flex-row items-center rounded-full bg-base-300 mb-4 gap-1 p-1"
