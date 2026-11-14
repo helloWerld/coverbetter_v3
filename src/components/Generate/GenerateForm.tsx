@@ -101,13 +101,13 @@ export default function GenerateForm({
 	return (
 		<form onSubmit={onSubmit} className="flex flex-col gap-6" noValidate>
 			<fieldset disabled={running} className="flex min-w-0 flex-col gap-6">
-				<div className="flex flex-wrap items-center justify-between gap-2 rounded-box border border-base-100/10 bg-gradient-to-br from-primary to-base-300 px-4 py-3 text-sm">
-					<p className="text-base-100">{status}</p>
-					{empty && (
-						<Link href="/dashboard/billing" className={`${link} text-base-100/80`}>
-							Go to Billing
-						</Link>
-					)}
+				<div className="flex flex-wrap items-center justify-between gap-3 rounded-box border border-base-100/10 bg-gradient-to-br from-primary to-base-300 px-4 py-3 sm:px-6">
+					<p className={`text-lg font-medium ${empty ? 'text-accent' : 'text-base-100'}`}>
+						{status}
+					</p>
+					<Link href="/dashboard/billing" className="btn btn-secondary min-h-11">
+						Buy more credits
+					</Link>
 				</div>
 
 				<section className="rounded-box border border-base-100/10 bg-gradient-to-br from-primary to-base-300 p-4 sm:p-6">
