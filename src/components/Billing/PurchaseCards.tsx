@@ -2,8 +2,8 @@ import {
 	startCheckoutAction,
 	openPortalAction,
 } from '@/app/dashboard/billing/actions';
-import { PRO_PRICE_CENTS, formatUsd } from '@/lib/billing-plans';
-import { PRO_FEATURES } from './features';
+import { PRO_FAIR_USE_CAP, PRO_PRICE_CENTS, formatUsd } from '@/lib/billing-plans';
+import FeaturesBox from './FeaturesBox';
 import LettersCard from './LettersCard';
 import SubmitButton from './SubmitButton';
 
@@ -26,6 +26,7 @@ export default function PurchaseCards({
 				</p>
 			)}
 			<div className="flex flex-col gap-6 lg:flex-row">
+				<FeaturesBox />
 				<LettersCard configured={configured} />
 
 				<form
@@ -40,11 +41,8 @@ export default function PurchaseCards({
 						<p className="mt-1 text-sm text-base-100/70">Pro</p>
 					</div>
 					<div className="flex flex-1 flex-col items-center p-6">
-						<ul className="list-image-checkmark mb-6 text-left text-base-100">
-							{PRO_FEATURES.map((f) => (
-								<li key={f}>{f}</li>
-							))}
-						</ul>
+						<p className="text-base-100">Up to {PRO_FAIR_USE_CAP} letters a month</p>
+						<p className="mb-6 mt-1 text-sm text-base-100/70">Cancel any time</p>
 						{isPro ? (
 							// An active Pro plan cannot start a second subscription.
 							<p className="mt-auto w-full rounded-btn border border-secondary/60 py-3 text-base-100">

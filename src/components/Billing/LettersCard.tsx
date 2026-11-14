@@ -11,7 +11,6 @@ import {
 	lettersTotalCents,
 	parseLetterQuantity,
 } from '@/lib/billing-plans';
-import { LETTERS_FEATURES } from './features';
 import SubmitButton from './SubmitButton';
 
 const card =
@@ -46,11 +45,7 @@ export default function LettersCard({
 				<p className="mt-1 text-sm text-base-100/70">Pay as you go</p>
 			</div>
 			<div className="flex flex-1 flex-col items-center p-6">
-				<ul className="list-image-checkmark mb-6 text-left text-base-100">
-					{LETTERS_FEATURES.map((f) => (
-						<li key={f}>{f}</li>
-					))}
-				</ul>
+				<p className="mb-6 text-base-100">Pay only for the letters you write</p>
 				<label htmlFor="letter-quantity" className="text-base-100">
 					How many letters?
 				</label>
