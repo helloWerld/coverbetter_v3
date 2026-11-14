@@ -14,6 +14,25 @@ function color(hex: string) {
 const CJK_CHAR = /[\u3000-\u9fff\uac00-\ud7af\uff00-\uffef]/u;
 const CJK_SPLIT = /[\u3000-\u9fff\uac00-\ud7af\uff00-\uffef]|[^\u3000-\u9fff\uac00-\ud7af\uff00-\uffef]+/gu;
 
+// Line-break rules for CJK text: these characters never start a line,
+// and opening brackets never end a line.
+const NO_LINE_START = new Set(Array.from('、。，．,.：:；;！!？?）)」』】〕〉》％%ー・ぁぃぅぇぉっゃゅょゎァィゥェォッャュョヮヵヶ'));
+const NO_LINE_END = new Set(Array.from('（(「『【〔〈《'));
+
+/** Splits one word into break pieces: one per CJK character, with the line-break rules applied. */
+export function cjkPieces(word: string): string[] {
+	const out: string[] = [];
+	for (const part of word.match(CJK_SPLIT) ?? [word]) {
+		const prev = out[out.length - 1];
+		if (prev !== undefined && (NO_LINE_START.has(part[0]) || NO_LINE_END.has(prev[prev.length - 1]))) {
+			out[out.length - 1] = prev + part;
+		} else {
+			out.push(part);
+		}
+	}
+	return out;
+}
+
 /** Wraps one line of text to a width. Breaks words that are too long. */
 function wrap(text: string, font: TextFace, size: number, width: number) {
 	const lines: string[] = [];
@@ -26,7 +45,7 @@ function wrap(text: string, font: TextFace, size: number, width: number) {
 	const pieces: { text: string; space: boolean }[] = [];
 	for (const word of text.split(/\s+/).filter(Boolean)) {
 		const parts =
-			font.breaksBetweenCjk && CJK_CHAR.test(word) ? (word.match(CJK_SPLIT) ?? [word]) : [word];
+			font.breaksBetweenCjk && CJK_CHAR.test(word) ? cjkPieces(word) : [word];
 		parts.forEach((p, i) => pieces.push({ text: p, space: i === 0 }));
 	}
 	for (const { text: word, space } of pieces) {

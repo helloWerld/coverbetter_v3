@@ -176,10 +176,10 @@ export function toLetterDoc(
 
 	// 2. Closing: a sign-off such as "Sincerely," then the name, then optional contact line.
 	// Models often put a blank line after "Sincerely,". Join those two parts.
+	// A sign-off can be more than one line, for example Chinese "此致" then "敬礼".
 	if (
 		paragraphs.length >= 2 &&
-		isClosing(paragraphs[paragraphs.length - 2]) &&
-		!paragraphs[paragraphs.length - 2].includes('\n')
+		paragraphs[paragraphs.length - 2].split('\n').every((l) => isClosing(l))
 	) {
 		const signature = paragraphs.pop() as string;
 		paragraphs[paragraphs.length - 1] += `\n${signature}`;
@@ -187,7 +187,9 @@ export function toLetterDoc(
 	const lastIdx = paragraphs.length - 1;
 	if (lastIdx >= 0) {
 		const lines = paragraphs[lastIdx].split('\n');
-		const ci = lines.findIndex((l) => isClosing(l));
+		let ci = lines.findIndex((l) => isClosing(l));
+		// Skip the other lines of a multi-line sign-off.
+		while (ci >= 0 && lines[ci + 1] && isClosing(lines[ci + 1])) ci++;
 		if (ci >= 0 && lines[ci + 1] && looksLikeName(lines[ci + 1])) {
 			if (!name) name = lines[ci + 1];
 			const rest = lines.slice(ci + 2);

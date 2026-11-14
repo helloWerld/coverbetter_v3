@@ -125,6 +125,15 @@ describe('toLetterDoc languages', () => {
 		expect(doc.contactLine).toBe('wang@example.com');
 	});
 
+	it('finds the name after the two-line Chinese sign-off', () => {
+		const body =
+			'尊敬的招聘负责人：\n\n我对这个职位很感兴趣。\n\n此致\n敬礼\n\nWang Wei\nwang.wei@example.com | +86 138 0000 1234';
+		const doc = toLetterDoc(body, TODAY, 'zh');
+		expect(doc.name).toBe('Wang Wei');
+		expect(doc.contactLine).toBe('wang.wei@example.com | +86 138 0000 1234');
+		expect(doc.paragraphs.at(-1)).toBe('此致\n敬礼\nWang Wei');
+	});
+
 	it('finds the name after an Arabic sign-off', () => {
 		const body = 'السيد مدير التوظيف،\n\nأتقدم لهذه الوظيفة.\n\nمع خالص التحية،\nأحمد علي\nahmed@example.com';
 		const doc = toLetterDoc(body, TODAY, 'ar');

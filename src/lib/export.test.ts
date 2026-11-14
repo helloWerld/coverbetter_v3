@@ -3,7 +3,7 @@ import { PDFDocument, PDFDict, PDFName } from 'pdf-lib';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import JSZip from 'jszip';
-import { renderPdf } from './export-pdf';
+import { cjkPieces, renderPdf } from './export-pdf';
 import { renderDocxBytes } from './export-docx';
 import { TEMPLATE_IDS, toLetterDoc } from './templates';
 import { LANGUAGE_CODES, getLanguage } from './languages';
@@ -118,5 +118,24 @@ describe('DOCX script settings', () => {
 		expect(x).not.toContain('<w:bidi');
 		expect(x).not.toContain('<w:rtl');
 		expect(x).not.toContain('<w:lang');
+	});
+});
+
+describe('cjkPieces', () => {
+	it('splits CJK text into one piece per character', () => {
+		expect(cjkPieces('我在上海')).toEqual(['我', '在', '上', '海']);
+	});
+
+	it('keeps closing punctuation with the character before it', () => {
+		expect(cjkPieces('一部分。贵公司，')).toEqual(['一', '部', '分。', '贵', '公', '司，']);
+		expect(cjkPieces('アプリ）を')).toEqual(['ア', 'プ', 'リ）', 'を']);
+	});
+
+	it('keeps an opening bracket with the character after it', () => {
+		expect(cjkPieces('公司（Acme）的')).toEqual(['公', '司', '（Acme）', '的']);
+	});
+
+	it('keeps a Latin run as one piece', () => {
+		expect(cjkPieces('在Nimbus')).toEqual(['在', 'Nimbus']);
 	});
 });
