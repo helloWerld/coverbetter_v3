@@ -115,26 +115,46 @@ export default function GenerateForm({
 
 				<section className="rounded-box border border-base-100/10 bg-gradient-to-br from-primary to-base-300 p-4 sm:p-6">
 					<div className="flex flex-col gap-4">
-						{resumes.length > 0 && (
-							<div>
-								<label htmlFor={`${id}-resume`} className="mb-2 block text-sm font-medium text-base-100">
-									Resume
+						{/* Resume on the left, letter language on the right. */}
+						<div className="grid gap-4 md:grid-cols-2">
+							{resumes.length > 0 && (
+								<div>
+									<label htmlFor={`${id}-resume`} className="mb-2 block text-sm font-medium text-base-100">
+										Resume
+									</label>
+									<select
+										id={`${id}-resume`}
+										value={resumeId}
+										onChange={(e) => setResumeId(e.target.value)}
+										className={`${field} min-h-11`}
+									>
+										{resumes.map((r) => (
+											<option key={r.id} value={r.id}>
+												{r.title}
+											</option>
+										))}
+										<option value={PASTE}>Paste a resume</option>
+									</select>
+								</div>
+							)}
+							<div className={resumes.length > 0 ? '' : 'md:col-start-2'}>
+								<label htmlFor={`${id}-language`} className="mb-2 block text-sm font-medium text-base-100">
+									Letter language
 								</label>
 								<select
-									id={`${id}-resume`}
-									value={resumeId}
-									onChange={(e) => setResumeId(e.target.value)}
+									id={`${id}-language`}
+									value={language}
+									onChange={(e) => setLanguage(e.target.value as LanguageCode)}
 									className={`${field} min-h-11`}
 								>
-									{resumes.map((r) => (
-										<option key={r.id} value={r.id}>
-											{r.title}
+									{LANGUAGES.map((l) => (
+										<option key={l.code} value={l.code}>
+											{l.label === l.nativeLabel ? l.label : `${l.label} (${l.nativeLabel})`}
 										</option>
 									))}
-									<option value={PASTE}>Paste a resume</option>
 								</select>
 							</div>
-						)}
+						</div>
 
 						{saved ? (
 							<div>
@@ -224,23 +244,6 @@ export default function GenerateForm({
 							</span>
 						</p>
 					)}
-					<div className="md:col-span-2">
-						<label htmlFor={`${id}-language`} className="mb-2 block text-sm font-medium text-base-100">
-							Letter language
-						</label>
-						<select
-							id={`${id}-language`}
-							value={language}
-							onChange={(e) => setLanguage(e.target.value as LanguageCode)}
-							className={`${field} min-h-11 md:max-w-sm`}
-						>
-							{LANGUAGES.map((l) => (
-								<option key={l.code} value={l.code}>
-									{l.label === l.nativeLabel ? l.label : `${l.label} (${l.nativeLabel})`}
-								</option>
-							))}
-						</select>
-					</div>
 					{showModelPicker && (
 						<div className="md:col-span-2">
 							<label htmlFor={`${id}-model`} className="mb-2 block text-sm font-medium text-base-100">
