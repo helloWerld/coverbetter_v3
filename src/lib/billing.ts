@@ -3,6 +3,7 @@ import { eq, sql } from 'drizzle-orm';
 import { stripeEvents, users } from '@/db/schema';
 import type { Db } from '@/lib/cf';
 import { LETTER_PRICE_CENTS, parseLetterQuantity } from '@/lib/billing-plans';
+import { canPickModel } from '@/lib/model-access';
 
 /*
  * Stripe API version: stripe-node 23.1.0 targets 2026-10-28.endive.
@@ -43,6 +44,20 @@ export function isStripeConfigured(env: StripeEnv): boolean {
 			env.STRIPE_PRICE_PRO &&
 			env.APP_URL,
 	);
+}
+
+/**
+ * True when this user may start a checkout. With test keys (sk_test_ or
+ * rk_test_), only the test accounts in MODEL_PICKER_EMAILS may pay, so the
+ * public cannot unlock paid features with Stripe's test card.
+ */
+export function paymentsOpenFor(
+	env: StripeEnv & { MODEL_PICKER_EMAILS?: string },
+	email: string,
+): boolean {
+	if (!isStripeConfigured(env)) return false;
+	const testKey = /^(sk|rk)_test_/.test(env.STRIPE_SECRET_KEY ?? '');
+	return !testKey || canPickModel(email, env.MODEL_PICKER_EMAILS);
 }
 
 /** Stripe client for Workers: uses fetch, not Node http. */

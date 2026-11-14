@@ -5,7 +5,7 @@ import { eq } from 'drizzle-orm';
 import { users } from '@/db/schema';
 import { getDb, getEnv } from '@/lib/cf';
 import { requireUser } from '@/lib/user';
-import { PRODUCTS, getStripe, isStripeConfigured } from '@/lib/billing';
+import { PRODUCTS, getStripe, paymentsOpenFor } from '@/lib/billing';
 import { isProductKey, parseLetterQuantity } from '@/lib/billing-plans';
 
 export async function startCheckoutAction(
@@ -20,11 +20,11 @@ export async function startCheckoutAction(
 		quantity = n;
 	}
 	const env = getEnv();
-	if (!isStripeConfigured(env)) {
+	const user = await requireUser();
+	if (!paymentsOpenFor(env, user.email)) {
 		redirect('/dashboard/billing?status=unavailable');
 	}
 
-	const user = await requireUser();
 	const stripe = getStripe(env);
 	const def = PRODUCTS[product];
 
@@ -62,10 +62,10 @@ export async function startCheckoutAction(
 
 export async function openPortalAction() {
 	const env = getEnv();
-	if (!isStripeConfigured(env)) {
+	const user = await requireUser();
+	if (!paymentsOpenFor(env, user.email)) {
 		redirect('/dashboard/billing?status=unavailable');
 	}
-	const user = await requireUser();
 	if (!user.stripeCustomerId) redirect('/dashboard/billing');
 
 	const session = await getStripe(env).billingPortal.sessions.create({

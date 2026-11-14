@@ -4,13 +4,14 @@ import PurchaseCards from '@/components/Billing/PurchaseCards';
 import StatusBanner from '@/components/Billing/StatusBanner';
 import { getEnv } from '@/lib/cf';
 import { requireUser } from '@/lib/user';
-import { isStripeConfigured } from '@/lib/billing';
+import { paymentsOpenFor } from '@/lib/billing';
 
 export default async function BillingPage({
 	searchParams,
 }: Readonly<{ searchParams: Promise<{ status?: string }> }>) {
 	const [{ status }, user] = await Promise.all([searchParams, requireUser()]);
-	const configured = isStripeConfigured(getEnv());
+	// With Stripe test keys, only the test accounts see working buttons.
+	const configured = paymentsOpenFor(getEnv(), user.email);
 
 	return (
 		<PageShell title="Billing" intro="Your plan and your letters.">
