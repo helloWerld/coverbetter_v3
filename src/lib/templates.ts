@@ -1,3 +1,5 @@
+import { DEFAULT_LANGUAGE, getLanguage, isClosingLine, type LanguageCode } from './languages';
+
 /** Letter templates. The HTML preview, the PDF, and the DOCX all read these tokens. */
 
 export const TEMPLATE_IDS = ['classic', 'modern', 'minimal'] as const;
@@ -107,13 +109,14 @@ export function getTemplate(id: string): TemplateTokens {
 }
 
 export interface LetterDoc {
+	/** The letter language. The exports pick fonts and direction from it. */
+	language: LanguageCode;
 	name: string;
 	contactLine: string;
 	date: string;
 	paragraphs: string[];
 }
 
-const CLOSING = /^(sincerely|best regards|kind regards|regards|best|warm regards|respectfully|yours (truly|sincerely)|thank you|thanks)[,.]?$/i;
 const CONTACT_HINT = /@|\+?\d[\d\s().-]{6,}|https?:\/\/|linkedin\.com/i;
 
 function looksLikeName(line: string): boolean {
@@ -127,8 +130,8 @@ function looksLikeName(line: string): boolean {
 	);
 }
 
-function formatDate(d: Date): string {
-	return d.toLocaleDateString('en-US', {
+function formatDate(d: Date, locale: string): string {
+	return d.toLocaleDateString(locale, {
 		year: 'numeric',
 		month: 'long',
 		day: 'numeric',
@@ -136,7 +139,12 @@ function formatDate(d: Date): string {
 }
 
 /** Builds the shared document model from a letter body. Best effort for name and contact. */
-export function toLetterDoc(body: string, today: Date): LetterDoc {
+export function toLetterDoc(
+	body: string,
+	today: Date,
+	language: LanguageCode = DEFAULT_LANGUAGE,
+): LetterDoc {
+	const isClosing = (line: string) => isClosingLine(line, language);
 	const paragraphs = body
 		.replace(/\r\n?/g, '\n')
 		.split(/\n\s*\n/)
@@ -166,11 +174,11 @@ export function toLetterDoc(body: string, today: Date): LetterDoc {
 		paragraphs.shift();
 	}
 
-	// 2. Closing: "Sincerely," then the name, then optional contact line.
+	// 2. Closing: a sign-off such as "Sincerely," then the name, then optional contact line.
 	// Models often put a blank line after "Sincerely,". Join those two parts.
 	if (
 		paragraphs.length >= 2 &&
-		CLOSING.test(paragraphs[paragraphs.length - 2]) &&
+		isClosing(paragraphs[paragraphs.length - 2]) &&
 		!paragraphs[paragraphs.length - 2].includes('\n')
 	) {
 		const signature = paragraphs.pop() as string;
@@ -179,7 +187,7 @@ export function toLetterDoc(body: string, today: Date): LetterDoc {
 	const lastIdx = paragraphs.length - 1;
 	if (lastIdx >= 0) {
 		const lines = paragraphs[lastIdx].split('\n');
-		const ci = lines.findIndex((l) => CLOSING.test(l));
+		const ci = lines.findIndex((l) => isClosing(l));
 		if (ci >= 0 && lines[ci + 1] && looksLikeName(lines[ci + 1])) {
 			if (!name) name = lines[ci + 1];
 			const rest = lines.slice(ci + 2);
@@ -190,5 +198,11 @@ export function toLetterDoc(body: string, today: Date): LetterDoc {
 		}
 	}
 
-	return { name, contactLine, date: formatDate(today), paragraphs };
+	return {
+		language,
+		name,
+		contactLine,
+		date: formatDate(today, getLanguage(language).locale),
+		paragraphs,
+	};
 }

@@ -99,3 +99,35 @@ describe('template tokens', () => {
 		expect(getTemplate('zzz').id).toBe('classic');
 	});
 });
+
+describe('toLetterDoc languages', () => {
+	it('defaults to English', () => {
+		expect(toLetterDoc('Hi.', TODAY).language).toBe('en');
+	});
+
+	it('formats the date in the letter language', () => {
+		expect(toLetterDoc('Hola.', TODAY, 'es').date).toBe('13 de noviembre de 2026');
+		expect(toLetterDoc('こんにちは。', TODAY, 'ja').date).toBe('2026年11月13日');
+	});
+
+	it('finds the name and contact after a Spanish sign-off', () => {
+		const body =
+			'Estimado equipo:\n\nMe interesa el puesto.\n\nAtentamente,\nAna García\nana@example.com | +34 600 123 456';
+		const doc = toLetterDoc(body, TODAY, 'es');
+		expect(doc.name).toBe('Ana García');
+		expect(doc.contactLine).toBe('ana@example.com | +34 600 123 456');
+	});
+
+	it('finds the name after a Chinese sign-off', () => {
+		const body = '尊敬的招聘经理：\n\n我对这个职位很感兴趣。\n\n此致，\n王伟\nwang@example.com';
+		const doc = toLetterDoc(body, TODAY, 'zh');
+		expect(doc.name).toBe('王伟');
+		expect(doc.contactLine).toBe('wang@example.com');
+	});
+
+	it('finds the name after an Arabic sign-off', () => {
+		const body = 'السيد مدير التوظيف،\n\nأتقدم لهذه الوظيفة.\n\nمع خالص التحية،\nأحمد علي\nahmed@example.com';
+		const doc = toLetterDoc(body, TODAY, 'ar');
+		expect(doc.name).toBe('أحمد علي');
+	});
+});
