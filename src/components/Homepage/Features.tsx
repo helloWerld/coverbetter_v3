@@ -59,9 +59,10 @@ export const ComingSoon = () => {
 };
 
 const FeatureGrid = ({ items }: { items: FeatureData[] }) => (
-  <ul className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 mt-12 gap-4 list-none p-0">
+  // Flex-wrap with justify-center, so a short last row sits in the middle.
+  <ul className="mt-12 flex w-full flex-wrap justify-center gap-4 list-none p-0">
     {items.map((feature) => (
-      <li key={feature.id} className="flex">
+      <li key={feature.id} className="flex w-full md:w-[calc(50%-0.5rem)] xl:w-96">
         <FeatureCard feature={feature} />
       </li>
     ))}

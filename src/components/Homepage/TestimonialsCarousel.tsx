@@ -17,7 +17,7 @@ const TestimonialsCarousel = () => {
 				<div className="embla__container">
 					{testimonials.map((testimonial) => (
 						<div
-							className="embla__slide py-12 flex flex-col justify-between shadow-lg shadow-primary/10"
+							className="embla__slide bg-primary py-12 flex flex-col justify-between shadow-lg shadow-primary/10"
 							key={testimonial.id}
 						>
 							<div className="flex flex-row">
