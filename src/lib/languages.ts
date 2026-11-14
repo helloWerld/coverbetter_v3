@@ -201,6 +201,12 @@ const END_PUNCT = /[\s,.!，。、،]+$/u;
 export function isClosingLine(line: string, code: LanguageCode = DEFAULT_LANGUAGE): boolean {
 	const t = line.trim().replace(END_PUNCT, '').toLowerCase();
 	if (!t) return false;
-	const lists = code === 'en' ? [LANGUAGES[0].closings] : [getLanguage(code).closings, LANGUAGES[0].closings];
-	return lists.some((list) => list.includes(t));
+	if (LANGUAGES[0].closings.includes(t)) return true;
+	if (code === 'en') return false;
+	const own = getLanguage(code).closings;
+	if (own.includes(t)) return true;
+	// Models often extend a sign-off ("... والتقدير،"). Accept a short line that
+	// starts with a known sign-off and does not end like a sentence.
+	const endsSentence = /[.!?。！？]\s*$/u.test(line.trim());
+	return !endsSentence && t.length <= 50 && own.some((c) => t.startsWith(`${c} `));
 }

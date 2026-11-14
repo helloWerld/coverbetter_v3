@@ -7,7 +7,7 @@ import {
 	saveLetter,
 	setLetterTemplate,
 } from '@/app/dashboard/letters/actions';
-import type { LanguageCode } from '@/lib/languages';
+import { getLanguage, type LanguageCode } from '@/lib/languages';
 import { toLetterDoc, type TemplateId } from '@/lib/templates';
 import DownloadButtons from './DownloadButtons';
 import LetterPreview from './LetterPreview';
@@ -226,6 +226,9 @@ export default function LetterEditor({
 					<textarea
 						id="letter-body"
 						ref={area}
+						// Arabic text runs right to left in the editor too.
+						lang={getLanguage(language).locale}
+						dir={getLanguage(language).dir}
 						value={body}
 						readOnly={!paid}
 						onChange={(e) => setBody(e.target.value)}

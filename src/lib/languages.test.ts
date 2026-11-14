@@ -62,6 +62,21 @@ describe('isClosingLine', () => {
 		expect(isClosingLine('Sincerely,', 'fr')).toBe(true);
 	});
 
+	it('matches a longer sign-off that starts with a known one', () => {
+		expect(isClosingLine('وتفضلوا بقبول فائق الاحترام والتقدير،', 'ar')).toBe(true);
+		expect(isClosingLine('Atentamente y con gratitud,', 'es')).toBe(true);
+	});
+
+	it('does not match a long sentence that starts with a sign-off word', () => {
+		expect(
+			isClosingLine(
+				'Cordialmente invito a su equipo a revisar mi experiencia en productos móviles y pagos digitales.',
+				'es',
+			),
+		).toBe(false);
+		expect(isClosingLine('Best of all, I shipped the app early.')).toBe(false);
+	});
+
 	it('does not match another language sign-off', () => {
 		expect(isClosingLine('Atentamente,', 'de')).toBe(false);
 	});
