@@ -37,7 +37,7 @@ const Pricing = () => {
           </div>
           <div className="flex flex-col items-center justify-center p-6">
             <ul className="list-image-checkmark">
-              <li>Up to 200 AI cover letters a month</li>
+              <li>200 cover letters / month</li>
               <li>Everything in Free</li>
               <li>Custom tone and length</li>
               <li>Editor and 3 templates</li>
