@@ -13,7 +13,7 @@ import {
 	FaUser,
 } from 'react-icons/fa6';
 import { UserButton } from '@clerk/nextjs';
-import { MAIN_NAV, type NavIcon } from './nav';
+import { ACCOUNT_NAV, MAIN_NAV, type NavIcon } from './nav';
 import { SOON_FEATURES } from '@/lib/soon';
 import Logo from '@/components/ui/Logo';
 
@@ -26,6 +26,12 @@ const ICONS: Record<NavIcon, React.ComponentType<{ className?: string }>> = {
 	billing: FaCreditCard,
 	account: FaUser,
 };
+
+// "Manage account" in the avatar menu opens the Account page, not a second dialog.
+const USER_BUTTON = {
+	userProfileMode: 'navigation',
+	userProfileUrl: '/dashboard/account',
+} as const;
 
 const linkBase =
 	'flex min-h-11 items-center gap-3 rounded-lg px-3 py-2 text-sm transition duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral';
@@ -73,7 +79,7 @@ export default function DashboardNav() {
 					<Logo className="h-11 w-auto" priority />
 				</Link>
 				<div className="flex h-11 w-11 items-center justify-center">
-					<UserButton />
+					<UserButton {...USER_BUTTON} />
 				</div>
 			</header>
 
@@ -81,7 +87,7 @@ export default function DashboardNav() {
 				id="dashboard-menu"
 				className={`${
 					open ? 'flex' : 'hidden'
-				} fixed inset-x-0 bottom-0 top-14 z-30 flex-col overflow-y-auto bg-base-300 p-4 md:static md:z-auto md:flex md:min-h-screen md:w-64 md:shrink-0 md:border-r md:border-base-100/10 md:top-0`}
+				} fixed inset-x-0 bottom-0 top-14 z-30 flex-col overflow-y-auto bg-base-300 p-4 md:sticky md:top-0 md:z-auto md:flex md:h-svh md:w-64 md:shrink-0 md:self-start md:border-r md:border-base-100/10`}
 			>
 				<Link
 					href="/"
@@ -90,28 +96,7 @@ export default function DashboardNav() {
 					<Logo className="h-16 w-auto" priority />
 				</Link>
 				<nav aria-label="Dashboard">
-					<ul className="flex flex-col gap-1">
-						{MAIN_NAV.map((item) => {
-							const Icon = ICONS[item.icon];
-							const active = isActive(item.href);
-							return (
-								<li key={item.href}>
-									<Link
-										href={item.href}
-										aria-current={active ? 'page' : undefined}
-										className={`${linkBase} ${
-											active
-												? 'bg-secondary text-base-100'
-												: 'text-base-100/70 hover:bg-base-200 hover:text-base-100'
-										}`}
-									>
-										<Icon className="text-base" aria-hidden="true" />
-										{item.label}
-									</Link>
-								</li>
-							);
-						})}
-					</ul>
+					<NavList items={MAIN_NAV} isActive={isActive} />
 				</nav>
 
 				<div className="divider my-4 opacity-10" />
@@ -149,11 +134,50 @@ export default function DashboardNav() {
 					</ul>
 				</nav>
 
-				<div className="mt-auto hidden items-center gap-3 px-3 pt-6 md:flex">
-					<UserButton />
-					<span className="text-xs text-base-100/70">Signed in</span>
+				{/* Billing and Account sit at the bottom, just above the avatar. */}
+				<div className="mt-auto pt-6">
+					<nav aria-label="Account">
+						<NavList items={ACCOUNT_NAV} isActive={isActive} />
+					</nav>
+					<div className="mt-3 hidden items-center gap-3 border-t border-base-100/10 px-3 pt-4 md:flex">
+						<UserButton {...USER_BUTTON} />
+						<span className="text-xs text-base-100/70">Signed in</span>
+					</div>
 				</div>
 			</aside>
 		</>
+	);
+}
+
+function NavList({
+	items,
+	isActive,
+}: Readonly<{
+	items: readonly { href: string; label: string; icon: NavIcon }[];
+	isActive: (href: string) => boolean;
+}>) {
+	return (
+		<ul className="flex flex-col gap-1">
+			{items.map((item) => {
+				const Icon = ICONS[item.icon];
+				const active = isActive(item.href);
+				return (
+					<li key={item.href}>
+						<Link
+							href={item.href}
+							aria-current={active ? 'page' : undefined}
+							className={`${linkBase} ${
+								active
+									? 'bg-secondary text-base-100'
+									: 'text-base-100/70 hover:bg-base-200 hover:text-base-100'
+							}`}
+						>
+							<Icon className="text-base" aria-hidden="true" />
+							{item.label}
+						</Link>
+					</li>
+				);
+			})}
+		</ul>
 	);
 }
