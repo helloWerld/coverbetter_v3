@@ -3,6 +3,7 @@ import { resumes } from '@/db/schema';
 import PageShell from '@/components/Dashboard/PageShell';
 import GenerateForm from '@/components/Generate/GenerateForm';
 import { letterStatus } from '@/components/Generate/status';
+import { hasPaidFeatures } from '@/lib/access';
 import { getDb, getEnv } from '@/lib/cf';
 import { canPickModel } from '@/lib/model-access';
 import { requireUser } from '@/lib/user';
@@ -26,6 +27,7 @@ export default async function GeneratePage() {
 				status={text}
 				empty={empty}
 				showModelPicker={canPickModel(user.email, getEnv().MODEL_PICKER_EMAILS)}
+				paid={hasPaidFeatures(user, new Date())}
 			/>
 		</PageShell>
 	);

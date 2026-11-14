@@ -63,6 +63,9 @@ const Pricing = () => {
               <li>Pay only for the letters you write</li>
               <li>Paid letters never expire</li>
               <li>Everything in Free</li>
+              <li>Custom tone and length</li>
+              <li>Editor and 3 templates</li>
+              <li>PDF and DOCX export</li>
             </ul>
             <Link href="/sign-up" className="btn btn-primary w-full mt-6">
               Pay as You Go

@@ -52,6 +52,9 @@ a:focus {
 
 .embla__viewport {
 	@apply overflow-hidden;
+	/* Testimonial cards fade out at the top and bottom as they scroll. */
+	-webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 22%, #000 78%, transparent 100%);
+	mask-image: linear-gradient(to bottom, transparent 0%, #000 22%, #000 78%, transparent 100%);
 }
 
 .embla__container {

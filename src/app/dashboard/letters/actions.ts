@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
+import { UPGRADE_MESSAGE, hasPaidFeatures } from '@/lib/access';
 import { requireUser } from '@/lib/user';
 import { deleteLetter, updateLetter } from '@/lib/letters';
 import { TEMPLATE_IDS } from '@/lib/templates';
@@ -25,6 +26,8 @@ export async function saveLetter(
 	if (!parsed.success)
 		return { ok: false, error: parsed.error.issues[0]?.message ?? 'Bad input.' };
 	const user = await requireUser();
+	// Editing is a paid feature.
+	if (!hasPaidFeatures(user, new Date())) return { ok: false, error: UPGRADE_MESSAGE };
 	const { id: letterId, ...patch } = parsed.data;
 	const done = await updateLetter(user.id, letterId, {
 		...patch,
@@ -45,6 +48,8 @@ export async function setLetterTemplate(
 	const parsed = templateSchema.safeParse(input);
 	if (!parsed.success) return { ok: false, error: 'Unknown template.' };
 	const user = await requireUser();
+	// Templates are a paid feature.
+	if (!hasPaidFeatures(user, new Date())) return { ok: false, error: UPGRADE_MESSAGE };
 	const done = await updateLetter(user.id, parsed.data.id, {
 		template: parsed.data.template,
 	});

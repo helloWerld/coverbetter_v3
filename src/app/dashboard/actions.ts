@@ -3,6 +3,7 @@
 import { and, count, eq, gt } from 'drizzle-orm';
 import { z } from 'zod';
 import { letters, resumes } from '@/db/schema';
+import { generateOptions, hasPaidFeatures } from '@/lib/access';
 import { getDb, getEnv } from '@/lib/cf';
 import { checkEntitlement, consumeEntitlement } from '@/lib/entitlements';
 import { generateLetter } from '@/lib/llm';
@@ -94,11 +95,18 @@ export async function generateLetterAction(
 		return { ok: false, error: MESSAGES[check.reason], code: check.reason };
 	}
 
+	// Free users always get Professional and Standard, whatever the form sent.
+	const { tone, length } = generateOptions(
+		hasPaidFeatures(user, now),
+		input.tone as (typeof TONES)[number],
+		input.length as (typeof LENGTHS)[number],
+	);
+
 	const prompt = buildPrompt({
 		resumeText: input.resumeText,
 		jobDescription: input.jobDescription,
-		tone: input.tone as (typeof TONES)[number],
-		length: input.length as (typeof LENGTHS)[number],
+		tone,
+		length,
 	});
 
 	let result;
@@ -139,8 +147,8 @@ export async function generateLetterAction(
 		jobTitle: parsedOut.jobTitle,
 		company: parsedOut.company,
 		jobDescription: input.jobDescription,
-		tone: input.tone,
-		length: input.length,
+		tone,
+		length,
 		template: 'classic',
 		body: parsedOut.body,
 		model: result.model,

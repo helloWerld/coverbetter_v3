@@ -9,15 +9,17 @@ export default function SegmentedControl<T extends string>({
 	options,
 	value,
 	onChange,
+	disabled = false,
 }: Readonly<{
 	legend: string;
 	name: string;
 	options: readonly Option<T>[];
 	value: T;
 	onChange: (v: T) => void;
+	disabled?: boolean;
 }>) {
 	return (
-		<fieldset className="min-w-0">
+		<fieldset className="min-w-0" disabled={disabled}>
 			<legend className="mb-2 text-sm font-medium text-base-100">{legend}</legend>
 			<div className="flex flex-wrap gap-2">
 				{options.map((o) => (

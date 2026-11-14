@@ -7,10 +7,11 @@ import { TEMPLATE_IDS, TEMPLATES, type TemplateId } from '@/lib/templates';
 export default function TemplateSwitcher({
 	value,
 	onChange,
-}: Readonly<{ value: TemplateId; onChange: (id: TemplateId) => void }>) {
+	disabled = false,
+}: Readonly<{ value: TemplateId; onChange: (id: TemplateId) => void; disabled?: boolean }>) {
 	const name = useId();
 	return (
-		<fieldset className="min-w-0">
+		<fieldset className="min-w-0 disabled:opacity-50 [&:disabled_label]:cursor-not-allowed" disabled={disabled}>
 			<legend className="mb-2 text-sm text-base-100/70">Template</legend>
 			<div className="flex flex-wrap gap-2">
 				{TEMPLATE_IDS.map((id) => (

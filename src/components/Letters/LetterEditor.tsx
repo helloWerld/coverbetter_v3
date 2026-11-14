@@ -1,7 +1,8 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { FaCheck, FaRegCopy } from 'react-icons/fa6';
+import Link from 'next/link';
+import { FaCheck, FaLock, FaRegCopy } from 'react-icons/fa6';
 import {
 	saveLetter,
 	setLetterTemplate,
@@ -22,12 +23,15 @@ export default function LetterEditor({
 	initialTemplate,
 	initialJobTitle,
 	initialCompany,
+	paid = false,
 }: Readonly<{
 	id: string;
 	initialBody: string;
 	initialTemplate: TemplateId;
 	initialJobTitle: string;
 	initialCompany: string;
+	/** Editing, templates, and export are paid features. Free users read and copy. */
+	paid?: boolean;
 }>) {
 	const [body, setBody] = useState(initialBody);
 	const [jobTitle, setJobTitle] = useState(initialJobTitle);
@@ -110,6 +114,21 @@ export default function LetterEditor({
 
 	return (
 		<div className="flex flex-col gap-6">
+			{!paid && (
+				<p className="flex items-start gap-2 rounded-box border border-accent/40 bg-accent/10 px-4 py-3 text-sm text-base-100">
+					<FaLock aria-hidden className="mt-0.5 shrink-0 text-accent" />
+					<span>
+						You can read and copy this letter. Editing, templates, and PDF or DOCX
+						downloads come with Pro or paid letters.{' '}
+						<Link
+							href="/dashboard/billing"
+							className="underline underline-offset-2 hover:text-base-100"
+						>
+							Go to Billing
+						</Link>
+					</span>
+				</p>
+			)}
 			<div className="flex flex-col gap-4 rounded-box border border-base-100/10 bg-gradient-to-br from-primary to-base-300 p-4 md:p-6">
 				<div className="grid gap-4 sm:grid-cols-2">
 					<div>
@@ -121,6 +140,7 @@ export default function LetterEditor({
 							className={field}
 							value={jobTitle}
 							maxLength={200}
+							readOnly={!paid}
 							onChange={(e) => setJobTitle(e.target.value)}
 						/>
 					</div>
@@ -133,20 +153,23 @@ export default function LetterEditor({
 							className={field}
 							value={company}
 							maxLength={200}
+							readOnly={!paid}
 							onChange={(e) => setCompany(e.target.value)}
 						/>
 					</div>
 				</div>
-				<TemplateSwitcher value={template} onChange={changeTemplate} />
+				<TemplateSwitcher value={template} onChange={changeTemplate} disabled={!paid} />
 				<div className="flex flex-wrap items-center gap-2">
-					<button
-						type="button"
-						className="btn btn-secondary min-h-11"
-						onClick={save}
-						disabled={status === 'saving'}
-					>
-						Save
-					</button>
+					{paid && (
+						<button
+							type="button"
+							className="btn btn-secondary min-h-11"
+							onClick={save}
+							disabled={status === 'saving'}
+						>
+							Save
+						</button>
+					)}
 					<button
 						type="button"
 						className="btn btn-outline min-h-11 border-base-100/30 text-base-100 hover:border-base-100 hover:bg-base-100/10"
@@ -155,7 +178,12 @@ export default function LetterEditor({
 						{copied ? <FaCheck aria-hidden /> : <FaRegCopy aria-hidden />}
 						{copied ? 'Copied' : 'Copy'}
 					</button>
-					<DownloadButtons getDoc={() => doc} template={template} company={company} />
+					<DownloadButtons
+						getDoc={() => doc}
+						template={template}
+						company={company}
+						locked={!paid}
+					/>
 					<p
 						role="status"
 						aria-live="polite"
@@ -196,6 +224,7 @@ export default function LetterEditor({
 						id="letter-body"
 						ref={area}
 						value={body}
+						readOnly={!paid}
 						onChange={(e) => setBody(e.target.value)}
 						className="textarea textarea-bordered w-full resize-none border-base-100/20 bg-base-300 text-base leading-relaxed text-base-100 focus:border-neutral"
 						style={{ minHeight: 320 }}

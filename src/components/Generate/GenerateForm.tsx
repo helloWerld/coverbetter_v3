@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useId, useState } from 'react';
+import { FaLock } from 'react-icons/fa6';
 import { generateLetterAction } from '@/app/dashboard/actions';
 import { MODEL_KEYS, MODEL_LABELS, type ModelKey } from '@/lib/model-access';
 import type { Length, Tone } from '@/lib/prompt';
@@ -36,11 +37,14 @@ export default function GenerateForm({
 	status,
 	empty,
 	showModelPicker = false,
+	paid = false,
 }: Readonly<{
 	resumes: SavedResume[];
 	status: string;
 	empty: boolean;
 	showModelPicker?: boolean;
+	/** Tone and length are paid features. Free users get Professional and Standard. */
+	paid?: boolean;
 }>) {
 	const router = useRouter();
 	const id = useId();
@@ -195,6 +199,7 @@ export default function GenerateForm({
 						options={TONE_OPTIONS}
 						value={tone}
 						onChange={setTone}
+						disabled={!paid}
 					/>
 					<SegmentedControl
 						legend="Length"
@@ -202,7 +207,20 @@ export default function GenerateForm({
 						options={LENGTH_OPTIONS}
 						value={length}
 						onChange={setLength}
+						disabled={!paid}
 					/>
+					{!paid && (
+						<p className="flex items-start gap-2 text-sm text-base-100/80 md:col-span-2">
+							<FaLock aria-hidden className="mt-0.5 shrink-0 text-accent" />
+							<span>
+								Free letters use Professional tone and Standard length.{' '}
+								<Link href="/dashboard/billing" className={link}>
+									Get Pro or buy letters
+								</Link>{' '}
+								to choose.
+							</span>
+						</p>
+					)}
 					{showModelPicker && (
 						<div className="md:col-span-2">
 							<label htmlFor={`${id}-model`} className="mb-2 block text-sm font-medium text-base-100">

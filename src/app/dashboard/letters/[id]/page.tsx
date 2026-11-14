@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { FaArrowLeft } from 'react-icons/fa6';
 import LetterEditor from '@/components/Letters/LetterEditor';
+import { hasPaidFeatures } from '@/lib/access';
 import { getEnv } from '@/lib/cf';
 import { getLetter } from '@/lib/letters';
 import { canPickModel, modelLabel } from '@/lib/model-access';
@@ -15,6 +16,7 @@ export default async function LetterPage({
 	const user = await requireUser();
 	const letter = await getLetter(user.id, id);
 	if (!letter) notFound();
+	const paid = hasPaidFeatures(user, new Date());
 
 	return (
 		<div className="mx-auto w-full max-w-screen-xl">
@@ -25,7 +27,7 @@ export default async function LetterPage({
 				<FaArrowLeft aria-hidden /> Letters
 			</Link>
 			<h1 className="gradient-text mb-6 text-3xl font-extralight md:text-5xl">
-				Edit letter
+				{paid ? 'Edit letter' : 'Your letter'}
 			</h1>
 			{canPickModel(user.email, getEnv().MODEL_PICKER_EMAILS) && (
 				<p className="-mt-4 mb-6 text-sm text-base-100/70">
@@ -38,6 +40,7 @@ export default async function LetterPage({
 				initialTemplate={getTemplate(letter.template).id}
 				initialJobTitle={letter.jobTitle}
 				initialCompany={letter.company}
+				paid={paid}
 			/>
 		</div>
 	);
