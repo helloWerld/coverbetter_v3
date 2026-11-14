@@ -16,7 +16,7 @@ export default async function BillingPage({
 	const configured = paymentsOpenFor(getEnv(), user.email);
 
 	return (
-		<PageShell title="Billing" intro="Your plan and your letters.">
+		<PageShell title="Billing" intro="Your plan and your credits.">
 			{/* On wide screens this column is as wide as the row of three boxes,
 			    so "Your plan" lines up with them. */}
 			<div className="flex w-full flex-col gap-6 lg:w-fit">

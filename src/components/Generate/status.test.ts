@@ -10,11 +10,11 @@ const base = {
 };
 
 describe('letterStatus for Pro', () => {
-	it('shows letters left this month', () => {
+	it('shows credits left this month', () => {
 		const r = letterStatus({ ...base, proLettersThisPeriod: 12 });
-		expect(r).toEqual({ text: 'Pro: 188 of 200 letters left this month', empty: false });
+		expect(r).toEqual({ text: 'Pro: 188 of 200 credits left this month', empty: false });
 	});
-	it('says the limit is reached at 200 with no paid letters', () => {
+	it('says the limit is reached at 200 with no paid credits', () => {
 		expect(letterStatus({ ...base, proLettersThisPeriod: 200 }).empty).toBe(true);
 	});
 	it('never says unlimited', () => {

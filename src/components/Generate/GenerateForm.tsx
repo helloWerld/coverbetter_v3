@@ -237,9 +237,9 @@ export default function GenerateForm({
 						<p className="flex items-start gap-2 text-sm text-base-100/80 md:col-span-2">
 							<FaLock aria-hidden className="mt-0.5 shrink-0 text-accent" />
 							<span>
-								Free letters use Professional tone and Standard length.{' '}
+								Letters from free credits use Professional tone and Standard length.{' '}
 								<Link href="/dashboard/billing" className={link}>
-									Get Pro or buy letters
+									Get Pro or buy credits
 								</Link>{' '}
 								to choose.
 							</span>

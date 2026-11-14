@@ -18,7 +18,7 @@ type PlanUser = Pick<
 	| 'proPeriodEnd'
 >;
 
-/** Current plan, letters left, and credit balance. */
+/** Current plan, credits used, and paid credit balance. One credit is one cover letter. */
 export default function PlanCard({ user }: Readonly<{ user: PlanUser }>) {
 	if (user.plan === 'pro') {
 		return (
@@ -32,28 +32,48 @@ export default function PlanCard({ user }: Readonly<{ user: PlanUser }>) {
 						</span>
 					)}
 				</p>
-				<p className="mt-2">
-					{user.proLettersThisPeriod} of {PRO_FAIR_USE_CAP} letters this month
-				</p>
+				<UsageMeter
+					used={user.proLettersThisPeriod}
+					total={PRO_FAIR_USE_CAP}
+					label="credits used this month"
+				/>
 				{user.credits > 0 && (
-					<p className="mt-1">
-						Paid letters: <span className="text-base-100">{user.credits}</span>
+					<p className="mt-2">
+						Paid credits: <span className="text-base-100">{user.credits}</span>
 					</p>
 				)}
 			</Card>
 		);
 	}
 
-	const freeLeft = Math.max(0, FREE_LETTERS - user.freeLettersUsed);
+	const freeUsed = Math.min(FREE_LETTERS, user.freeLettersUsed);
 	return (
 		<Card title="Your plan">
 			<p className="text-2xl text-base-100">Free</p>
+			<UsageMeter used={freeUsed} total={FREE_LETTERS} label="free credits used" />
 			<p className="mt-2">
-				{freeLeft} of {FREE_LETTERS} free letters left
-			</p>
-			<p className="mt-1">
-				Paid letters: <span className="text-base-100">{user.credits}</span>
+				Paid credits: <span className="text-base-100">{user.credits}</span>
 			</p>
 		</Card>
+	);
+}
+
+/** "X of Y credits used" with a bar. */
+function UsageMeter({
+	used,
+	total,
+	label,
+}: Readonly<{ used: number; total: number; label: string }>) {
+	const text = `${used} of ${total} ${label}`;
+	return (
+		<div className="mt-2 max-w-sm">
+			<p>{text}</p>
+			<progress
+				className="progress progress-secondary mt-2 h-2 w-full bg-base-200"
+				value={Math.min(used, total)}
+				max={total}
+				aria-label={text}
+			/>
+		</div>
 	);
 }

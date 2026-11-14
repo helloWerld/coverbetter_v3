@@ -21,14 +21,14 @@ export function letterStatus(
 		}
 		const left = PRO_MONTHLY_CAP - u.proLettersThisPeriod;
 		return {
-			text: `Pro: ${left} of ${PRO_MONTHLY_CAP} letters left this month`,
+			text: `Pro: ${left} of ${PRO_MONTHLY_CAP} credits left this month`,
 			empty: false,
 		};
 	}
 	const free = Math.max(0, FREE_LETTERS - u.freeLettersUsed);
 	const parts: string[] = [];
-	if (free > 0) parts.push(`${free} free ${free === 1 ? 'letter' : 'letters'} left`);
-	if (u.credits > 0) parts.push(`${u.credits} ${u.credits === 1 ? 'credit' : 'credits'}`);
-	if (parts.length === 0) return { text: 'No letters left', empty: true };
+	if (free > 0) parts.push(`${free} free ${free === 1 ? 'credit' : 'credits'} left`);
+	if (u.credits > 0) parts.push(`${u.credits} paid ${u.credits === 1 ? 'credit' : 'credits'}`);
+	if (parts.length === 0) return { text: 'No credits left', empty: true };
 	return { text: parts.join(', '), empty: false };
 }

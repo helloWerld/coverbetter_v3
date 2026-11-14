@@ -18,7 +18,7 @@ const card =
 const stepButton =
 	'btn btn-secondary btn-square min-h-11 min-w-11 disabled:!border-base-100/10 disabled:!bg-base-200 disabled:!text-base-100/40';
 
-/** Pay-as-you-go card. The buyer picks 1 to 50 letters and sees the total. */
+/** Pay-as-you-go card. The buyer picks 1 to 50 credits and sees the total. */
 export default function LettersCard({
 	configured,
 }: Readonly<{ configured: boolean }>) {
@@ -40,14 +40,14 @@ export default function LettersCard({
 			<div className="flex flex-col items-center justify-center border-b border-primary p-6">
 				<h3 className="text-5xl">
 					{formatUsd(LETTER_PRICE_CENTS)}
-					<span className="text-xl"> / letter</span>
+					<span className="text-xl"> / credit</span>
 				</h3>
 				<p className="mt-1 text-sm text-base-100/70">Pay as you go</p>
 			</div>
 			<div className="flex flex-1 flex-col items-center p-6">
-				<p className="mb-6 text-base-100">Pay only for the letters you write</p>
+				<p className="mb-6 text-base-100">One credit writes one cover letter</p>
 				<label htmlFor="letter-quantity" className="text-base-100">
-					How many letters?
+					How many credits?
 				</label>
 				<div className="mt-2 flex items-center gap-2">
 					<button
@@ -55,7 +55,7 @@ export default function LettersCard({
 						className={stepButton}
 						onClick={() => step(-1)}
 						disabled={n !== null && n <= MIN_LETTERS}
-						aria-label="Fewer letters"
+						aria-label="Fewer credits"
 						aria-controls="letter-quantity"
 					>
 						<FaMinus aria-hidden />
@@ -79,14 +79,14 @@ export default function LettersCard({
 						className={stepButton}
 						onClick={() => step(1)}
 						disabled={n !== null && n >= MAX_LETTERS}
-						aria-label="More letters"
+						aria-label="More credits"
 						aria-controls="letter-quantity"
 					>
 						<FaPlus aria-hidden />
 					</button>
 				</div>
 				<p className="mt-1 text-sm text-base-100/70">
-					{MIN_LETTERS} to {MAX_LETTERS} letters
+					{MIN_LETTERS} to {MAX_LETTERS} credits
 				</p>
 				<p className="mb-4 mt-4 text-base-100" aria-live="polite">
 					{n === null
@@ -97,9 +97,9 @@ export default function LettersCard({
 					disabled={!configured || n === null}
 					className="btn btn-primary mt-auto w-full"
 				>
-					{n === null ? 'Buy letters' : `Buy ${n} ${n === 1 ? 'letter' : 'letters'}`}
+					{n === null ? 'Buy credits' : `Buy ${n} ${n === 1 ? 'credit' : 'credits'}`}
 				</SubmitButton>
-				<p className="mt-2 text-sm text-base-100/70">Letters never expire</p>
+				<p className="mt-2 text-sm text-base-100/70">Credits never expire</p>
 			</div>
 		</form>
 	);

@@ -41,7 +41,7 @@ export default function PurchaseCards({
 						<p className="mt-1 text-sm text-base-100/70">Pro</p>
 					</div>
 					<div className="flex flex-1 flex-col items-center p-6">
-						<p className="text-base-100">{PRO_FAIR_USE_CAP} cover letters / month</p>
+						<p className="text-base-100">{PRO_FAIR_USE_CAP} credits / month</p>
 						<p className="mb-6 mt-1 text-sm text-base-100/70">Cancel any time</p>
 						{isPro ? (
 							// An active Pro plan cannot start a second subscription.
