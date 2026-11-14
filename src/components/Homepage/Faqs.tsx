@@ -128,7 +128,7 @@ const Faqs = () => {
             <div className="collapse-content">
               <p>
                 You get 3 letters free. After that, pay as you go at $1.50 a
-                letter, or go Pro at $19 a month for up to 200 letters a month.
+                letter, or go Pro at $19.97 a month for up to 200 letters a month.
               </p>
             </div>
           </div>

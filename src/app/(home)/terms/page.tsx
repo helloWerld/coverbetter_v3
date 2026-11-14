@@ -38,7 +38,7 @@ const sections: LegalSection[] = [
 		heading: 'Plans and payments',
 		body: [
 			'Free: 3 letters for each account.',
-			'Pro: $19 a month, for up to 200 letters a month.',
+			'Pro: $19.97 a month, for up to 200 letters a month.',
 			'Pay as you go: $1.50 per letter. Paid letters never expire.',
 			'Stripe processes all payments. Prices may change. A change to the price of Pro applies from your next billing period, and we tell you before it starts.',
 		],

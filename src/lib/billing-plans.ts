@@ -5,7 +5,7 @@ export const LETTER_PRICE_CENTS = 150;
 export const MIN_LETTERS = 1;
 export const MAX_LETTERS = 50;
 
-export const PRO_PRICE_CENTS = 1900;
+export const PRO_PRICE_CENTS = 1997;
 export const PRO_FAIR_USE_CAP = 200;
 export const FREE_LETTERS = 3;
 

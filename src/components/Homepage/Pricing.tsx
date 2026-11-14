@@ -31,7 +31,7 @@ const Pricing = () => {
         <div className="w-80 h-fit scale-105 md:hover:scale-110 transition ease-in-out duration-500 rounded-lg border border-secondary text-center bg-base-300">
           <div className="flex flex-col items-center justify-center p-6 border-b border-primary">
             <h3 className="text-5xl">
-              $19<span className="text-xl"> / mo </span>
+              $19.97<span className="text-xl"> / mo </span>
             </h3>
             <p className="text-sm text-base-100/70 mt-1">Pro</p>
           </div>
