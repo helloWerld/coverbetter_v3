@@ -19,7 +19,11 @@ export function letterStatus(
 		if (u.proLettersThisPeriod >= PRO_MONTHLY_CAP && u.credits === 0) {
 			return { text: 'Pro: monthly limit reached', empty: true };
 		}
-		return { text: 'Pro: unlimited', empty: false };
+		const left = PRO_MONTHLY_CAP - u.proLettersThisPeriod;
+		return {
+			text: `Pro: ${left} of ${PRO_MONTHLY_CAP} letters left this month`,
+			empty: false,
+		};
 	}
 	const free = Math.max(0, FREE_LETTERS - u.freeLettersUsed);
 	const parts: string[] = [];

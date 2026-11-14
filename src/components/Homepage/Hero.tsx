@@ -1,7 +1,7 @@
 import Image from "next/image";
 import gradient from "../../../public/purple-gradient.png";
 import React from "react";
-import { FaRegCirclePlay, FaArrowRight, FaStar } from "react-icons/fa6";
+import { FaRegCirclePlay, FaArrowRight } from "react-icons/fa6";
 import Link from "next/link";
 
 const Hero = () => {
@@ -16,38 +16,18 @@ const Hero = () => {
         className="absolute -bottom-[200px] md:-bottom-[400px] xl:-bottom-[800px] w-3/4 animate-slow-pulse"
       />
       <div className="absolute bottom-4 w-full flex items-center justify-between">
-        <div className="scale-75 md:scale-100 flex flex-row gap-2">
-          <div className="stat">
-            <div className="stat-value">18k+</div>
-            <div className="stat-title  text-primary-content/50">
-              Satisfied customers
-            </div>
-          </div>
-          <div className="stat">
-            <div className="stat-value">100k+</div>
-            <div className="stat-title text-primary-content/50">
-              Cover Letters Generated
-            </div>
+        <div className="stat scale-75 md:scale-100">
+          <div className="stat-value">18k+</div>
+          <div className="stat-title text-primary-content/50">
+            Satisfied customers
           </div>
         </div>
-        <Link
-          href="/#testimonials"
-          className="hidden group btn md:flex flex-col h-fit py-3 px-4 gap-0 items-center justify-center text-center text-base-100 rounded-2xl mr-4 w-fit bg-gradient-to-br from-secondary via-purple-950 to-primary mb-2 hover:scale-105"
-        >
-          <div className="flex flex-row gap-1">
-            <FaStar className="group-hover:text-yellow-300 text-accent text-xl" />
-            <FaStar className="group-hover:text-yellow-300 text-accent text-xl" />
-            <FaStar className="group-hover:text-yellow-300 text-accent text-xl" />
-            <FaStar className="group-hover:text-yellow-300 text-accent text-xl" />
-            <FaStar className="group-hover:text-yellow-300 text-accent text-xl" />
+        <div className="stat scale-75 md:scale-100 text-right">
+          <div className="stat-value">100k+</div>
+          <div className="stat-title text-primary-content/50">
+            Cover Letters Generated
           </div>
-          <p className="font-semibold text-lg mt-1 italic">
-            Raving Five Star Reviews!
-          </p>
-          <p className="text-xs font-light text-base-100/50">
-            Read our customer testimonials
-          </p>
-        </Link>
+        </div>
       </div>
 
       <div className="hero-content text-center">

@@ -40,7 +40,7 @@ export default function DeleteAccount() {
 					</h2>
 					<p className="mt-3 text-base-100/70">
 						This deletes your resumes, your letters, and your sign-in. It
-						cancels any Pro plan. Unused pack letters are lost. You cannot
+						cancels any Pro plan. Unused paid letters are lost. You cannot
 						undo this.
 					</p>
 					<label htmlFor="delete-confirm" className="mt-4 block text-sm">

@@ -38,18 +38,35 @@ const Features = () => {
         Write a cover letter for each job from your resume and the job post,
         then edit it and export it.
       </p>
-      <ul className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 mt-12 gap-4 list-none p-0">
-        {features.map((feature) => (
-          <li key={feature.id} className="flex">
-            <FeatureCard feature={feature} />
-          </li>
-        ))}
-      </ul>
+      <FeatureGrid items={features.filter((f) => !f.badge)} />
     </div>
   );
 };
 
 export default Features;
+
+/** The features that are not built yet, in their own section below Features. */
+export const ComingSoon = () => {
+  return (
+    <div id="coming-soon" className="page-section">
+      <h2 className="homepage-title">Coming Soon</h2>
+      <p className="homepage-subtitle">
+        Tools we are building next. Open one to get an email when it is ready.
+      </p>
+      <FeatureGrid items={features.filter((f) => f.badge)} />
+    </div>
+  );
+};
+
+const FeatureGrid = ({ items }: { items: FeatureData[] }) => (
+  <ul className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 mt-12 gap-4 list-none p-0">
+    {items.map((feature) => (
+      <li key={feature.id} className="flex">
+        <FeatureCard feature={feature} />
+      </li>
+    ))}
+  </ul>
+);
 
 const FeatureCard = ({ feature }: { feature: FeatureData }) => {
   const body = (

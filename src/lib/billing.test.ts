@@ -6,27 +6,37 @@ const ev = (type: string, object: unknown, id = 'evt_1') =>
 	({ id, type, data: { object } }) as unknown as Stripe.Event;
 
 describe('applyStripeEvent', () => {
-	it('adds credits for a paid pack checkout', () => {
-		const e = ev('checkout.session.completed', {
+	const letters = (over: Record<string, unknown> = {}, credits = '5') =>
+		ev('checkout.session.completed', {
 			mode: 'payment',
 			payment_status: 'paid',
 			customer: 'cus_1',
-			metadata: { userId: 'user_1', product: 'pack15' },
+			amount_total: 750,
+			metadata: { userId: 'user_1', product: 'letters', credits },
+			...over,
 		});
-		expect(applyStripeEvent(e)).toEqual([
+
+	it('adds credits for a paid letters checkout with the right amount', () => {
+		expect(applyStripeEvent(letters())).toEqual([
 			{ kind: 'set_customer', userId: 'user_1', customerId: 'cus_1' },
-			{ kind: 'add_credits', userId: 'user_1', credits: 15 },
+			{ kind: 'add_credits', userId: 'user_1', credits: 5 },
 		]);
 	});
 
+	it('adds nothing when the amount does not match', () => {
+		expect(applyStripeEvent(letters({ amount_total: 500 }))).toEqual([]);
+		expect(applyStripeEvent(letters({ amount_total: undefined }))).toEqual([]);
+	});
+
+	it('adds nothing for credits out of range or not an integer', () => {
+		expect(applyStripeEvent(letters({ amount_total: 0 }, '0'))).toEqual([]);
+		expect(applyStripeEvent(letters({ amount_total: 7650 }, '51'))).toEqual([]);
+		expect(applyStripeEvent(letters({ amount_total: 375 }, '2.5'))).toEqual([]);
+		expect(applyStripeEvent(letters({}, 'abc'))).toEqual([]);
+	});
+
 	it('adds nothing for an unpaid checkout', () => {
-		const e = ev('checkout.session.completed', {
-			mode: 'payment',
-			payment_status: 'unpaid',
-			customer: 'cus_1',
-			metadata: { userId: 'user_1', product: 'pack5' },
-		});
-		expect(applyStripeEvent(e)).toEqual([]);
+		expect(applyStripeEvent(letters({ payment_status: 'unpaid' }))).toEqual([]);
 	});
 
 	it('ignores a payment checkout with an unknown product', () => {
@@ -34,7 +44,8 @@ describe('applyStripeEvent', () => {
 			mode: 'payment',
 			payment_status: 'paid',
 			customer: 'cus_1',
-			metadata: { userId: 'user_1', product: 'pack999' },
+			amount_total: 750,
+			metadata: { userId: 'user_1', product: 'pack5', credits: '5' },
 		});
 		expect(applyStripeEvent(e)).toEqual([]);
 	});
@@ -166,7 +177,8 @@ describe('handleStripeEvent (idempotency)', () => {
 		mode: 'payment',
 		payment_status: 'paid',
 		customer: 'cus_1',
-		metadata: { userId: 'user_1', product: 'pack5' },
+		amount_total: 750,
+		metadata: { userId: 'user_1', product: 'letters', credits: '5' },
 	});
 
 	it('applies a new event once', async () => {

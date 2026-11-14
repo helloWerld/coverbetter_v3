@@ -37,7 +37,7 @@ export default function PlanCard({ user }: Readonly<{ user: PlanUser }>) {
 				</p>
 				{user.credits > 0 && (
 					<p className="mt-1">
-						Pack letters: <span className="text-base-100">{user.credits}</span>
+						Paid letters: <span className="text-base-100">{user.credits}</span>
 					</p>
 				)}
 			</Card>
@@ -52,7 +52,7 @@ export default function PlanCard({ user }: Readonly<{ user: PlanUser }>) {
 				{freeLeft} of {FREE_LETTERS} free letters left
 			</p>
 			<p className="mt-1">
-				Pack letters: <span className="text-base-100">{user.credits}</span>
+				Paid letters: <span className="text-base-100">{user.credits}</span>
 			</p>
 		</Card>
 	);

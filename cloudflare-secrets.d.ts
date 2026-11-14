@@ -10,8 +10,7 @@ interface CloudflareEnv {
 	CF_AIG_TOKEN: string;
 	STRIPE_SECRET_KEY: string;
 	STRIPE_WEBHOOK_SECRET: string;
-	STRIPE_PRICE_PACK_5: string;
-	STRIPE_PRICE_PACK_15: string;
+	STRIPE_PRICE_LETTER: string;
 	STRIPE_PRICE_PRO: string;
 	APP_URL: string;
 	/** Comma-separated emails that see the model dropdown on the Generate page. */

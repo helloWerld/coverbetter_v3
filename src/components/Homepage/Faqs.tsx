@@ -31,22 +31,6 @@ const Faqs = () => {
             <input
               type="radio"
               name="faq-accordion"
-              aria-label={"Which AI writes my letter?"}
-            />
-            <div className="collapse-title text-xl font-medium">
-              Which AI writes my letter?
-            </div>
-            <div className="collapse-content">
-              <p>
-                Claude, made by Anthropic, writes your letter. If Claude is not
-                available, a backup model from OpenAI writes it instead.
-              </p>
-            </div>
-          </div>
-          <div className="collapse border border-neutral-content/50 bg-base-300">
-            <input
-              type="radio"
-              name="faq-accordion"
               aria-label={"Is my resume private?"}
             />
             <div className="collapse-title text-xl font-medium">
@@ -143,9 +127,8 @@ const Faqs = () => {
             </div>
             <div className="collapse-content">
               <p>
-                You get 3 letters free. After that, Pro is $19 a month for
-                unlimited letters (fair use is 200 a month). Or you can buy
-                credit packs: 5 letters for $5 or 15 letters for $12.
+                You get 3 letters free. After that, pay as you go at $1.50 a
+                letter, or go Pro at $19 a month for up to 200 letters a month.
               </p>
             </div>
           </div>
@@ -153,13 +136,13 @@ const Faqs = () => {
             <input
               type="radio"
               name="faq-accordion"
-              aria-label={"Do credits expire?"}
+              aria-label={"Do paid letters expire?"}
             />
             <div className="collapse-title text-xl font-medium">
-              Do credits expire?
+              Do paid letters expire?
             </div>
             <div className="collapse-content">
-              <p>No. Credits stay on your account until you use them.</p>
+              <p>No. Paid letters stay on your account until you use them.</p>
             </div>
           </div>
           <div className="collapse border border-neutral-content/50 bg-base-300">
@@ -189,7 +172,7 @@ const Faqs = () => {
             </div>
             <div className="collapse-content">
               <p>
-                Credits that you used are not refundable. If something went
+                Paid letters that you used are not refundable. If something went
                 wrong with a payment, write to support@coverbetter.io.
               </p>
             </div>

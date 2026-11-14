@@ -3,6 +3,7 @@ import {
 	Hero,
 	TrustBanner,
 	Features,
+	ComingSoon,
 	HowItWorks,
 	Testimonials,
 	Pricing,
@@ -23,6 +24,7 @@ const Home = () => {
 					className="absolute inset-0 h-full object-cover overflow-clip max-w-screen-2xl mx-auto w-full"
 				/>
 				<Features />
+				<ComingSoon />
 				<HowItWorks />
 				<Testimonials />
 				<Pricing />

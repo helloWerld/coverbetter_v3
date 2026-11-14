@@ -36,9 +36,9 @@ const inputSchema = z.object({
 const MESSAGES = {
 	rate_limit:
 		'You made many letters in the last hour. Wait a few minutes and try again.',
-	no_credits: 'You have no letters left. Buy a pack or go Pro to keep going.',
+	no_credits: 'You have no letters left. Buy letters or go Pro to keep going.',
 	pro_cap:
-		'You reached the monthly limit of 200 letters on Pro. Buy a pack or wait for the next period.',
+		'You reached the monthly limit of 200 letters on Pro. Buy letters or wait for the next period.',
 } as const;
 
 export async function generateLetterAction(

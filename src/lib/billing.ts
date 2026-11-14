@@ -2,6 +2,7 @@ import Stripe from 'stripe';
 import { eq, sql } from 'drizzle-orm';
 import { stripeEvents, users } from '@/db/schema';
 import type { Db } from '@/lib/cf';
+import { LETTER_PRICE_CENTS, parseLetterQuantity } from '@/lib/billing-plans';
 
 /*
  * Stripe API version: stripe-node 23.1.0 targets 2026-10-28.endive.
@@ -13,8 +14,11 @@ import type { Db } from '@/lib/cf';
  */
 
 export const PRODUCTS = {
-	pack5: { credits: 5, mode: 'payment', priceEnv: 'STRIPE_PRICE_PACK_5' },
-	pack15: { credits: 15, mode: 'payment', priceEnv: 'STRIPE_PRICE_PACK_15' },
+	letters: {
+		mode: 'payment',
+		priceEnv: 'STRIPE_PRICE_LETTER',
+		unitCents: LETTER_PRICE_CENTS,
+	},
 	pro: { mode: 'subscription', priceEnv: 'STRIPE_PRICE_PRO' },
 } as const;
 
@@ -25,19 +29,17 @@ type StripeEnv = Partial<
 		CloudflareEnv,
 		| 'STRIPE_SECRET_KEY'
 		| 'STRIPE_WEBHOOK_SECRET'
-		| 'STRIPE_PRICE_PACK_5'
-		| 'STRIPE_PRICE_PACK_15'
+		| 'STRIPE_PRICE_LETTER'
 		| 'STRIPE_PRICE_PRO'
 		| 'APP_URL'
 	>
 >;
 
-/** True when the secret key, the three price ids, and the site URL are all set. */
+/** True when the secret key, the two price ids, and the site URL are all set. */
 export function isStripeConfigured(env: StripeEnv): boolean {
 	return Boolean(
 		env.STRIPE_SECRET_KEY &&
-			env.STRIPE_PRICE_PACK_5 &&
-			env.STRIPE_PRICE_PACK_15 &&
+			env.STRIPE_PRICE_LETTER &&
 			env.STRIPE_PRICE_PRO &&
 			env.APP_URL,
 	);
@@ -123,13 +125,15 @@ export function applyStripeEvent(event: Stripe.Event): DbChange[] {
 
 			if (obj.mode === 'payment') {
 				if (obj.payment_status !== 'paid') return [];
-				const product = meta.product;
-				if (product !== 'pack5' && product !== 'pack15') return [];
-				changes.push({
-					kind: 'add_credits',
-					userId,
-					credits: PRODUCTS[product].credits,
-				});
+				if (meta.product !== 'letters') return [];
+				const credits = parseLetterQuantity(meta.credits);
+				if (
+					credits === null ||
+					obj.amount_total !== credits * PRODUCTS.letters.unitCents
+				) {
+					return [];
+				}
+				changes.push({ kind: 'add_credits', userId, credits });
 				return changes;
 			}
 			if (obj.mode === 'subscription') {

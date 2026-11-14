@@ -6,10 +6,19 @@ import { users } from '@/db/schema';
 import { getDb, getEnv } from '@/lib/cf';
 import { requireUser } from '@/lib/user';
 import { PRODUCTS, getStripe, isStripeConfigured } from '@/lib/billing';
-import { isProductKey } from '@/lib/billing-plans';
+import { isProductKey, parseLetterQuantity } from '@/lib/billing-plans';
 
-export async function startCheckoutAction(product: string) {
+export async function startCheckoutAction(
+	product: string,
+	formData?: FormData,
+) {
 	if (!isProductKey(product)) throw new Error('Unknown product');
+	let quantity = 1;
+	if (product === 'letters') {
+		const n = parseLetterQuantity(formData?.get('quantity'));
+		if (n === null) throw new Error('Choose 1 to 50 letters');
+		quantity = n;
+	}
 	const env = getEnv();
 	if (!isStripeConfigured(env)) {
 		redirect('/dashboard/billing?status=unavailable');
@@ -32,12 +41,13 @@ export async function startCheckoutAction(product: string) {
 			.where(eq(users.id, user.id));
 	}
 
-	const metadata = { userId: user.id, product };
+	const metadata: Record<string, string> = { userId: user.id, product };
+	if (product === 'letters') metadata.credits = String(quantity);
 	const session = await stripe.checkout.sessions.create({
 		mode: def.mode,
 		customer: customerId,
 		client_reference_id: user.id,
-		line_items: [{ price: env[def.priceEnv], quantity: 1 }],
+		line_items: [{ price: env[def.priceEnv], quantity }],
 		metadata,
 		...(def.mode === 'subscription'
 			? { subscription_data: { metadata } }

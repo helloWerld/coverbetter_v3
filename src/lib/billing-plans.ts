@@ -1,10 +1,9 @@
 /** Display data for the purchase cards. No Stripe import, so client code can use it. */
-export type ProductKey = 'pack5' | 'pack15' | 'pro';
+export type ProductKey = 'letters' | 'pro';
 
-export const PACK_DISPLAY = {
-	pack5: { credits: 5, priceCents: 500 },
-	pack15: { credits: 15, priceCents: 1200 },
-} as const;
+export const LETTER_PRICE_CENTS = 150;
+export const MIN_LETTERS = 1;
+export const MAX_LETTERS = 50;
 
 export const PRO_PRICE_CENTS = 1900;
 export const PRO_FAIR_USE_CAP = 200;
@@ -15,11 +14,21 @@ export function formatUsd(cents: number): string {
 	return `$${(cents / 100).toFixed(whole ? 0 : 2)}`;
 }
 
-/** Price for one letter in a pack, for example "$0.80 per letter". */
-export function perLetterLabel(priceCents: number, credits: number): string {
-	return `$${(priceCents / credits / 100).toFixed(2)} per letter`;
+export function lettersTotalCents(n: number): number {
+	return n * LETTER_PRICE_CENTS;
+}
+
+/** An integer from 1 to 50, or null. Accepts a number or a plain digit string. */
+export function parseLetterQuantity(value: unknown): number | null {
+	const n =
+		typeof value === 'number'
+			? value
+			: typeof value === 'string' && /^\d+$/.test(value.trim())
+				? Number(value)
+				: NaN;
+	return Number.isInteger(n) && n >= MIN_LETTERS && n <= MAX_LETTERS ? n : null;
 }
 
 export function isProductKey(value: unknown): value is ProductKey {
-	return value === 'pack5' || value === 'pack15' || value === 'pro';
+	return value === 'letters' || value === 'pro';
 }
