@@ -116,9 +116,9 @@ export default function GenerateForm({
 				<section className="rounded-box border border-base-100/10 bg-gradient-to-br from-primary to-base-300 p-4 sm:p-6">
 					<div className="flex flex-col gap-4">
 						{/* Resume on the left, letter language on the right. */}
-						<div className="grid gap-4 md:grid-cols-2">
+						<div className="flex flex-col gap-4 md:flex-row">
 							{resumes.length > 0 && (
-								<div>
+								<div className="min-w-0 md:flex-1">
 									<label htmlFor={`${id}-resume`} className="mb-2 block text-sm font-medium text-base-100">
 										Resume
 									</label>
@@ -137,7 +137,8 @@ export default function GenerateForm({
 									</select>
 								</div>
 							)}
-							<div className={resumes.length > 0 ? '' : 'md:col-start-2'}>
+							{/* The select is only as wide as its longest language name. */}
+							<div className="md:ml-auto">
 								<label htmlFor={`${id}-language`} className="mb-2 block text-sm font-medium text-base-100">
 									Letter language
 								</label>
@@ -145,7 +146,7 @@ export default function GenerateForm({
 									id={`${id}-language`}
 									value={language}
 									onChange={(e) => setLanguage(e.target.value as LanguageCode)}
-									className={`${field} min-h-11`}
+									className={`${field} min-h-11 md:w-auto`}
 								>
 									{LANGUAGES.map((l) => (
 										<option key={l.code} value={l.code}>
