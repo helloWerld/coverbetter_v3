@@ -9,7 +9,7 @@ describe("homepage features data", () => {
       .map((f) => f.soonSlug)
       .sort();
     expect(slugs).toEqual(SOON_FEATURES.map((s) => s.slug).sort());
-    expect(slugs).toHaveLength(6);
+    expect(slugs).toHaveLength(5);
   });
 
   it("gives no badge or soon slug to built features", () => {

@@ -12,12 +12,6 @@ export const SOON_FEATURES: SoonFeature[] = [
 			'See how well your resume matches a job post before you apply, with a list of gaps.',
 	},
 	{
-		slug: 'ats-resume-checker',
-		name: 'ATS Resume Checker',
-		description:
-			'Check that applicant tracking systems can read your resume and find the right keywords.',
-	},
-	{
 		slug: 'follow-up-letters',
 		name: 'Follow-up Letters',
 		description:

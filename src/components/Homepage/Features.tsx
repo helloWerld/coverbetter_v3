@@ -9,7 +9,7 @@ import {
   FaStar,
   FaRegFolderOpen,
 } from "react-icons/fa";
-import { FaChartPie, FaCheck, FaEnvelope, FaLanguage } from "react-icons/fa6";
+import { FaChartPie, FaEnvelope, FaLanguage } from "react-icons/fa6";
 import { features, type FeatureData } from "./features-data";
 
 export { features };
@@ -21,7 +21,6 @@ const icons: Record<number, React.ReactNode> = {
   3: <FaDownload />,
   4: <FaRegFolderOpen />,
   5: <FaStar />,
-  6: <FaCheck />,
   7: <FaEnvelope />,
   8: <FaChrome />,
   9: <FaLanguage />,

@@ -13,5 +13,4 @@ CoverBetter is a powerful AI web application that empowers job applicants to wri
 - Importing and saving of resumes for later use
 - Exporting of cover letters as PDF or Docx
 - AI Job Fit Score: AI enabled job eligibilty grading system, based on resume and job description
-- ATS Resume Checker
 - Analytics and tracking

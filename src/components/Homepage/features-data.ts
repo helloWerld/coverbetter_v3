@@ -52,14 +52,6 @@ export const features: FeatureData[] = [
     soonSlug: "job-fit-score",
   },
   {
-    id: 6,
-    title: "ATS Resume Checker",
-    description:
-      "Check that applicant tracking systems can read your resume and find the right keywords.",
-    badge: "Coming soon",
-    soonSlug: "ats-resume-checker",
-  },
-  {
     id: 7,
     title: "Follow-up Letter Generator",
     description:
