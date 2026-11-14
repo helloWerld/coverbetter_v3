@@ -16,13 +16,17 @@ export default async function BillingPage({
 
 	return (
 		<PageShell title="Billing" intro="Your plan and your letters.">
-			<StatusBanner status={status} />
-			<PlanCard user={user} />
-			<PurchaseCards
-				configured={configured}
-				hasCustomer={Boolean(user.stripeCustomerId)}
-				isPro={isProActive(user, new Date())}
-			/>
+			{/* On wide screens this column is as wide as the row of three boxes,
+			    so "Your plan" lines up with them. */}
+			<div className="flex w-full flex-col gap-6 lg:w-fit">
+				<StatusBanner status={status} />
+				<PlanCard user={user} />
+				<PurchaseCards
+					configured={configured}
+					hasCustomer={Boolean(user.stripeCustomerId)}
+					isPro={isProActive(user, new Date())}
+				/>
+			</div>
 		</PageShell>
 	);
 }
