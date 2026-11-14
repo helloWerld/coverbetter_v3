@@ -4,6 +4,7 @@ import { FaArrowLeft } from 'react-icons/fa6';
 import LetterEditor from '@/components/Letters/LetterEditor';
 import { hasPaidFeatures } from '@/lib/access';
 import { getEnv } from '@/lib/cf';
+import { getLanguage } from '@/lib/languages';
 import { getLetter } from '@/lib/letters';
 import { canPickModel, modelLabel } from '@/lib/model-access';
 import { getTemplate } from '@/lib/templates';
@@ -40,6 +41,7 @@ export default async function LetterPage({
 				initialTemplate={getTemplate(letter.template).id}
 				initialJobTitle={letter.jobTitle}
 				initialCompany={letter.company}
+				language={getLanguage(letter.language).code}
 				paid={paid}
 			/>
 		</div>

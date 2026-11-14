@@ -61,6 +61,38 @@ describe('buildPrompt', () => {
 	});
 });
 
+describe('buildPrompt language', () => {
+	it('keeps the English prompt unchanged', () => {
+		const out = buildPrompt(base);
+		expect(out).toMatchSnapshot();
+		expect(buildPrompt({ ...base, language: 'en' })).toEqual(out);
+	});
+
+	it('asks for the whole letter in the chosen language', () => {
+		const { system } = buildPrompt({ ...base, language: 'es' });
+		expect(system).toContain('Spanish');
+		expect(system).toContain('greeting, body, and sign-off');
+		expect(system).toContain('standard formal greeting in Spanish');
+		expect(system).not.toContain('Dear Hiring Manager');
+		expect(system).toContain('exactly as written in the resume');
+		expect(system).toContain('sign-off on its own line');
+	});
+
+	it('keeps the English header format and drops the banned list', () => {
+		const { system } = buildPrompt({ ...base, language: 'ja' });
+		expect(system).toContain('Line 1: JOB: <job title> | COMPANY: <company>');
+		expect(system).toContain('Line 2: ---');
+		expect(system).toContain('Japanese');
+		expect(system).toContain('Avoid clichés and filler');
+		for (const p of BANNED_PHRASES) expect(system).not.toContain(p);
+	});
+
+	it('uses the prompt name of each language', () => {
+		expect(buildPrompt({ ...base, language: 'zh' }).system).toContain('Chinese');
+		expect(buildPrompt({ ...base, language: 'ar' }).system).toContain('Arabic');
+	});
+});
+
 describe('parseModelOutput', () => {
 	it('splits a well-formed header', () => {
 		const r = parseModelOutput(

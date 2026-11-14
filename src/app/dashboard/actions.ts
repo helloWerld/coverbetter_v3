@@ -8,6 +8,7 @@ import { getDb, getEnv } from '@/lib/cf';
 import { checkEntitlement, consumeEntitlement } from '@/lib/entitlements';
 import { generateLetter } from '@/lib/llm';
 import { canPickModel, resolveModelKey } from '@/lib/model-access';
+import { LANGUAGE_CODES } from '@/lib/languages';
 import { LENGTHS, TONES, buildPrompt, parseModelOutput } from '@/lib/prompt';
 import { requireUser } from '@/lib/user';
 
@@ -32,6 +33,8 @@ const inputSchema = z.object({
 	tone: z.enum(TONES as unknown as [string, ...string[]]),
 	length: z.enum(LENGTHS as unknown as [string, ...string[]]),
 	resumeId: z.preprocess(emptyToUndefined, z.string().max(100).optional()),
+	// A missing or unknown language falls back to English.
+	language: z.enum(LANGUAGE_CODES).catch('en'),
 });
 
 const MESSAGES = {
@@ -67,6 +70,7 @@ export async function generateLetterAction(
 		jobDescription: formData.get('jobDescription') ?? '',
 		tone: formData.get('tone'),
 		length: formData.get('length'),
+		language: formData.get('language') ?? undefined,
 	});
 	if (!parsed.success) {
 		return { ok: false, error: parsed.error.issues[0]?.message ?? 'Check your input.' };
@@ -107,6 +111,7 @@ export async function generateLetterAction(
 		jobDescription: input.jobDescription,
 		tone,
 		length,
+		language: input.language,
 	});
 
 	let result;
@@ -150,6 +155,7 @@ export async function generateLetterAction(
 		tone,
 		length,
 		template: 'classic',
+		language: input.language,
 		body: parsedOut.body,
 		model: result.model,
 	});

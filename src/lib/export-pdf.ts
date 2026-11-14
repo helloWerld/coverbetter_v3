@@ -1,4 +1,6 @@
-import { PDFDocument, StandardFonts, rgb, type PDFFont } from 'pdf-lib';
+import { PDFDocument, rgb } from 'pdf-lib';
+import { getLanguage } from './languages';
+import { browserFontIO, notoFaces, standardFaces, type FontIO, type TextFace } from './pdf-fonts';
 import { getTemplate, type LetterDoc, type TemplateId } from './templates';
 
 const PAGE_W = 612;
@@ -9,38 +11,35 @@ function color(hex: string) {
 	return rgb(((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255);
 }
 
-/** Replaces characters the standard fonts cannot encode. */
-function clean(text: string, font: PDFFont): string {
-	const ok = new Set(font.getCharacterSet());
-	return Array.from(text.replace(/\t/g, '    '))
-		.map((ch) => {
-			if (ok.has(ch.codePointAt(0)!)) return ch;
-			if (ch === '→') return '->';
-			return '?';
-		})
-		.join('');
-}
+const CJK_CHAR = /[\u3000-\u9fff\uac00-\ud7af\uff00-\uffef]/u;
+const CJK_SPLIT = /[\u3000-\u9fff\uac00-\ud7af\uff00-\uffef]|[^\u3000-\u9fff\uac00-\ud7af\uff00-\uffef]+/gu;
 
 /** Wraps one line of text to a width. Breaks words that are too long. */
-function wrap(text: string, font: PDFFont, size: number, width: number) {
+function wrap(text: string, font: TextFace, size: number, width: number) {
 	const lines: string[] = [];
 	let line = '';
 	const push = () => {
 		lines.push(line);
 		line = '';
 	};
+	// A piece is a word. For CJK fonts a word splits into one piece per CJK character.
+	const pieces: { text: string; space: boolean }[] = [];
 	for (const word of text.split(/\s+/).filter(Boolean)) {
-		const next = line ? `${line} ${word}` : word;
-		if (font.widthOfTextAtSize(next, size) <= width) {
+		const parts =
+			font.breaksBetweenCjk && CJK_CHAR.test(word) ? (word.match(CJK_SPLIT) ?? [word]) : [word];
+		parts.forEach((p, i) => pieces.push({ text: p, space: i === 0 }));
+	}
+	for (const { text: word, space } of pieces) {
+		const next = line ? (space ? `${line} ${word}` : `${line}${word}`) : word;
+		if (font.width(next, size) <= width) {
 			line = next;
 			continue;
 		}
 		if (line) push();
 		let rest = word;
-		while (font.widthOfTextAtSize(rest, size) > width) {
+		while (font.width(rest, size) > width) {
 			let cut = rest.length - 1;
-			while (cut > 1 && font.widthOfTextAtSize(rest.slice(0, cut), size) > width)
-				cut--;
+			while (cut > 1 && font.width(rest.slice(0, cut), size) > width) cut--;
 			lines.push(rest.slice(0, cut));
 			rest = rest.slice(cut);
 		}
@@ -54,13 +53,24 @@ function wrap(text: string, font: PDFFont, size: number, width: number) {
 export async function renderPdf(
 	doc: LetterDoc,
 	templateId: TemplateId | string,
+	io: FontIO = browserFontIO,
 ): Promise<Uint8Array> {
 	const t = getTemplate(templateId);
+	const lang = getLanguage(doc.language);
+	const rtl = lang.dir === 'rtl';
 	const pdf = await PDFDocument.create();
-	const regular = await pdf.embedFont(StandardFonts[t.pdfFont]);
-	const bold = await pdf.embedFont(
-		StandardFonts[t.pdfFont === 'TimesRoman' ? 'TimesRomanBold' : 'HelveticaBold'],
-	);
+	const serif = t.pdfFont === 'TimesRoman';
+	const { regular, bold } =
+		lang.fontSet === 'standard'
+			? await standardFaces(pdf, serif)
+			: await notoFaces(
+					pdf,
+					lang.fontSet,
+					serif,
+					[doc.name, doc.contactLine, doc.date, ...doc.paragraphs].join(' '),
+					io,
+					rtl,
+				);
 
 	const margin = t.marginIn * 72;
 	const width = PAGE_W - margin * 2;
@@ -78,7 +88,7 @@ export async function renderPdf(
 
 	const drawLine = (
 		text: string,
-		font: PDFFont,
+		font: TextFace,
 		size: number,
 		hex: string,
 		align: 'left' | 'center',
@@ -86,20 +96,25 @@ export async function renderPdf(
 	) => {
 		ensure(leading);
 		y -= size;
-		const w = font.widthOfTextAtSize(text, size);
-		const x = align === 'center' ? margin + (width - w) / 2 : margin;
-		page.drawText(text, { x, y, size, font, color: color(hex) });
+		const w = font.width(text, size);
+		const x =
+			align === 'center'
+				? margin + (width - w) / 2
+				: rtl
+					? margin + width - w
+					: margin;
+		font.draw(page, text, x, y, size, hex);
 		y -= leading - size;
 	};
 
 	// Header
 	if (doc.name) {
 		const font = t.nameBold ? bold : regular;
-		for (const l of wrap(clean(doc.name, font), font, t.namePt, width))
+		for (const l of wrap(font.clean(doc.name), font, t.namePt, width))
 			drawLine(l, font, t.namePt, t.nameColor, t.headerAlign, t.namePt * 1.25);
 	}
 	if (doc.contactLine) {
-		for (const l of wrap(clean(doc.contactLine, regular), regular, t.contactPt, width))
+		for (const l of wrap(regular.clean(doc.contactLine), regular, t.contactPt, width))
 			drawLine(l, regular, t.contactPt, t.contactColor, t.headerAlign, t.contactPt * 1.4);
 	}
 	if (doc.name || doc.contactLine) {
@@ -117,13 +132,13 @@ export async function renderPdf(
 	}
 
 	// Date
-	drawLine(clean(doc.date, regular), regular, t.bodyPt, t.bodyColor, 'left', lead);
+	drawLine(regular.clean(doc.date), regular, t.bodyPt, t.bodyColor, 'left', lead);
 	y -= t.paragraphGapPt;
 
 	// Body
 	for (const para of doc.paragraphs) {
 		for (const raw of para.split('\n')) {
-			for (const l of wrap(clean(raw, regular), regular, t.bodyPt, width))
+			for (const l of wrap(regular.clean(raw), regular, t.bodyPt, width))
 				drawLine(l, regular, t.bodyPt, t.bodyColor, 'left', lead);
 		}
 		y -= t.paragraphGapPt;

@@ -2,12 +2,11 @@ import { describe, expect, it } from 'vitest';
 import { SOON_FEATURES, getSoonFeature, isValidEmail } from './soon';
 
 describe('soon features', () => {
-	it('lists the five planned features', () => {
+	it('lists the four planned features', () => {
 		expect(SOON_FEATURES.map((f) => f.slug)).toEqual([
 			'job-fit-score',
 			'follow-up-letters',
 			'chrome-extension',
-			'multi-language',
 			'analytics',
 		]);
 	});

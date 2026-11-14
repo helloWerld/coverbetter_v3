@@ -6,6 +6,7 @@ import { useId, useState } from 'react';
 import { FaLock } from 'react-icons/fa6';
 import { generateLetterAction } from '@/app/dashboard/actions';
 import { MODEL_KEYS, MODEL_LABELS, type ModelKey } from '@/lib/model-access';
+import { DEFAULT_LANGUAGE, LANGUAGES, type LanguageCode } from '@/lib/languages';
 import type { Length, Tone } from '@/lib/prompt';
 import GenerateProgress from './GenerateProgress';
 import SegmentedControl from './SegmentedControl';
@@ -53,6 +54,7 @@ export default function GenerateForm({
 	const [job, setJob] = useState('');
 	const [tone, setTone] = useState<Tone>('professional');
 	const [length, setLength] = useState<Length>('standard');
+	const [language, setLanguage] = useState<LanguageCode>(DEFAULT_LANGUAGE);
 	const [model, setModel] = useState<ModelKey>('sonnet');
 	const [running, setRunning] = useState(false);
 	const [done, setDone] = useState(false);
@@ -76,6 +78,7 @@ export default function GenerateForm({
 		fd.set('jobDescription', job);
 		fd.set('tone', tone);
 		fd.set('length', length);
+		fd.set('language', language);
 		if (showModelPicker) fd.set('model', model);
 
 		try {
@@ -221,6 +224,23 @@ export default function GenerateForm({
 							</span>
 						</p>
 					)}
+					<div className="md:col-span-2">
+						<label htmlFor={`${id}-language`} className="mb-2 block text-sm font-medium text-base-100">
+							Letter language
+						</label>
+						<select
+							id={`${id}-language`}
+							value={language}
+							onChange={(e) => setLanguage(e.target.value as LanguageCode)}
+							className={`${field} min-h-11 md:max-w-sm`}
+						>
+							{LANGUAGES.map((l) => (
+								<option key={l.code} value={l.code}>
+									{l.label === l.nativeLabel ? l.label : `${l.label} (${l.nativeLabel})`}
+								</option>
+							))}
+						</select>
+					</div>
 					{showModelPicker && (
 						<div className="md:col-span-2">
 							<label htmlFor={`${id}-model`} className="mb-2 block text-sm font-medium text-base-100">

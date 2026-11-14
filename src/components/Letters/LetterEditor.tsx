@@ -7,6 +7,7 @@ import {
 	saveLetter,
 	setLetterTemplate,
 } from '@/app/dashboard/letters/actions';
+import type { LanguageCode } from '@/lib/languages';
 import { toLetterDoc, type TemplateId } from '@/lib/templates';
 import DownloadButtons from './DownloadButtons';
 import LetterPreview from './LetterPreview';
@@ -23,6 +24,7 @@ export default function LetterEditor({
 	initialTemplate,
 	initialJobTitle,
 	initialCompany,
+	language = 'en',
 	paid = false,
 }: Readonly<{
 	id: string;
@@ -30,6 +32,7 @@ export default function LetterEditor({
 	initialTemplate: TemplateId;
 	initialJobTitle: string;
 	initialCompany: string;
+	language?: LanguageCode;
 	/** Editing, templates, and export are paid features. Free users read and copy. */
 	paid?: boolean;
 }>) {
@@ -45,7 +48,7 @@ export default function LetterEditor({
 
 	const saved = useRef({ body: initialBody, jobTitle: initialJobTitle, company: initialCompany });
 	const area = useRef<HTMLTextAreaElement>(null);
-	const doc = useMemo(() => toLetterDoc(body, today), [body, today]);
+	const doc = useMemo(() => toLetterDoc(body, today, language), [body, today, language]);
 
 	const save = useCallback(async () => {
 		setStatus('saving');

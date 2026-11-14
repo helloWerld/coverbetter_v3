@@ -71,9 +71,8 @@ export const features: FeatureData[] = [
     id: 9,
     title: "Multi-language Letters",
     description:
-      "Write cover letters in languages other than English from the same resume.",
-    badge: "Coming soon",
-    soonSlug: "multi-language",
+      "Write your letter in 12 languages, including Spanish, French, German, Chinese, Japanese, and Arabic.",
+    badge: false,
   },
   {
     id: 10,

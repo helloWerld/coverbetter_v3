@@ -59,6 +59,7 @@ export const letters = sqliteTable(
 		tone: text('tone').notNull(),
 		length: text('length').notNull(),
 		template: text('template').notNull().default('classic'),
+		language: text('language').notNull().default('en'),
 		body: text('body').notNull(),
 		model: text('model').notNull().default(''),
 		createdAt: createdAt(),

@@ -24,12 +24,6 @@ export const SOON_FEATURES: SoonFeature[] = [
 			'Write a cover letter from the job post you are reading, without a copy and paste.',
 	},
 	{
-		slug: 'multi-language',
-		name: 'Multi-language',
-		description:
-			'Write cover letters in languages other than English from the same resume.',
-	},
-	{
 		slug: 'analytics',
 		name: 'Analytics',
 		description:

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import PageShell, { Card } from '@/components/Dashboard/PageShell';
 import DeleteLetterButton from '@/components/Letters/DeleteLetterButton';
 import { getEnv } from '@/lib/cf';
+import { getLanguage } from '@/lib/languages';
 import { listLetters } from '@/lib/letters';
 import { canPickModel, modelLabel } from '@/lib/model-access';
 import { requireUser } from '@/lib/user';
@@ -47,6 +48,12 @@ export default async function LettersPage() {
 										</time>
 										<span aria-hidden> · </span>
 										<span className="capitalize">{l.tone}</span>
+										{l.language !== 'en' && (
+											<>
+												<span aria-hidden> · </span>
+												<span>{getLanguage(l.language).label}</span>
+											</>
+										)}
 										{showModel && (
 											<>
 												<span aria-hidden> · </span>
