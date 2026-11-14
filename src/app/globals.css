@@ -84,3 +84,54 @@ a:focus {
 .dashboard-section {
 	@apply max-w-screen-lg mx-auto;
 }
+
+/* Blog post body. The HTML comes from Markdown, so the styles target plain tags. */
+.blog-prose {
+	@apply text-lg leading-8 text-base-100/90;
+}
+.blog-prose > * + * {
+	@apply mt-5;
+}
+.blog-prose h2 {
+	@apply mt-12 scroll-mt-24 text-2xl font-semibold leading-snug text-base-100 sm:text-3xl;
+}
+.blog-prose h3 {
+	@apply mt-8 scroll-mt-24 text-xl font-semibold text-base-100;
+}
+.blog-prose a {
+	@apply text-neutral underline underline-offset-2 hover:text-base-100;
+}
+.blog-prose strong {
+	@apply font-semibold text-base-100;
+}
+.blog-prose ul {
+	@apply list-disc space-y-2 pl-6;
+}
+.blog-prose ol {
+	@apply list-decimal space-y-2 pl-6;
+}
+.blog-prose li::marker {
+	@apply text-neutral;
+}
+.blog-prose blockquote {
+	@apply rounded-box border-l-4 border-secondary bg-base-300 px-5 py-4 text-base-100;
+}
+.blog-prose blockquote > * + * {
+	@apply mt-3;
+}
+.blog-prose table {
+	@apply block w-full overflow-x-auto border-collapse text-base;
+}
+.blog-prose th,
+.blog-prose td {
+	@apply border border-base-100/15 px-3 py-2 text-left align-top;
+}
+.blog-prose th {
+	@apply bg-base-300 font-semibold text-base-100;
+}
+.blog-prose code {
+	@apply rounded bg-base-300 px-1.5 py-0.5 text-base;
+}
+.blog-prose hr {
+	@apply my-10 border-base-100/10;
+}

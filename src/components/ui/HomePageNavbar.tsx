@@ -34,6 +34,11 @@ const navLinks = [
 		path: '/sample',
 		title: 'Sample',
 	},
+	{
+		id: 6,
+		path: '/blog',
+		title: 'Blog',
+	},
 ];
 
 const HomePageNavbar = () => {
