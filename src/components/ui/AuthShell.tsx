@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { FaHouse } from 'react-icons/fa6';
+import Logo from './Logo';
 
 /** Centered page for the Clerk sign-in and sign-up forms. */
 export default function AuthShell({
@@ -10,9 +10,9 @@ export default function AuthShell({
 			<Link
 				href="/"
 				aria-label="CoverBetter home"
-				className="absolute top-3 left-3 flex h-11 w-11 items-center justify-center rounded-lg text-base-100/70 hover:text-base-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-neutral"
+				className="absolute top-3 left-3 flex min-h-11 items-center rounded-lg px-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-neutral"
 			>
-				<FaHouse className="text-xl" aria-hidden="true" />
+				<Logo className="h-11 w-auto" priority />
 			</Link>
 			{children}
 		</main>

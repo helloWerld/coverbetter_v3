@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import React from 'react';
 import { Show, UserButton } from '@clerk/nextjs';
+import Logo from './Logo';
 
 const navLinks = [
 	{
@@ -41,8 +42,8 @@ const HomePageNavbar = () => {
 		<div className="h-fit absolute top-0 w-full max-w-full z-[100]">
 			<div className="navbar">
 				<div className="navbar-start">
-					<Link href="/" className="btn btn-ghost text-xl text-base-100">
-						CoverBetter
+					<Link href="/" className="btn btn-ghost h-auto min-h-11 px-2">
+						<Logo className="h-12 w-auto" priority />
 					</Link>
 				</div>
 				<div className="navbar-center hidden lg:flex">

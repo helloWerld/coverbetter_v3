@@ -1,16 +1,15 @@
 import React from "react";
-import { FaFileAlt } from "react-icons/fa";
 import Link from "next/link";
+import Logo from "./Logo";
 
 const Footer = () => {
   return (
     <footer className=" bg-primary text-primary-content p-10 border-t border-primary-content/10">
       <div className="footer max-w-screen-2xl mx-auto">
         <aside>
-          <div className="flex flex-row gap-1 my-4 ">
-            <FaFileAlt className="text-2xl rotate-12 mt-1" />
-            <p className="text-3xl font-semibold text-base-100">CoverBetter</p>
-          </div>
+          <Link href="/" className="my-4 inline-block">
+            <Logo className="h-14 w-auto" />
+          </Link>
         </aside>
         <nav aria-label="Site">
           <h6 className="footer-title">Product</h6>

@@ -15,6 +15,7 @@ import {
 import { UserButton } from '@clerk/nextjs';
 import { MAIN_NAV, type NavIcon } from './nav';
 import { SOON_FEATURES } from '@/lib/soon';
+import Logo from '@/components/ui/Logo';
 
 // Each icon matches its page: pen for writing, letter for letters, file for resumes,
 // card for billing, person for account.
@@ -67,9 +68,9 @@ export default function DashboardNav() {
 				</button>
 				<Link
 					href="/"
-					className="text-xl text-base-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-neutral"
+					className="flex min-h-11 items-center rounded-lg px-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-neutral"
 				>
-					CoverBetter
+					<Logo className="h-11 w-auto" priority />
 				</Link>
 				<div className="flex h-11 w-11 items-center justify-center">
 					<UserButton />
@@ -84,9 +85,9 @@ export default function DashboardNav() {
 			>
 				<Link
 					href="/"
-					className="mb-6 hidden px-3 text-2xl text-base-100 md:block focus-visible:outline focus-visible:outline-2 focus-visible:outline-neutral"
+					className="mb-6 hidden rounded-lg px-3 md:block focus-visible:outline focus-visible:outline-2 focus-visible:outline-neutral"
 				>
-					CoverBetter
+					<Logo className="h-16 w-auto" priority />
 				</Link>
 				<nav aria-label="Dashboard">
 					<ul className="flex flex-col gap-1">
