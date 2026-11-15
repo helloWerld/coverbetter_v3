@@ -11,7 +11,8 @@ Writes a cover letter from the job post in the current tab. It uses the saved re
    - `GET /api/ext/me`: email, letters left, style choice allowed, saved resumes.
    - `POST /api/ext/letters`: `{ resumeId, jobDescription, tone, length }`. Same checks and credits as the dashboard.
    - `DELETE /api/ext/token`: disconnects this browser.
-5. `extract.js` reads the job post: selected text, then JobPosting structured data, then known job sites, then the main page text. The user can edit the text before writing.
+5. `extract.js` reads the job post in this order: text the user highlighted (in any frame), then JobPosting structured data, then known job sites (LinkedIn, Indeed, Greenhouse, Lever, Workday, Ashby, Glassdoor). It never uses the whole page. When nothing matches, the box stays empty and the popup asks the user to highlight the job description.
+6. Right-click menu: highlight text, right-click, and pick "Write a cover letter from this text". `background.js` saves the text in `chrome.storage.session` and opens the popup. On older Chrome versions, the icon shows a "1" badge instead.
 
 The database keeps only the SHA-256 hash of each token (`extension_tokens`). A user can connect 5 browsers. Account deletion removes all tokens.
 

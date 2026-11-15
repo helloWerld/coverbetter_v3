@@ -1,4 +1,4 @@
-import { extractJobPost } from './extract.js';
+import { extractJobPost, readSelection } from './extract.js';
 
 const SITE = 'https://coverbetter.io';
 const $ = (id) => document.getElementById(id);
@@ -40,32 +40,68 @@ async function api(path, init = {}) {
 	return { ok: res.ok, status: res.status, data };
 }
 
-async function readJobPost() {
-	const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-	if (!tab || !tab.id || !/^https?:/.test(tab.url || '')) return null;
+const MIN_TEXT = 50;
+const PENDING_MAX_AGE_MS = 10 * 60 * 1000;
+
+/** Text saved by the right-click menu item (background.js) for this tab, if it is new. */
+async function takePendingSelection(tab) {
 	try {
-		const [res] = await chrome.scripting.executeScript({ target: { tabId: tab.id }, func: extractJobPost });
-		return res ? res.result : null;
+		const { pendingJob } = await chrome.storage.session.get('pendingJob');
+		if (!pendingJob) return null;
+		await chrome.storage.session.remove('pendingJob');
+		chrome.action.setBadgeText({ text: '', tabId: tab.id });
+		const fresh = Date.now() - pendingJob.at < PENDING_MAX_AGE_MS;
+		if (!fresh || pendingJob.tabId !== tab.id || pendingJob.description.length < MIN_TEXT) return null;
+		return pendingJob;
 	} catch {
-		// Chrome blocks scripts on some pages, for example the Chrome Web Store.
 		return null;
 	}
 }
 
+async function readJobPost() {
+	const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+	if (!tab || !tab.id || !/^https?:/.test(tab.url || '')) return null;
+
+	const pending = await takePendingSelection(tab);
+	try {
+		const target = { tabId: tab.id };
+		const [main] = await chrome.scripting.executeScript({ target, func: extractJobPost });
+		const job = main && main.result ? main.result : { title: '', company: '', description: '', source: 'none' };
+		if (pending) return { ...job, description: pending.description, source: 'selection' };
+
+		// Some career pages show the job in an iframe. Use the longest highlight in any frame.
+		if (job.source !== 'selection') {
+			const frames = await chrome.scripting
+				.executeScript({ target: { ...target, allFrames: true }, func: readSelection })
+				.catch(() => []);
+			const best = frames.map((f) => f.result || '').sort((a, b) => b.length - a.length)[0] || '';
+			if (best.length >= MIN_TEXT) return { ...job, description: best, source: 'selection' };
+		}
+		return job;
+	} catch {
+		// Chrome blocks scripts on some pages, for example the Chrome Web Store.
+		return pending ? { title: '', company: '', description: pending.description, source: 'selection' } : null;
+	}
+}
+
+const FOUND_HINT =
+	'We found the job description on this page. Check it. To use other text, highlight it on the page and click the CoverBetter icon again.';
+const HIGHLIGHT_HINT =
+	'Highlight the job description on the page, then click the CoverBetter icon again. You can also right-click the highlighted text, or paste the text here.';
+
 const SOURCE_HINTS = {
-	selection: 'From the text you selected. Check it before you write.',
-	'structured-data': 'Read from this job post. Check it before you write.',
-	site: 'Read from this job post. Check it before you write.',
-	page: 'This is all the text on the page. Delete the parts that are not the job post.',
+	selection: 'From the text you highlighted.',
+	'structured-data': FOUND_HINT,
+	site: FOUND_HINT,
+	none: HIGHLIGHT_HINT,
 };
 
 function fillJob(job) {
 	const parts = job ? [job.title, job.company].filter(Boolean) : [];
-	$('job-heading').textContent = parts.length ? parts.join(' at ') : 'Paste the job post below';
+	$('job-heading').textContent = parts.length ? parts.join(' at ') : 'Job post';
 	$('description').value = job ? job.description : '';
-	$('source-hint').textContent = job
-		? SOURCE_HINTS[job.source] || ''
-		: 'We could not read this page. Copy the job post and paste it here.';
+	$('description').placeholder = 'Highlight the job description on the page, or paste it here.';
+	$('source-hint').textContent = job ? SOURCE_HINTS[job.source] || HIGHLIGHT_HINT : HIGHLIGHT_HINT;
 }
 
 function letterCount(n) {
@@ -122,7 +158,9 @@ async function write(e) {
 	e.preventDefault();
 	showError('');
 	const description = $('description').value.trim();
-	if (description.length < 50) return showError('The job post is too short. Paste at least 50 characters.');
+	if (description.length < MIN_TEXT) {
+		return showError('Add the job description first. Highlight it on the page, or paste at least 50 characters.');
+	}
 
 	const button = $('write');
 	button.disabled = true;

@@ -1,11 +1,14 @@
 /**
  * Reads the job post on the current page.
  *
- * Chrome copies this function into the page with chrome.scripting.executeScript,
- * so it must not use anything from outside its own body.
+ * Chrome copies these functions into the page with chrome.scripting.executeScript,
+ * so they must not use anything from outside their own body.
  *
- * Order: text the user selected, then JobPosting structured data,
- * then known job sites, then the main part of the page.
+ * Order: text the user highlighted, then JobPosting structured data,
+ * then known job sites. The function never returns the whole page,
+ * because that text has menus, other jobs, and footers in it.
+ * When nothing matches, the description is empty and the popup asks
+ * the user to highlight the job description.
  *
  * @returns {{ title: string, company: string, description: string, source: string, url: string }}
  */
@@ -139,7 +142,7 @@ export function extractJobPost() {
 		company = m ? m[1] : '';
 	}
 
-	if (selected.length >= 200) return result(title, company, selected, 'selection');
+	if (selected.length >= 50) return result(title, company, selected, 'selection');
 	if (posting && posting.description) {
 		const d = htmlToText(posting.description);
 		if (d.length >= 200) return result(title, company, d, 'structured-data');
@@ -148,6 +151,22 @@ export function extractJobPost() {
 		const d = first(site.description);
 		if (d.length >= 200) return result(title, company, d, 'site');
 	}
-	const main = first(['main', '[role="main"]', 'article']) || textOf(document.body);
-	return result(title, company, main, 'page');
+	return result(title, company, '', 'none');
+}
+
+/**
+ * The text the user highlighted in this frame, with line breaks kept.
+ * Runs in every frame, because some career pages show the job in an iframe.
+ *
+ * @returns {string}
+ */
+export function readSelection() {
+	const sel = window.getSelection ? String(window.getSelection()) : '';
+	return sel
+		.replace(/\u00a0/g, ' ')
+		.replace(/[ \t]+/g, ' ')
+		.replace(/ *\n */g, '\n')
+		.replace(/\n{3,}/g, '\n\n')
+		.trim()
+		.slice(0, 20000);
 }
