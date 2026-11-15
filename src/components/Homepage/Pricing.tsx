@@ -9,8 +9,9 @@ const Pricing = () => {
         Intelligence
       </h2>
       <p className="homepage-subtitle">
-        Start free with 3 letters. Pay as you go at $1.50 a letter, or go Pro
-        for up to 200 letters a month.
+        Start free with 3 letters. Pay as you go at $1.50 a credit, or go Pro
+        for up to 200 credits a month. 1 credit writes 1 letter with its Job
+        Fit Score.
       </p>
       <div className="flex flex-col lg:flex-row gap-6 mt-12 z-20">
         <div className="w-80 h-fit rounded-lg border border-base-100/10 text-center bg-base-300">
@@ -37,7 +38,7 @@ const Pricing = () => {
           </div>
           <div className="flex flex-col items-center justify-center p-6">
             <ul className="list-image-checkmark">
-              <li>200 cover letters / month</li>
+              <li>200 credits / month</li>
               <li>Everything in Free</li>
               <li>Custom tone and length</li>
               <li>Editor and 3 templates</li>
@@ -55,14 +56,14 @@ const Pricing = () => {
         <div className="w-80 h-fit rounded-lg border border-base-100/10 text-center bg-base-300">
           <div className="flex flex-col items-center justify-center p-6 border-b border-primary">
             <h3 className="text-5xl">
-              $1.50<span className="text-xl"> / letter </span>
+              $1.50<span className="text-xl"> / credit </span>
             </h3>
             <p className="text-sm text-base-100/70 mt-1">Pay as you go</p>
           </div>
           <div className="flex flex-col items-center justify-center p-6">
             <ul className="list-image-checkmark">
-              <li>Pay only for the letters you write</li>
-              <li>Paid letters never expire</li>
+              <li>Pay only for the credits you use</li>
+              <li>Credits never expire</li>
               <li>Everything in Free</li>
               <li>Custom tone and length</li>
               <li>Editor and 3 templates</li>

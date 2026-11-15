@@ -128,7 +128,9 @@ const Faqs = () => {
             <div className="collapse-content">
               <p>
                 You get 3 letters free. After that, pay as you go at $1.50 a
-                letter, or go Pro at $19.97 a month for up to 200 letters a month.
+                credit, or go Pro at $19.97 a month for up to 200 credits a
+                month. 1 credit writes 1 letter with its Job Fit Score. A Job
+                Fit Score check without a letter also uses 1 credit.
               </p>
             </div>
           </div>
@@ -136,13 +138,13 @@ const Faqs = () => {
             <input
               type="radio"
               name="faq-accordion"
-              aria-label={"Do paid letters expire?"}
+              aria-label={"Do credits expire?"}
             />
             <div className="collapse-title text-xl font-medium">
-              Do paid letters expire?
+              Do credits expire?
             </div>
             <div className="collapse-content">
-              <p>No. Paid letters stay on your account until you use them.</p>
+              <p>No. Credits that you buy stay on your account until you use them.</p>
             </div>
           </div>
           <div className="collapse border border-neutral-content/50 bg-base-300">
@@ -172,7 +174,7 @@ const Faqs = () => {
             </div>
             <div className="collapse-content">
               <p>
-                Paid letters that you used are not refundable. If something went
+                Credits that you used are not refundable. If something went
                 wrong with a payment, write to support@coverbetter.io.
               </p>
             </div>
