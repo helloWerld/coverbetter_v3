@@ -93,3 +93,21 @@ export const stripeEvents = sqliteTable('stripe_events', {
 export type User = typeof users.$inferSelect;
 export type Resume = typeof resumes.$inferSelect;
 export type Letter = typeof letters.$inferSelect;
+
+/** Sign-in tokens for the Chrome extension. Only the SHA-256 hash is stored. */
+export const extensionTokens = sqliteTable(
+	'extension_tokens',
+	{
+		id: text('id').primaryKey(),
+		userId: text('user_id').notNull(),
+		tokenHash: text('token_hash').notNull(),
+		createdAt: createdAt(),
+		lastUsedAt: integer('last_used_at', { mode: 'timestamp' }),
+	},
+	(t) => [
+		unique('extension_tokens_hash_unique').on(t.tokenHash),
+		index('extension_tokens_user_idx').on(t.userId),
+	],
+);
+
+export type ExtensionToken = typeof extensionTokens.$inferSelect;

@@ -4,6 +4,7 @@ import {
 	HOURLY_LIMIT,
 	PRO_MONTHLY_CAP,
 	checkEntitlement,
+	lettersLeft,
 } from './entitlements';
 
 const now = new Date('2026-11-13T12:00:00Z');
@@ -87,5 +88,19 @@ describe('checkEntitlement', () => {
 			ok: false,
 			reason: 'no_credits',
 		});
+	});
+});
+
+describe('lettersLeft', () => {
+	it('counts free letters and credits', () => {
+		expect(lettersLeft(user(), now)).toBe(FREE_LETTERS);
+		expect(lettersLeft(user({ freeLettersUsed: 2, credits: 4 }), now)).toBe(5);
+		expect(lettersLeft(user({ freeLettersUsed: 9 }), now)).toBe(0);
+	});
+
+	it('counts the Pro allowance only while Pro is active', () => {
+		const pro = { plan: 'pro' as const, proLettersThisPeriod: 10, credits: 1 };
+		expect(lettersLeft(user({ ...pro, proPeriodEnd: future }), now)).toBe(PRO_MONTHLY_CAP - 10 + 1);
+		expect(lettersLeft(user({ ...pro, proPeriodEnd: past, freeLettersUsed: 3 }), now)).toBe(1);
 	});
 });

@@ -1,0 +1,26 @@
+{
+	"manifest_version": 3,
+	"name": "CoverBetter: Cover Letter from Any Job Post",
+	"short_name": "CoverBetter",
+	"version": "0.1.0",
+	"description": "Write a cover letter from the job post you are reading. Uses your saved CoverBetter resumes.",
+	"icons": {
+		"16": "icons/icon16.png",
+		"32": "icons/icon32.png",
+		"48": "icons/icon48.png",
+		"128": "icons/icon128.png"
+	},
+	"action": {
+		"default_title": "Write a cover letter for this job",
+		"default_popup": "popup.html"
+	},
+	"permissions": ["activeTab", "scripting", "storage"],
+	"host_permissions": ["https://coverbetter.io/*", "http://localhost:3600/*"],
+	"content_scripts": [
+		{
+			"matches": ["https://coverbetter.io/dashboard/extension*", "http://localhost:3600/dashboard/extension*"],
+			"js": ["connect.js"],
+			"run_at": "document_start"
+		}
+	]
+}

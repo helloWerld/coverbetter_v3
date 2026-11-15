@@ -1,0 +1,167 @@
+:root {
+	color-scheme: dark;
+	--bg: #000000;
+	--surface: #111111;
+	--line: rgba(255, 255, 255, 0.14);
+	--text: #ffffff;
+	--muted: rgba(255, 255, 255, 0.68);
+	--accent: #9333ea;
+	--accent-hover: #7e22ce;
+	--link: #a868e4;
+	--error: #fca5a5;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+body {
+	width: 380px;
+	margin: 0;
+	padding: 14px 16px 10px;
+	background: var(--bg);
+	color: var(--text);
+	font: 14px/1.45 system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+[hidden] {
+	display: none !important;
+}
+
+.top {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding-bottom: 10px;
+	border-bottom: 1px solid var(--line);
+	margin-bottom: 12px;
+}
+
+.brand {
+	font-weight: 600;
+}
+
+#account {
+	margin-left: auto;
+	max-width: 190px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+h1 {
+	font-size: 17px;
+	font-weight: 600;
+	margin: 0 0 8px;
+}
+
+p {
+	margin: 0 0 10px;
+}
+
+.muted {
+	color: var(--muted);
+}
+
+.small {
+	font-size: 12px;
+}
+
+.center {
+	text-align: center;
+}
+
+.job {
+	font-weight: 600;
+	margin-bottom: 10px;
+}
+
+label {
+	display: block;
+	font-size: 12px;
+	font-weight: 600;
+	color: var(--muted);
+	margin: 0 0 4px;
+}
+
+textarea,
+select {
+	width: 100%;
+	background: var(--surface);
+	color: var(--text);
+	border: 1px solid var(--line);
+	border-radius: 8px;
+	padding: 8px 10px;
+	font: inherit;
+	margin-bottom: 10px;
+}
+
+select {
+	min-height: 36px;
+}
+
+textarea {
+	resize: vertical;
+	font-size: 13px;
+}
+
+textarea:focus-visible,
+select:focus-visible,
+.btn:focus-visible,
+.link:focus-visible {
+	outline: 2px solid var(--link);
+	outline-offset: 2px;
+}
+
+.row {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 10px;
+}
+
+.btn {
+	width: 100%;
+	min-height: 40px;
+	border-radius: 8px;
+	border: 1px solid var(--line);
+	background: var(--surface);
+	color: var(--text);
+	font: inherit;
+	font-weight: 600;
+	cursor: pointer;
+	margin-bottom: 8px;
+}
+
+.btn.primary {
+	background: var(--accent);
+	border-color: var(--accent);
+}
+
+.btn.primary:hover {
+	background: var(--accent-hover);
+}
+
+.btn:disabled {
+	opacity: 0.6;
+	cursor: progress;
+}
+
+.link {
+	background: none;
+	border: 0;
+	padding: 4px 0;
+	color: var(--link);
+	font: inherit;
+	cursor: pointer;
+	text-decoration: underline;
+}
+
+.error {
+	color: var(--error);
+}
+
+.bottom {
+	display: flex;
+	justify-content: flex-end;
+	margin-top: 4px;
+}

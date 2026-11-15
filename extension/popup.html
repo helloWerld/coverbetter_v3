@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>CoverBetter</title>
+		<link rel="stylesheet" href="popup.css" />
+	</head>
+	<body>
+		<header class="top">
+			<img src="icons/icon32.png" alt="" width="20" height="20" />
+			<span class="brand">CoverBetter</span>
+			<span id="account" class="muted small"></span>
+		</header>
+
+		<main>
+			<section id="view-loading">
+				<p class="muted">Loading…</p>
+			</section>
+
+			<section id="view-connect" hidden>
+				<h1>Connect your account</h1>
+				<p>Sign in to CoverBetter and connect this extension. It then uses your saved resumes and your credits.</p>
+				<button id="connect" class="btn primary" type="button">Connect to CoverBetter</button>
+				<p class="muted small">After you connect, open this popup again.</p>
+			</section>
+
+			<section id="view-no-resume" hidden>
+				<h1>Add a resume first</h1>
+				<p>The extension writes letters from a saved resume. Add one on CoverBetter, then open this popup again.</p>
+				<button id="add-resume" class="btn primary" type="button">Add a resume</button>
+			</section>
+
+			<form id="view-form" hidden>
+				<p id="job-heading" class="job"></p>
+
+				<label for="description">Job post</label>
+				<textarea id="description" rows="7" required minlength="50" maxlength="20000"></textarea>
+				<p id="source-hint" class="muted small"></p>
+
+				<label for="resume">Resume</label>
+				<select id="resume"></select>
+
+				<div class="row">
+					<div>
+						<label for="tone">Tone</label>
+						<select id="tone">
+							<option value="professional">Professional</option>
+							<option value="friendly">Friendly</option>
+							<option value="confident">Confident</option>
+							<option value="enthusiastic">Enthusiastic</option>
+						</select>
+					</div>
+					<div>
+						<label for="length">Length</label>
+						<select id="length">
+							<option value="short">Short</option>
+							<option value="standard" selected>Standard</option>
+							<option value="detailed">Detailed</option>
+						</select>
+					</div>
+				</div>
+				<p id="style-hint" class="muted small" hidden>Free letters use Professional and Standard. Credits or Pro let you choose.</p>
+
+				<p id="form-error" class="error" role="alert" hidden></p>
+				<button id="write" class="btn primary" type="submit">Write my cover letter</button>
+				<p id="left" class="muted small center"></p>
+			</form>
+
+			<section id="view-result" hidden>
+				<p id="result-heading" class="job"></p>
+				<label for="letter">Your cover letter</label>
+				<textarea id="letter" rows="14" readonly></textarea>
+				<div class="row">
+					<button id="copy" class="btn primary" type="button">Copy letter</button>
+					<button id="open" class="btn" type="button">Edit on CoverBetter</button>
+				</div>
+				<p id="copy-status" class="muted small center" aria-live="polite"></p>
+				<button id="back" class="link" type="button">Write another letter</button>
+			</section>
+		</main>
+
+		<footer class="bottom">
+			<button id="disconnect" class="link small" type="button" hidden>Disconnect</button>
+		</footer>
+
+		<script type="module" src="popup.js"></script>
+	</body>
+</html>

@@ -83,3 +83,15 @@ export async function consumeEntitlement(
 	}
 	return rows.length > 0;
 }
+
+/** How many letters the user can still write now, before the hourly limit. */
+export function lettersLeft(user: UserFields, now: Date): number {
+	const proActive =
+		user.plan === 'pro' &&
+		user.proPeriodEnd !== null &&
+		user.proPeriodEnd.getTime() > now.getTime();
+	const included = proActive
+		? Math.max(0, PRO_MONTHLY_CAP - user.proLettersThisPeriod)
+		: Math.max(0, FREE_LETTERS - user.freeLettersUsed);
+	return included + Math.max(0, user.credits);
+}
