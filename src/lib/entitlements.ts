@@ -95,3 +95,27 @@ export function lettersLeft(user: UserFields, now: Date): number {
 		: Math.max(0, FREE_LETTERS - user.freeLettersUsed);
 	return included + Math.max(0, user.credits);
 }
+
+export type FitEntitlementResult =
+	| { ok: true; source: 'pro' | 'credit' }
+	| { ok: false; reason: 'rate_limit' | 'premium' | 'no_credits' | 'pro_cap' };
+
+/**
+ * The Job Fit Score tool on its own uses 1 paid credit: a Pro credit first,
+ * then a bought credit. Free letters never pay for it, because it is a paid feature.
+ */
+export function checkFitEntitlement(
+	user: UserFields,
+	now: Date,
+	usesInLastHour: number,
+): FitEntitlementResult {
+	if (usesInLastHour >= HOURLY_LIMIT) return { ok: false, reason: 'rate_limit' };
+	const proActive =
+		user.plan === 'pro' &&
+		user.proPeriodEnd !== null &&
+		user.proPeriodEnd.getTime() > now.getTime();
+	if (proActive && user.proLettersThisPeriod < PRO_MONTHLY_CAP) return { ok: true, source: 'pro' };
+	if (user.credits > 0) return { ok: true, source: 'credit' };
+	if (proActive) return { ok: false, reason: 'pro_cap' };
+	return { ok: false, reason: 'premium' };
+}

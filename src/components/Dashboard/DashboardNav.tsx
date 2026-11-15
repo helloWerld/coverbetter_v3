@@ -10,6 +10,7 @@ import {
 	FaEnvelopeOpenText,
 	FaFileLines,
 	FaCreditCard,
+	FaBullseye,
 } from 'react-icons/fa6';
 import { UserButton } from '@clerk/nextjs';
 import { ACCOUNT_NAV, MAIN_NAV, type NavIcon } from './nav';
@@ -17,11 +18,12 @@ import { SOON_FEATURES } from '@/lib/soon';
 import Logo from '@/components/ui/Logo';
 
 // Each icon matches its page: pen for writing, letter for letters, file for resumes,
-// card for billing.
+// target for the Job Fit Score, card for billing.
 const ICONS: Record<NavIcon, React.ComponentType<{ className?: string }>> = {
 	generate: FaPenNib,
 	letters: FaEnvelopeOpenText,
 	resumes: FaFileLines,
+	fit: FaBullseye,
 	billing: FaCreditCard,
 };
 

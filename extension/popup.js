@@ -104,6 +104,16 @@ function fillJob(job) {
 	$('source-hint').textContent = job ? SOURCE_HINTS[job.source] || HIGHLIGHT_HINT : HIGHLIGHT_HINT;
 }
 
+function showFit(fit) {
+	$('fit').hidden = !fit;
+	if (!fit) return;
+	$('fit-number').textContent = String(fit.score);
+	$('fit-label').textContent = fit.label;
+	$('fit-summary').textContent = fit.summary || '';
+	const gaps = [...(fit.missing || []), ...(fit.partial || []).map((p) => `${p} (partly)`)];
+	$('fit-gaps').textContent = gaps.length ? `Gaps: ${gaps.join(', ')}.` : 'No gaps found in the main requirements.';
+}
+
 function letterCount(n) {
 	if (n <= 0) return 'You have no letters left.';
 	return n === 1 ? '1 letter left.' : `${n} letters left.`;
@@ -186,7 +196,8 @@ async function write(e) {
 			}
 			return;
 		}
-		const { jobTitle, company, body, url } = res.data;
+		const { jobTitle, company, body, url, fit } = res.data;
+		showFit(fit);
 		lastLetterUrl = url;
 		$('result-heading').textContent = [jobTitle, company].filter(Boolean).join(' at ') || 'Your letter';
 		$('letter').value = body;

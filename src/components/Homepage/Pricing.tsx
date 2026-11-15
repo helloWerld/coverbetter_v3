@@ -42,6 +42,7 @@ const Pricing = () => {
               <li>Custom tone and length</li>
               <li>Editor and 3 templates</li>
               <li>PDF and DOCX export</li>
+              <li>AI Job Fit Score with each letter</li>
             </ul>
             <Link href="/sign-up" className="btn btn-secondary w-full mt-6">
               Get Pro
@@ -66,6 +67,7 @@ const Pricing = () => {
               <li>Custom tone and length</li>
               <li>Editor and 3 templates</li>
               <li>PDF and DOCX export</li>
+              <li>AI Job Fit Score with each letter</li>
             </ul>
             <Link href="/sign-up" className="btn btn-primary w-full mt-6">
               Pay as You Go

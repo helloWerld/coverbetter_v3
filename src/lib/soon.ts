@@ -6,12 +6,6 @@ export type SoonFeature = {
 
 export const SOON_FEATURES: SoonFeature[] = [
 	{
-		slug: 'job-fit-score',
-		name: 'AI Job Fit Score',
-		description:
-			'See how well your resume matches a job post before you apply, with a list of gaps.',
-	},
-	{
 		slug: 'follow-up-letters',
 		name: 'Follow-up Letters',
 		description:

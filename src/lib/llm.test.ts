@@ -47,7 +47,7 @@ describe('generateLetter', () => {
 		const body = JSON.parse(init.body);
 		expect(body).toMatchObject({
 			model: ANTHROPIC_MODEL,
-			max_tokens: 2000,
+			max_tokens: 2600,
 			// Thinking before the answer used the whole token budget and cut letters off.
 			thinking: { type: 'between_tools' },
 			system: 'SYS',

@@ -9,12 +9,12 @@ describe("homepage features data", () => {
       .map((f) => f.soonSlug)
       .sort();
     expect(slugs).toEqual(SOON_FEATURES.map((s) => s.slug).sort());
-    expect(slugs).toHaveLength(4);
+    expect(slugs).toHaveLength(3);
   });
 
   it("gives no badge or soon slug to built features", () => {
     const built = features.filter((f) => !f.badge);
-    expect(built).toHaveLength(6);
+    expect(built).toHaveLength(7);
     for (const f of built) expect(f.soonSlug).toBeUndefined();
   });
 });

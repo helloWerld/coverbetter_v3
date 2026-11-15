@@ -165,3 +165,30 @@ select:focus-visible,
 	justify-content: flex-end;
 	margin-top: 4px;
 }
+
+.fit {
+	border: 1px solid var(--line);
+	border-radius: 8px;
+	background: var(--surface);
+	padding: 10px 12px;
+	margin-bottom: 10px;
+}
+
+.fit p {
+	margin-bottom: 6px;
+}
+
+.fit-score {
+	font-variant-numeric: tabular-nums;
+}
+
+#fit-number {
+	font-size: 22px;
+	font-weight: 600;
+}
+
+.fit-label {
+	color: var(--link);
+	font-weight: 600;
+	margin-left: 6px;
+}

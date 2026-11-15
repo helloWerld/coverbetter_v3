@@ -8,6 +8,13 @@ const STEPS = [
 	{ upTo: 101, label: 'Writing your letter' },
 ];
 
+// Paid letters also get the Job Fit Score.
+const FIT_STEPS = [
+	{ upTo: 20, label: 'Reading your resume' },
+	{ upTo: 45, label: 'Checking how your resume fits the job' },
+	{ upTo: 101, label: 'Writing your letter' },
+];
+
 const TIME_CONSTANT_MS = 7000;
 const CEILING = 90;
 
@@ -15,7 +22,7 @@ const CEILING = 90;
  * Eases toward 90 % (about 85 % after 20 s), then jumps to 100 % when `done` is true.
  * The bar tells the user the work is moving. It does not measure real progress.
  */
-export default function GenerateProgress({ done }: Readonly<{ done: boolean }>) {
+export default function GenerateProgress({ done, fit = false }: Readonly<{ done: boolean; fit?: boolean }>) {
 	const [pct, setPct] = useState(0);
 
 	useEffect(() => {
@@ -31,7 +38,8 @@ export default function GenerateProgress({ done }: Readonly<{ done: boolean }>) 
 		return () => clearInterval(id);
 	}, [done]);
 
-	const step = STEPS.find((s) => pct < s.upTo) ?? STEPS[STEPS.length - 1];
+	const steps = fit ? FIT_STEPS : STEPS;
+	const step = steps.find((s) => pct < s.upTo) ?? steps[steps.length - 1];
 
 	return (
 		<div className="flex flex-col gap-2">

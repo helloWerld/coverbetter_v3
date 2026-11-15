@@ -47,9 +47,8 @@ export const features: FeatureData[] = [
     id: 5,
     title: "AI Job Fit Score",
     description:
-      "See how well your resume matches a job post before you apply, with a list of gaps.",
-    badge: "Coming soon",
-    soonSlug: "job-fit-score",
+      "With credits or Pro, every letter comes with a score from 0 to 100 and the job requirements your resume meets and misses.",
+    badge: false,
   },
   {
     id: 7,

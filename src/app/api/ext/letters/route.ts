@@ -1,4 +1,5 @@
 import { UNAUTHORIZED, json, userFromRequest } from '@/lib/extension-auth';
+import { BAND_LABEL, fitBand } from '@/lib/fit';
 import { generateForUser } from '@/lib/generate';
 
 /** Writes a letter from a saved resume and the job post the extension read. */
@@ -35,6 +36,16 @@ export async function POST(req: Request) {
 		jobTitle: out.jobTitle,
 		company: out.company,
 		body: out.body,
+		// Null for free letters.
+		fit: out.fit
+			? {
+					score: out.fit.score,
+					label: BAND_LABEL[fitBand(out.fit.score)],
+					summary: out.fit.summary,
+					missing: out.fit.requirements.filter((r) => r.status === 'missing').map((r) => r.requirement),
+					partial: out.fit.requirements.filter((r) => r.status === 'partial').map((r) => r.requirement),
+				}
+			: null,
 		url: `${new URL(req.url).origin}/dashboard/letters/${out.letterId}`,
 	});
 }

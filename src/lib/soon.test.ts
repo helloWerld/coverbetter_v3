@@ -2,9 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { SOON_FEATURES, getSoonFeature, isValidEmail } from './soon';
 
 describe('soon features', () => {
-	it('lists the four planned features', () => {
+	it('lists the three planned features', () => {
 		expect(SOON_FEATURES.map((f) => f.slug)).toEqual([
-			'job-fit-score',
 			'follow-up-letters',
 			'chrome-extension',
 			'analytics',
@@ -12,12 +11,12 @@ describe('soon features', () => {
 	});
 
 	it('maps a slug to its feature name', () => {
-		expect(getSoonFeature('job-fit-score')?.name).toBe('AI Job Fit Score');
 		expect(getSoonFeature('analytics')?.name).toBe('Analytics');
 	});
 
-	it('no longer lists the ATS checker', () => {
+	it('no longer lists the ATS checker or the live Job Fit Score', () => {
 		expect(getSoonFeature('ats-resume-checker')).toBeUndefined();
+		expect(getSoonFeature('job-fit-score')).toBeUndefined();
 	});
 
 	it('returns undefined for an unknown slug', () => {

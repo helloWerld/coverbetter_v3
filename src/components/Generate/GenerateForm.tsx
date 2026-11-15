@@ -237,7 +237,7 @@ export default function GenerateForm({
 						<p className="flex items-start gap-2 text-sm text-base-100/80 md:col-span-2">
 							<FaLock aria-hidden className="mt-0.5 shrink-0 text-accent" />
 							<span>
-								Letters from free credits use Professional tone and Standard length.{' '}
+								Letters from free credits use Professional tone and Standard length, with no Job Fit Score.{' '}
 								<Link href="/dashboard/billing" className={link}>
 									Get Pro or buy credits
 								</Link>{' '}
@@ -284,7 +284,7 @@ export default function GenerateForm({
 			)}
 
 			{running ? (
-				<GenerateProgress done={done} />
+				<GenerateProgress done={done} fit={paid} />
 			) : (
 				<button
 					type="submit"

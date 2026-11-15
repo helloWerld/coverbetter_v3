@@ -11,8 +11,9 @@ const ANTHROPIC_MODELS: Record<ModelKey, { id: string; thinking: { type: string 
 // TODO: verify the exact model ID in the OpenAI docs before launch.
 export const OPENAI_FALLBACK_MODEL = 'gpt-6.1-sol';
 
-// The letter is about 300 to 700 output tokens. 2000 leaves room for long letters.
-const MAX_TOKENS = 2000;
+// The letter is about 300 to 700 output tokens. The fit block adds about 300.
+// 2600 leaves room for long letters.
+const MAX_TOKENS = 2600;
 const TIMEOUT_MS = 60_000;
 
 type Env = Pick<

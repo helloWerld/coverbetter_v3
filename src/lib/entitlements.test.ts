@@ -4,6 +4,7 @@ import {
 	HOURLY_LIMIT,
 	PRO_MONTHLY_CAP,
 	checkEntitlement,
+	checkFitEntitlement,
 	lettersLeft,
 } from './entitlements';
 
@@ -102,5 +103,32 @@ describe('lettersLeft', () => {
 		const pro = { plan: 'pro' as const, proLettersThisPeriod: 10, credits: 1 };
 		expect(lettersLeft(user({ ...pro, proPeriodEnd: future }), now)).toBe(PRO_MONTHLY_CAP - 10 + 1);
 		expect(lettersLeft(user({ ...pro, proPeriodEnd: past, freeLettersUsed: 3 }), now)).toBe(1);
+	});
+});
+
+describe('checkFitEntitlement', () => {
+	it('blocks free users, even with free letters left', () => {
+		expect(checkFitEntitlement(user(), now, 0)).toEqual({ ok: false, reason: 'premium' });
+		expect(checkFitEntitlement(user({ freeLettersUsed: 3 }), now, 0)).toEqual({ ok: false, reason: 'premium' });
+	});
+
+	it('uses a bought credit, not a free letter', () => {
+		expect(checkFitEntitlement(user({ credits: 2 }), now, 0)).toEqual({ ok: true, source: 'credit' });
+	});
+
+	it('uses Pro first, then credits, then stops at the cap', () => {
+		const pro = { plan: 'pro' as const, proPeriodEnd: future };
+		expect(checkFitEntitlement(user(pro), now, 0)).toEqual({ ok: true, source: 'pro' });
+		const capped = { ...pro, proLettersThisPeriod: PRO_MONTHLY_CAP };
+		expect(checkFitEntitlement(user({ ...capped, credits: 1 }), now, 0)).toEqual({ ok: true, source: 'credit' });
+		expect(checkFitEntitlement(user(capped), now, 0)).toEqual({ ok: false, reason: 'pro_cap' });
+	});
+
+	it('treats an ended Pro period as free', () => {
+		expect(checkFitEntitlement(user({ plan: 'pro', proPeriodEnd: past }), now, 0)).toEqual({ ok: false, reason: 'premium' });
+	});
+
+	it('applies the hourly limit', () => {
+		expect(checkFitEntitlement(user({ credits: 5 }), now, HOURLY_LIMIT)).toEqual({ ok: false, reason: 'rate_limit' });
 	});
 });

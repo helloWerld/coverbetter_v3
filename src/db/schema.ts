@@ -62,12 +62,34 @@ export const letters = sqliteTable(
 		language: text('language').notNull().default('en'),
 		body: text('body').notNull(),
 		model: text('model').notNull().default(''),
+		/** AI Job Fit Score, 0 to 100. Empty for free letters and older letters. */
+		fitScore: integer('fit_score'),
+		/** Summary and requirement list, see src/lib/fit.ts. */
+		fitJson: text('fit_json'),
 		createdAt: createdAt(),
 		updatedAt: integer('updated_at', { mode: 'timestamp' })
 			.notNull()
 			.default(sql`(unixepoch())`),
 	},
 	(t) => [index('letters_user_idx').on(t.userId)],
+);
+
+/** Job Fit Score checks run on their own, without a letter. Each one uses 1 credit. */
+export const fitChecks = sqliteTable(
+	'fit_checks',
+	{
+		id: text('id').primaryKey(),
+		userId: text('user_id').notNull(),
+		resumeId: text('resume_id'),
+		jobTitle: text('job_title').notNull().default(''),
+		company: text('company').notNull().default(''),
+		jobDescription: text('job_description').notNull(),
+		fitScore: integer('fit_score').notNull(),
+		fitJson: text('fit_json').notNull(),
+		model: text('model').notNull().default(''),
+		createdAt: createdAt(),
+	},
+	(t) => [index('fit_checks_user_idx').on(t.userId)],
 );
 
 export const waitlist = sqliteTable(
@@ -93,6 +115,7 @@ export const stripeEvents = sqliteTable('stripe_events', {
 export type User = typeof users.$inferSelect;
 export type Resume = typeof resumes.$inferSelect;
 export type Letter = typeof letters.$inferSelect;
+export type FitCheck = typeof fitChecks.$inferSelect;
 
 /** Sign-in tokens for the Chrome extension. Only the SHA-256 hash is stored. */
 export const extensionTokens = sqliteTable(

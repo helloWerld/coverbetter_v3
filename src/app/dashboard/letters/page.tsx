@@ -2,6 +2,7 @@ import Link from 'next/link';
 import PageShell, { Card } from '@/components/Dashboard/PageShell';
 import DeleteLetterButton from '@/components/Letters/DeleteLetterButton';
 import { getEnv } from '@/lib/cf';
+import { BAND_LABEL, fitBand } from '@/lib/fit';
 import { getLanguage } from '@/lib/languages';
 import { listLetters } from '@/lib/letters';
 import { canPickModel, modelLabel } from '@/lib/model-access';
@@ -52,6 +53,14 @@ export default async function LettersPage() {
 											<>
 												<span aria-hidden> · </span>
 												<span>{getLanguage(l.language).label}</span>
+											</>
+										)}
+										{l.fitScore !== null && (
+											<>
+												<span aria-hidden> · </span>
+												<span className="text-neutral">
+													Fit {l.fitScore}/100 ({BAND_LABEL[fitBand(l.fitScore)]})
+												</span>
 											</>
 										)}
 										{showModel && (

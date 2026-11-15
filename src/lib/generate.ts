@@ -1,7 +1,7 @@
 import 'server-only';
 import { and, count, eq, gt } from 'drizzle-orm';
 import { z } from 'zod';
-import { letters, resumes, type User } from '@/db/schema';
+import { fitChecks, letters, resumes, type User } from '@/db/schema';
 import { generateOptions, hasPaidFeatures } from '@/lib/access';
 import { getDb, getEnv } from '@/lib/cf';
 import { checkEntitlement, consumeEntitlement } from '@/lib/entitlements';
@@ -9,11 +9,20 @@ import { generateLetter } from '@/lib/llm';
 import { canPickModel, resolveModelKey } from '@/lib/model-access';
 import { LANGUAGE_CODES } from '@/lib/languages';
 import { LENGTHS, TONES, buildPrompt, parseModelOutput } from '@/lib/prompt';
+import { serializeFit, type FitResult } from '@/lib/fit';
 
 export type GenerateErrorCode = 'no_credits' | 'rate_limit' | 'pro_cap';
 
 export type GenerateOutcome =
-	| { ok: true; letterId: string; jobTitle: string; company: string; body: string }
+	| {
+			ok: true;
+			letterId: string;
+			jobTitle: string;
+			company: string;
+			body: string;
+			/** Null for free letters, and when the model's fit block was not valid. */
+			fit: FitResult | null;
+	  }
 	| { ok: false; error: string; code?: GenerateErrorCode };
 
 /** Raw input from the dashboard form or the Chrome extension. */
@@ -91,15 +100,7 @@ export async function generateForUser(
 	}
 
 	const now = new Date();
-	const [{ n }] = await db
-		.select({ n: count() })
-		.from(letters)
-		.where(
-			and(
-				eq(letters.userId, user.id),
-				gt(letters.createdAt, new Date(now.getTime() - 60 * 60 * 1000)),
-			),
-		);
+	const n = await usesInLastHour(user.id, now);
 
 	const check = checkEntitlement(user, now, n);
 	if (!check.ok) {
@@ -107,8 +108,10 @@ export async function generateForUser(
 	}
 
 	// Free users always get Professional and Standard, whatever the form sent.
+	// The Job Fit Score is also a paid feature.
+	const paid = hasPaidFeatures(user, now);
 	const { tone, length } = generateOptions(
-		hasPaidFeatures(user, now),
+		paid,
 		input.tone as (typeof TONES)[number],
 		input.length as (typeof LENGTHS)[number],
 	);
@@ -119,6 +122,7 @@ export async function generateForUser(
 		tone,
 		length,
 		language: input.language,
+		fit: paid,
 	});
 
 	let result;
@@ -165,6 +169,8 @@ export async function generateForUser(
 		language: input.language,
 		body: parsedOut.body,
 		model: result.model,
+		fitScore: parsedOut.fit?.score ?? null,
+		fitJson: parsedOut.fit ? serializeFit(parsedOut.fit) : null,
 	});
 
 	return {
@@ -173,5 +179,23 @@ export async function generateForUser(
 		jobTitle: parsedOut.jobTitle,
 		company: parsedOut.company,
 		body: parsedOut.body,
+		fit: parsedOut.fit,
 	};
+}
+
+/** Letters plus fit checks in the last hour, for the hourly limit. */
+export async function usesInLastHour(userId: string, now: Date): Promise<number> {
+	const db = getDb();
+	const since = new Date(now.getTime() - 60 * 60 * 1000);
+	const [[l], [f]] = await Promise.all([
+		db
+			.select({ n: count() })
+			.from(letters)
+			.where(and(eq(letters.userId, userId), gt(letters.createdAt, since))),
+		db
+			.select({ n: count() })
+			.from(fitChecks)
+			.where(and(eq(fitChecks.userId, userId), gt(fitChecks.createdAt, since))),
+	]);
+	return l.n + f.n;
 }
