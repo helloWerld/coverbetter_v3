@@ -39,6 +39,11 @@ const navLinks = [
 		path: '/blog',
 		title: 'Blog',
 	},
+	{
+		id: 7,
+		path: '/tools',
+		title: 'Tools',
+	},
 ];
 
 const HomePageNavbar = () => {
@@ -52,7 +57,7 @@ const HomePageNavbar = () => {
 					</Link>
 				</div>
 				<div className="navbar-center hidden lg:flex">
-					<ul className="menu menu-horizontal px-1">
+					<ul className="menu menu-horizontal px-1 [&>li>a]:px-2.5 xl:[&>li>a]:px-4">
 						{pathname === '/' &&
 							navLinks.map((link) => (
 								<li

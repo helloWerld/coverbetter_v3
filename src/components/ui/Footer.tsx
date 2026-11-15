@@ -28,6 +28,9 @@ const Footer = () => {
           <Link href="/blog" className="link link-hover">
             Blog
           </Link>
+          <Link href="/tools" className="link link-hover">
+            Free tools
+          </Link>
           <Link href="/sign-in" className="link link-hover">
             Sign in
           </Link>
