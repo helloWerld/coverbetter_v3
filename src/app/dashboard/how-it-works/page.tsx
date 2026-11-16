@@ -12,22 +12,28 @@ const STEPS = [
 		action: 'Open career profile',
 	},
 	{
-		title: 'Add the jobs you want',
-		text: 'Add an application for each job. Paste the job post, because the resume, the letter, and the interview prep use it. Each cover letter that you write also adds an application.',
+		title: 'Add your resumes',
+		text: 'Upload up to 5 resumes, for example one for each type of job. The tailored resumes that you build for each job are also kept on this page.',
+		href: '/dashboard/resumes',
+		action: 'Open resumes',
+	},
+	{
+		title: 'Save the roles you find',
+		text: 'Add an application for each role that you want. Paste the full job post, because the fit score, the resume, the letter, and the interview prep use it.',
 		href: '/dashboard/applications/new',
 		action: 'Add an application',
 	},
 	{
-		title: 'Build a tailored resume',
-		text: 'On the application, select "Build the resume". Pick the jobs and bullets that match this job post, and put them in order. Then download a PDF or a Word file.',
-		href: '/dashboard/applications',
-		action: 'See your applications',
+		title: 'Check the fit of your saved roles',
+		text: 'Pick several saved roles and check them against one resume or your career profile. The best fit comes first. Each check uses 1 credit.',
+		href: '/dashboard/fit-score#saved-roles',
+		action: 'Check your saved roles',
 	},
 	{
-		title: 'Write the cover letter',
-		text: 'The AI writes a letter from your resume and the job post. Edit it, pick a template, and download it. Paid letters also show your Job Fit Score.',
-		href: '/dashboard',
-		action: 'Write a letter',
+		title: 'Build the resume and write the letter',
+		text: 'For the best roles, pick the jobs and bullets that match the post, then download the resume. Write the cover letter. With credits, the AI does both in one step.',
+		href: '/dashboard/applications',
+		action: 'See your applications',
 	},
 	{
 		title: 'Apply, then update the status',
@@ -37,9 +43,9 @@ const STEPS = [
 	},
 	{
 		title: 'Follow up and say thank you',
-		text: 'The Applications page shows "Due now" when a follow-up or a thank-you letter is due. Start from a free template, or let the AI write it. Then send it from your own email.',
-		href: '/dashboard/applications',
-		action: 'See what is due',
+		text: 'The Follow-ups page shows each follow-up and thank-you letter that is due. Start from a free template, or let the AI write it. Then send it from your own email.',
+		href: '/dashboard/follow-ups',
+		action: 'Open follow-ups',
 	},
 	{
 		title: 'Prepare for the interview',
@@ -67,7 +73,7 @@ const FREE = [
 const CREDIT = [
 	'A cover letter, with the Job Fit Score for paid letters',
 	'The AI package: tailored resume, cover letter, and Job Fit Score together',
-	'A Job Fit Score check without a letter',
+	'A Job Fit Score check for one saved role or one job post',
 	'A follow-up or thank-you letter written by AI',
 	'An AI interview prep pack for one job',
 ];
@@ -75,7 +81,7 @@ const CREDIT = [
 export default async function HowItWorksPage() {
 	await requireUser();
 	return (
-		<PageShell title="How it works" intro="CoverBetter keeps your whole job search in one place. Do these steps for each job.">
+		<PageShell title="How it works" intro="CoverBetter keeps your whole job search in one place. The sidebar groups the pages in the same order.">
 			<ol className="grid gap-4 md:grid-cols-2">
 				{STEPS.map((s, i) => (
 					<li key={s.title} className="flex flex-col gap-3 rounded-box border border-base-100/10 bg-gradient-to-br from-primary to-base-300 p-5">

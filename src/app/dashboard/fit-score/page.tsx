@@ -3,9 +3,12 @@ import PageShell, { Card } from '@/components/Dashboard/PageShell';
 import FitScoreCard from '@/components/Fit/FitScoreCard';
 import { hasPaidFeatures } from '@/lib/access';
 import { deserializeFit } from '@/lib/fit';
-import { listFitChecks } from '@/lib/fit-check';
+import { listApplications } from '@/lib/applications/db';
+import { listFitChecks, PROFILE_RESUME_ID } from '@/lib/fit-check';
+import { hasProfile } from '@/lib/profile/db';
 import { listResumes } from '@/lib/resumes';
 import { requireUser } from '@/lib/user';
+import BatchFitForm from './BatchFitForm';
 import FitCheckForm from './FitCheckForm';
 
 export const metadata = { title: 'Job Fit Score | CoverBetter' };
@@ -15,16 +18,32 @@ const dateFmt = new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'shor
 export default async function FitScorePage() {
 	const user = await requireUser();
 	const paid = hasPaidFeatures(user, new Date());
-	const [resumes, checks] = await Promise.all([listResumes(user.id), listFitChecks(user.id)]);
+	const [resumes, checks, apps, profile] = await Promise.all([
+		listResumes(user.id),
+		listFitChecks(user.id),
+		listApplications(user.id),
+		hasProfile(user.id),
+	]);
+	// Base resumes only. A tailored resume belongs to one job.
+	const baseResumes = resumes.filter((r) => r.kind !== 'tailored').map((r) => ({ id: r.id, title: r.title }));
+	const batchResumes = profile ? [{ id: PROFILE_RESUME_ID, title: 'My career profile' }, ...baseResumes] : baseResumes;
+	const savedRoles = apps
+		.filter((a) => a.status === 'saved')
+		.map((a) => ({
+			id: a.id,
+			label: [a.jobTitle || 'Untitled job', a.company].filter(Boolean).join(' at '),
+			fitScore: a.fitScore,
+			hasPost: a.jobDescription.trim().length >= 50,
+		}));
 
 	return (
 		<PageShell
 			title="Job Fit Score"
-			intro="See how well one of your resumes fits a job post, before you write a letter."
+			intro="See how well your resume fits a job, before you build a tailored resume or write a letter."
 		>
 			<Card title="How credits work">
 				<p>
-					A check on this page uses 1 credit. When you write a cover letter with credits or Pro, the letter comes
+					Each check uses 1 credit. When you write a cover letter with credits or Pro, the letter comes
 					with a Job Fit Score at no extra cost. That is 1 credit in total for the letter and the score.
 				</p>
 			</Card>
@@ -36,15 +55,26 @@ export default async function FitScorePage() {
 						See plans
 					</Link>
 				</Card>
-			) : resumes.length === 0 ? (
+			) : batchResumes.length === 0 ? (
 				<Card title="Add a resume first">
-					<p>The check compares a saved resume with the job post.</p>
+					<p>The check compares your resume or your career profile with the job post.</p>
 					<Link href="/dashboard/resumes" className="btn btn-secondary mt-4 min-h-11">
 						Add a resume
 					</Link>
 				</Card>
 			) : (
-				<FitCheckForm resumes={resumes.map((r) => ({ id: r.id, title: r.title }))} />
+				<>
+					<BatchFitForm roles={savedRoles} resumes={batchResumes} />
+					{baseResumes.length > 0 && (
+						<section aria-labelledby="one-post" className="flex flex-col gap-3">
+							<h2 id="one-post" className="text-2xl font-extralight text-base-100">
+								Check one job post
+							</h2>
+							<p className="text-base-100/75">Paste a job post that you did not save as an application.</p>
+							<FitCheckForm resumes={baseResumes} />
+						</section>
+					)}
+				</>
 			)}
 
 			{checks.length > 0 && (
