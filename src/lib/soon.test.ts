@@ -2,21 +2,18 @@ import { describe, expect, it } from 'vitest';
 import { SOON_FEATURES, getSoonFeature, isValidEmail } from './soon';
 
 describe('soon features', () => {
-	it('lists the three planned features', () => {
-		expect(SOON_FEATURES.map((f) => f.slug)).toEqual([
-			'follow-up-letters',
-			'chrome-extension',
-			'analytics',
-		]);
+	it('lists the one planned feature', () => {
+		expect(SOON_FEATURES.map((f) => f.slug)).toEqual(['chrome-extension']);
 	});
 
 	it('maps a slug to its feature name', () => {
-		expect(getSoonFeature('analytics')?.name).toBe('Analytics');
+		expect(getSoonFeature('chrome-extension')?.name).toBe('Chrome Extension');
 	});
 
-	it('no longer lists the ATS checker or the live Job Fit Score', () => {
-		expect(getSoonFeature('ats-resume-checker')).toBeUndefined();
-		expect(getSoonFeature('job-fit-score')).toBeUndefined();
+	it('no longer lists the features that are live', () => {
+		for (const slug of ['ats-resume-checker', 'job-fit-score', 'analytics', 'follow-up-letters']) {
+			expect(getSoonFeature(slug)).toBeUndefined();
+		}
 	});
 
 	it('returns undefined for an unknown slug', () => {

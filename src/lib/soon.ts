@@ -6,22 +6,10 @@ export type SoonFeature = {
 
 export const SOON_FEATURES: SoonFeature[] = [
 	{
-		slug: 'follow-up-letters',
-		name: 'Follow-up Letters',
-		description:
-			'Write a short follow-up note after you apply or after an interview.',
-	},
-	{
 		slug: 'chrome-extension',
 		name: 'Chrome Extension',
 		description:
 			'Write a cover letter from the job post you are reading, without a copy and paste.',
-	},
-	{
-		slug: 'analytics',
-		name: 'Analytics',
-		description:
-			'See how many letters you wrote, which tones you use, and where you apply.',
 	},
 ];
 

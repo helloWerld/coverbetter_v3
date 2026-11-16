@@ -39,6 +39,8 @@ export default function GenerateForm({
 	empty,
 	showModelPicker = false,
 	paid = false,
+	defaults,
+	application,
 }: Readonly<{
 	resumes: SavedResume[];
 	status: string;
@@ -46,15 +48,22 @@ export default function GenerateForm({
 	showModelPicker?: boolean;
 	/** Tone and length are paid features. Free users get Professional and Standard. */
 	paid?: boolean;
+	/** From Settings. */
+	defaults?: { tone: Tone; length: Length; language: LanguageCode; resumeId: string };
+	/** When the letter is for an application: its id, label, job post, and resume. */
+	application?: { id: string; label: string; jobDescription: string; resumeId: string | null };
 }>) {
 	const router = useRouter();
 	const id = useId();
-	const [resumeId, setResumeId] = useState(resumes[0]?.id ?? PASTE);
+	const pick = (rid: string | null | undefined) => (rid && resumes.some((r) => r.id === rid) ? rid : '');
+	const [resumeId, setResumeId] = useState(
+		pick(application?.resumeId) || pick(defaults?.resumeId) || resumes[0]?.id || PASTE,
+	);
 	const [pasted, setPasted] = useState('');
-	const [job, setJob] = useState('');
-	const [tone, setTone] = useState<Tone>('professional');
-	const [length, setLength] = useState<Length>('standard');
-	const [language, setLanguage] = useState<LanguageCode>(DEFAULT_LANGUAGE);
+	const [job, setJob] = useState(application?.jobDescription ?? '');
+	const [tone, setTone] = useState<Tone>(paid ? (defaults?.tone ?? 'professional') : 'professional');
+	const [length, setLength] = useState<Length>(paid ? (defaults?.length ?? 'standard') : 'standard');
+	const [language, setLanguage] = useState<LanguageCode>(defaults?.language ?? DEFAULT_LANGUAGE);
 	const [model, setModel] = useState<ModelKey>('sonnet');
 	const [running, setRunning] = useState(false);
 	const [done, setDone] = useState(false);
@@ -79,6 +88,7 @@ export default function GenerateForm({
 		fd.set('tone', tone);
 		fd.set('length', length);
 		fd.set('language', language);
+		if (application) fd.set('applicationId', application.id);
 		if (showModelPicker) fd.set('model', model);
 
 		try {
@@ -104,6 +114,14 @@ export default function GenerateForm({
 	return (
 		<form onSubmit={onSubmit} className="flex flex-col gap-6" noValidate>
 			<fieldset disabled={running} className="flex min-w-0 flex-col gap-6">
+				{application && (
+					<p className="rounded-box border border-secondary/50 bg-base-300 px-4 py-3 text-base-100">
+						This letter is for: <span className="font-medium">{application.label}</span>.{' '}
+						<Link href={`/dashboard/applications/${application.id}`} className={link}>
+							Back to the application
+						</Link>
+					</p>
+				)}
 				<div className="flex flex-wrap items-center justify-between gap-3 rounded-box border border-base-100/10 bg-gradient-to-br from-primary to-base-300 px-4 py-3 sm:px-6">
 					<p className={`text-lg font-medium ${empty ? 'text-accent' : 'text-base-100'}`}>
 						{status}

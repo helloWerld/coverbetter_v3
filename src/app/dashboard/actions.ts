@@ -19,6 +19,7 @@ export async function generateLetterAction(
 		length: formData.get('length'),
 		language: formData.get('language') ?? undefined,
 		model: formData.get('model'),
+		applicationId: formData.get('applicationId') ?? undefined,
 	});
 	return out.ok ? { ok: true, letterId: out.letterId } : out;
 }

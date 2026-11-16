@@ -22,7 +22,9 @@ const Pricing = () => {
           <div className="flex flex-col items-center justify-center p-6">
             <ul className="list-image-checkmark">
               <li>3 AI cover letters</li>
-              <li>Cover Letter Generator</li>
+              <li>Application tracker and analytics</li>
+              <li>Career profile and tailored resumes</li>
+              <li>Interview question bank</li>
             </ul>
             <Link href="/sign-up" className="btn btn-primary w-full mt-6">
               Try It Free
@@ -44,6 +46,8 @@ const Pricing = () => {
               <li>Editor and 3 templates</li>
               <li>PDF and DOCX export</li>
               <li>AI Job Fit Score with each letter</li>
+              <li>AI resume, letter, and fit score for 1 credit</li>
+              <li>AI follow-ups and interview prep, 1 credit each</li>
             </ul>
             <Link href="/sign-up" className="btn btn-secondary w-full mt-6">
               Get Pro
@@ -69,6 +73,8 @@ const Pricing = () => {
               <li>Editor and 3 templates</li>
               <li>PDF and DOCX export</li>
               <li>AI Job Fit Score with each letter</li>
+              <li>AI resume, letter, and fit score for 1 credit</li>
+              <li>AI follow-ups and interview prep, 1 credit each</li>
             </ul>
             <Link href="/sign-up" className="btn btn-primary w-full mt-6">
               Pay as You Go

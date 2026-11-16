@@ -40,7 +40,7 @@ export const features: FeatureData[] = [
     id: 4,
     title: "Saved Resumes",
     description:
-      "Keep up to 5 resumes on your account and choose one each time you write a letter.",
+      "Upload up to 5 resumes, and keep a tailored resume for each job you apply to.",
     badge: false,
   },
   {
@@ -52,11 +52,10 @@ export const features: FeatureData[] = [
   },
   {
     id: 7,
-    title: "Follow-up Letter Generator",
+    title: "Follow-up and Thank-you Letters",
     description:
-      "Write a short follow-up note after you apply or after an interview.",
-    badge: "Coming soon",
-    soonSlug: "follow-up-letters",
+      "Get a reminder when a follow-up is due. Start from a free template, or let the AI write it from your interview notes.",
+    badge: false,
   },
   {
     id: 8,
@@ -75,10 +74,23 @@ export const features: FeatureData[] = [
   },
   {
     id: 10,
-    title: "Analytics Dashboard",
+    title: "Application Tracker and Analytics",
     description:
-      "See how many letters you wrote, which tones you use, and where you apply.",
-    badge: "Coming soon",
-    soonSlug: "analytics",
+      "Track each job from saved to offer. A flow chart shows how many applications reach each stage. Free for everyone.",
+    badge: false,
+  },
+  {
+    id: 11,
+    title: "Career Profile and Tailored Resumes",
+    description:
+      "Add your full work history once, or import it from LinkedIn or a resume file. Then pick the best experience for each job.",
+    badge: false,
+  },
+  {
+    id: 12,
+    title: "Interview Prep",
+    description:
+      "Practice with a bank of more than 350 questions and a STAR answer builder. With credits, get questions made for the job post.",
+    badge: false,
   },
 ];
