@@ -19,6 +19,7 @@ export default async function ResumesPage() {
 			title: r.title,
 			fileName: r.fileName,
 			text: r.text,
+			createdAt: r.createdAt.toISOString(),
 			updatedAt: r.updatedAt.toISOString(),
 		}));
 
@@ -47,16 +48,11 @@ export default async function ResumesPage() {
 	}
 
 	return (
-		<PageShell title="Manage Resumes" intro="Upload up to 5 resumes. The tailored resume for each role is listed below.">
+		<PageShell title="Manage Resumes" intro="Save up to 5 resumes. Select a resume to read or edit it. The tailored resume for each role is listed below.">
 			<Link href="/dashboard/profile" className="inline-flex min-h-11 w-fit items-center text-neutral underline underline-offset-2 hover:text-base-100">
 				Edit your profile
 			</Link>
-			<section aria-labelledby="uploaded-resumes" className="flex flex-col gap-4">
-				<h2 id="uploaded-resumes" className="text-2xl font-extralight text-base-100">
-					Uploaded resumes
-				</h2>
-				<ResumesManager resumes={uploaded} />
-			</section>
+			<ResumesManager resumes={uploaded} />
 			<section aria-labelledby="tailored-resumes" className="flex flex-col gap-4">
 				<h2 id="tailored-resumes" className="text-2xl font-extralight text-base-100">
 					Tailored resumes

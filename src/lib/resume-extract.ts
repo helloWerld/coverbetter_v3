@@ -1,6 +1,7 @@
 import { extractText, getDocumentProxy } from 'unpdf';
 import mammoth from 'mammoth';
 import { MAX_FILE_BYTES } from '@/lib/resume-limit';
+import { htmlToMarkdown, textToMarkdown } from '@/lib/resume-markdown';
 
 export type ExtractError = 'unsupported' | 'too_large' | 'scanned' | 'parse_failed';
 export type ExtractResult = { ok: true; text: string } | { ok: false; error: ExtractError };
@@ -32,15 +33,16 @@ function kindOf(mime: string, fileName: string): 'pdf' | 'docx' | null {
  * mammoth reads `buffer` in its Node build and `arrayBuffer` in its browser
  * build. A bundler can pick either, so try both.
  */
-async function docxToText(bytes: Uint8Array): Promise<string> {
+async function docxToMarkdown(bytes: Uint8Array): Promise<string> {
+	// HTML keeps the headings, bold text, and lists. Then it becomes Markdown.
 	try {
-		const res = await mammoth.extractRawText({ buffer: Buffer.from(bytes) });
-		return res.value;
+		const res = await mammoth.convertToHtml({ buffer: Buffer.from(bytes) });
+		return htmlToMarkdown(res.value);
 	} catch (err) {
 		if (!String(err).includes('Could not find file')) throw err;
 		const arrayBuffer = bytes.slice().buffer as ArrayBuffer;
-		const res = await mammoth.extractRawText({ arrayBuffer });
-		return res.value;
+		const res = await mammoth.convertToHtml({ arrayBuffer });
+		return htmlToMarkdown(res.value);
 	}
 }
 
@@ -59,16 +61,17 @@ export async function extractResumeText(
 			// unpdf may detach the buffer, so give it a copy.
 			const pdf = await getDocumentProxy(new Uint8Array(bytes));
 			const { text } = await extractText(pdf, { mergePages: true });
-			raw = text;
+			raw = textToMarkdown(normalizeText(text));
 		} else {
-			raw = await docxToText(bytes);
+			raw = await docxToMarkdown(bytes);
 		}
 	} catch {
 		return { ok: false, error: 'parse_failed' };
 	}
 
 	const text = normalizeText(raw);
-	if (text.replace(/\s/g, '').length < MIN_NON_SPACE_CHARS) {
+	// Count letters only, so Markdown marks do not hide a scanned file.
+	if (text.replace(/[\s#*_-]/g, '').length < MIN_NON_SPACE_CHARS) {
 		return { ok: false, error: 'scanned' };
 	}
 	return { ok: true, text };

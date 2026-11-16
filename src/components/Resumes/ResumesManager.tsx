@@ -6,7 +6,30 @@ import { MAX_RESUMES } from '@/lib/resume-limit';
 import AddResume from './AddResume';
 import DeleteDialog from './DeleteDialog';
 import EditDialog from './EditDialog';
-import { formatDate, preview, type ResumeView } from './types';
+import { formatDate, type ResumeView } from './types';
+
+/** One saved resume as a small white page. It shows the title and the date, not the text. */
+function PaperCard({ r, onOpen }: Readonly<{ r: ResumeView; onOpen: () => void }>) {
+	return (
+		<button
+			type="button"
+			onClick={onOpen}
+			className="group flex aspect-[8.5/11] w-full flex-col rounded-sm bg-white p-4 text-left text-black shadow-lg shadow-black/40 transition-transform duration-200 hover:shadow-secondary/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-neutral motion-safe:hover:scale-[1.04] motion-safe:focus-visible:scale-[1.04]"
+		>
+			<span className="sr-only">Open </span>
+			<span className="line-clamp-4 break-words font-medium leading-snug">{r.title}</span>
+			<span className="mt-1 text-xs text-black/60">
+				{r.fileName ? 'Uploaded' : 'Added'} {formatDate(r.createdAt)}
+			</span>
+			{/* Lines that look like text. They are only a picture of a page. */}
+			<span aria-hidden="true" className="mt-auto flex flex-col gap-1.5">
+				{[100, 85, 92, 60, 88, 70].map((w, i) => (
+					<span key={i} className="h-1 rounded-full bg-black/10" style={{ width: `${w}%` }} />
+				))}
+			</span>
+		</button>
+	);
+}
 
 export default function ResumesManager({ resumes }: Readonly<{ resumes: ResumeView[] }>) {
 	const router = useRouter();
@@ -16,6 +39,7 @@ export default function ResumesManager({ resumes }: Readonly<{ resumes: ResumeVi
 
 	const editing = resumes.find((r) => r.id === editId) ?? null;
 	const deleting = resumes.find((r) => r.id === deleteId) ?? null;
+	const pct = Math.round((100 * resumes.length) / MAX_RESUMES);
 
 	function created(id: string, fromFile: boolean) {
 		router.refresh();
@@ -25,57 +49,59 @@ export default function ResumesManager({ resumes }: Readonly<{ resumes: ResumeVi
 
 	return (
 		<>
-			<p className="text-base-100/80" aria-live="polite">
-				{resumes.length} of {MAX_RESUMES} saved
-			</p>
+			<AddResume count={resumes.length} onCreated={created} />
 
-			{resumes.length === 0 ? (
-				<section className="rounded-box border border-dashed border-base-100/20 p-8 text-center">
-					<h2 className="text-xl text-base-100">No resumes saved yet</h2>
-					<p className="mt-2 text-base-100/70">
-						Upload a PDF or DOCX file, or paste your text below. You pick one when you write a letter.
+			<section aria-labelledby="saved-resumes" className="flex flex-col gap-4">
+				<div className="flex flex-wrap items-baseline justify-between gap-3">
+					<h2 id="saved-resumes" className="text-2xl font-extralight text-base-100">
+						Saved resumes
+					</h2>
+					<p id="saved-count" className="tabular-nums text-base-100/70" aria-live="polite">
+						{resumes.length} of {MAX_RESUMES}
 					</p>
-				</section>
-			) : (
-				<ul className="flex flex-col gap-4">
-					{resumes.map((r) => (
-						<li
-							key={r.id}
-							className="rounded-box border border-base-100/10 bg-gradient-to-br from-primary to-base-300 p-5 sm:p-6"
-						>
-							<h2 className="break-words text-xl text-base-100">{r.title}</h2>
-							<p className="mt-1 break-all text-sm text-base-100/70">
-								{r.fileName ?? 'Pasted'} &middot; Updated {formatDate(r.updatedAt)}
-							</p>
-							<p className="mt-3 break-words text-base-100/70">{preview(r.text)}</p>
-							<div className="mt-4 flex flex-wrap gap-3">
-								<button
-									type="button"
-									onClick={() => {
+				</div>
+				<div
+					role="progressbar"
+					aria-labelledby="saved-resumes"
+					aria-describedby="saved-count"
+					aria-valuemin={0}
+					aria-valuemax={MAX_RESUMES}
+					aria-valuenow={resumes.length}
+					className="h-2 w-full overflow-hidden rounded-full bg-base-100/10"
+				>
+					<div className={`h-full rounded-full transition-[width] duration-300 ${resumes.length >= MAX_RESUMES ? 'bg-accent' : 'bg-secondary'}`} style={{ width: `${pct}%` }} />
+				</div>
+
+				{resumes.length === 0 ? (
+					<p className="rounded-box border border-dashed border-base-100/20 p-8 text-center text-base-100/70">
+						No resumes saved yet. Upload a PDF or DOCX file, or paste your text above.
+					</p>
+				) : (
+					<ul className="grid grid-cols-2 gap-5 pt-2 sm:grid-cols-3 lg:grid-cols-5">
+						{resumes.map((r) => (
+							<li key={r.id}>
+								<PaperCard
+									r={r}
+									onOpen={() => {
 										setHint(false);
 										setEditId(r.id);
 									}}
-									className="btn btn-secondary min-h-11"
-								>
-									Edit
-									<span className="sr-only">, {r.title}</span>
-								</button>
-								<button
-									type="button"
-									onClick={() => setDeleteId(r.id)}
-									className="btn btn-outline border-base-100/30 text-base-100 hover:border-neutral hover:bg-base-200 hover:text-base-100 min-h-11"
-								>
-									Delete
-									<span className="sr-only">, {r.title}</span>
-								</button>
-							</div>
-						</li>
-					))}
-				</ul>
-			)}
+								/>
+							</li>
+						))}
+					</ul>
+				)}
+			</section>
 
-			<AddResume count={resumes.length} onCreated={created} />
-			<EditDialog resume={editing} showHint={hint} onClose={() => setEditId(null)} />
+			<EditDialog
+				resume={editing}
+				showHint={hint}
+				onClose={() => setEditId(null)}
+				onDelete={(id) => {
+					setEditId(null);
+					setDeleteId(id);
+				}}
+			/>
 			<DeleteDialog resume={deleting} onClose={() => setDeleteId(null)} />
 		</>
 	);

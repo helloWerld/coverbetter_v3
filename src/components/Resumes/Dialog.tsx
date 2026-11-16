@@ -14,7 +14,7 @@ export default function Dialog({
 	onClose: () => void;
 	labelledBy: string;
 	children: React.ReactNode;
-	wide?: boolean;
+	wide?: boolean | 'xl';
 }>) {
 	const ref = useRef<HTMLDialogElement>(null);
 
@@ -34,7 +34,7 @@ export default function Dialog({
 		>
 			{open && (
 				<div
-					className={`modal-box border border-base-100/10 bg-base-300 text-base-100 ${wide ? 'max-w-3xl' : ''}`}
+					className={`modal-box border border-base-100/10 bg-base-300 text-base-100 ${wide === 'xl' ? 'w-11/12 max-w-6xl' : wide ? 'max-w-3xl' : ''}`}
 				>
 					{children}
 				</div>

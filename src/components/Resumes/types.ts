@@ -5,6 +5,8 @@ export type ResumeView = {
 	fileName: string | null;
 	text: string;
 	/** ISO date string */
+	createdAt: string;
+	/** ISO date string */
 	updatedAt: string;
 };
 
