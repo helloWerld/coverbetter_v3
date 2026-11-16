@@ -20,8 +20,8 @@ export default async function TailoredResumePage({ params }: Readonly<{ params: 
 	const [profile, settings] = await Promise.all([getProfile(user.id), getSettings(user.id)]);
 	const intro = [app.jobTitle, app.company].filter(Boolean).join(' at ') || 'This application';
 	const back = (
-		<Link href={`/dashboard/applications/${app.id}`} className="link inline-flex min-h-11 items-center text-neutral">
-			Back to the application
+		<Link href={`/dashboard/applications/${app.id}`} className="inline-flex min-h-11 w-fit items-center text-neutral underline underline-offset-2 hover:text-base-100">
+			Back to the role profile
 		</Link>
 	);
 

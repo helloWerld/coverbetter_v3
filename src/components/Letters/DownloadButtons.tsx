@@ -39,7 +39,7 @@ export default function DownloadButtons({
 		<>
 			<button
 				type="button"
-				className="btn btn-outline min-h-11 border-base-100/30 text-base-100 hover:border-base-100 hover:bg-base-100/10 disabled:!border-base-100/10 disabled:!bg-base-200 disabled:!text-base-100/60"
+				className="btn btn-outline border-base-100/30 text-base-100 hover:border-neutral hover:bg-base-200 hover:text-base-100 min-h-11 disabled:!border-base-100/10 disabled:!bg-base-200 disabled:!text-base-100/60"
 				onClick={() => run('pdf')}
 				disabled={locked || busy !== null}
 			>
@@ -48,7 +48,7 @@ export default function DownloadButtons({
 			</button>
 			<button
 				type="button"
-				className="btn btn-outline min-h-11 border-base-100/30 text-base-100 hover:border-base-100 hover:bg-base-100/10 disabled:!border-base-100/10 disabled:!bg-base-200 disabled:!text-base-100/60"
+				className="btn btn-outline border-base-100/30 text-base-100 hover:border-neutral hover:bg-base-200 hover:text-base-100 min-h-11 disabled:!border-base-100/10 disabled:!bg-base-200 disabled:!text-base-100/60"
 				onClick={() => run('docx')}
 				disabled={locked || busy !== null}
 			>

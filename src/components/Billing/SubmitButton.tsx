@@ -6,7 +6,7 @@ import { useFormStatus } from 'react-dom';
 export default function SubmitButton({
 	children,
 	pendingLabel = 'One moment...',
-	className = 'btn btn-primary',
+	className = 'btn btn-secondary min-h-11',
 	disabled = false,
 }: Readonly<{
 	children: React.ReactNode;

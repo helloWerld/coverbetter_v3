@@ -16,9 +16,9 @@ export type CustomizeRole = RoleOption & {
 	fitScore: number | null;
 };
 
-const panel = 'flex flex-col gap-3 rounded-box border border-base-100/10 bg-gradient-to-br from-primary to-base-300 p-5';
+const panel = 'flex flex-col gap-3 rounded-box border border-base-100/10 bg-gradient-to-br from-primary to-base-300 p-5 sm:p-6';
 const linkClass = 'inline-flex min-h-11 items-center text-neutral underline underline-offset-2 hover:text-base-100';
-const outlineBtn = 'btn btn-outline min-h-11 w-fit border-base-100/30 text-base-100 hover:bg-base-200';
+const outlineBtn = 'btn btn-outline border-base-100/30 text-base-100 hover:border-neutral hover:bg-base-200 hover:text-base-100 min-h-11 w-fit';
 
 type Done = { resumeId: string; letterId: string | null; fit: FitResult | null };
 
@@ -96,7 +96,7 @@ export default function CustomizeApplication({
 					) : (
 						<div className="grid gap-4 lg:grid-cols-2">
 							<section aria-labelledby="ai-h" className={panel}>
-								<h2 id="ai-h" className="text-lg text-base-100">
+								<h2 id="ai-h" className="text-xl text-base-100">
 									Customize with AI · 1 credit
 								</h2>
 								<p className="text-base-100/75">
@@ -133,7 +133,7 @@ export default function CustomizeApplication({
 							</section>
 
 							<section aria-labelledby="free-h" className={panel}>
-								<h2 id="free-h" className="text-lg text-base-100">
+								<h2 id="free-h" className="text-xl text-base-100">
 									Do it yourself · free
 								</h2>
 								<p className="text-base-100/75">
@@ -150,7 +150,7 @@ export default function CustomizeApplication({
 					<div aria-live="polite">
 						{done && (
 							<section aria-labelledby="done-h" className="flex flex-col gap-4 rounded-box border border-secondary/50 bg-base-300 p-5">
-								<h2 id="done-h" className="text-lg text-base-100">
+								<h2 id="done-h" className="text-xl text-base-100">
 									Your application is ready
 								</h2>
 								<p className="text-base-100/75">

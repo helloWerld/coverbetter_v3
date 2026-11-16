@@ -65,7 +65,7 @@ export default function RoleSearch({ rows }: Readonly<{ rows: SearchRow[] }>) {
 				<button
 					type="button"
 					onClick={() => setShown((n) => n + PAGE)}
-					className="btn btn-outline min-h-11 w-fit border-base-100/30 text-base-100 hover:bg-base-200"
+					className="btn btn-outline border-base-100/30 text-base-100 hover:border-neutral hover:bg-base-200 hover:text-base-100 min-h-11 w-fit"
 				>
 					Show {Math.min(PAGE, matches.length - shown)} more
 				</button>

@@ -31,8 +31,8 @@ const EVENT_LABEL: Record<string, string> = {
 
 function Step({ n, title, children }: Readonly<{ n: number; title: string; children: React.ReactNode }>) {
 	return (
-		<section className="flex flex-col gap-3 rounded-box border border-base-100/10 bg-gradient-to-br from-primary to-base-300 p-5">
-			<h2 className="flex items-center gap-3 text-lg text-base-100">
+		<section className="flex flex-col gap-3 rounded-box border border-base-100/10 bg-gradient-to-br from-primary to-base-300 p-5 sm:p-6">
+			<h2 className="flex items-center gap-3 text-xl text-base-100">
 				<span aria-hidden="true" className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary text-sm tabular-nums">
 					{n}
 				</span>
@@ -44,7 +44,7 @@ function Step({ n, title, children }: Readonly<{ n: number; title: string; child
 }
 
 const btn = 'btn min-h-11 w-fit';
-const btnOutline = `${btn} btn-outline border-base-100/30 text-base-100 hover:bg-base-200`;
+const btnOutline = `${btn} btn-outline border-base-100/30 text-base-100 hover:border-neutral hover:bg-base-200 hover:text-base-100`;
 
 export default async function ApplicationPage({ params }: Readonly<{ params: Promise<{ id: string }> }>) {
 	const { id } = await params;
@@ -72,7 +72,7 @@ export default async function ApplicationPage({ params }: Readonly<{ params: Pro
 
 	return (
 		<PageShell title={title} intro={app.company || undefined}>
-			<Link href="/dashboard/applications" className="w-fit text-neutral underline underline-offset-2">
+			<Link href="/dashboard/applications" className="inline-flex min-h-11 w-fit items-center text-neutral underline underline-offset-2 hover:text-base-100">
 				Back to Find Roles
 			</Link>
 

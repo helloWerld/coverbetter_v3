@@ -47,7 +47,7 @@ function EditForm({
 
 	return (
 		<form onSubmit={save} className="flex flex-col gap-4">
-			<h2 id="edit-title" className="text-xl">
+			<h2 id="edit-title" className="text-xl text-base-100">
 				Edit resume
 			</h2>
 			{showHint && (
@@ -91,7 +91,7 @@ function EditForm({
 				</p>
 			)}
 			<div className="flex flex-wrap justify-end gap-3">
-				<button type="button" onClick={onClose} className="btn btn-outline min-h-11 border-base-100/40 text-base-100">
+				<button type="button" onClick={onClose} className="btn btn-outline border-base-100/30 text-base-100 hover:border-neutral hover:bg-base-200 hover:text-base-100 min-h-11">
 					Cancel
 				</button>
 				<button type="submit" disabled={pending} className="btn btn-secondary min-h-11">

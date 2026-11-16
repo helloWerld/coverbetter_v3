@@ -30,7 +30,7 @@ export default function DeleteDialog({
 		<Dialog open={resume !== null} onClose={close} labelledBy="delete-title">
 			{resume && (
 				<div className="flex flex-col gap-4">
-					<h2 id="delete-title" className="text-xl">
+					<h2 id="delete-title" className="text-xl text-base-100">
 						Delete this resume?
 					</h2>
 					<p className="text-base-100/70">
@@ -42,7 +42,7 @@ export default function DeleteDialog({
 						</p>
 					)}
 					<div className="flex flex-wrap justify-end gap-3">
-						<button type="button" onClick={close} className="btn btn-outline min-h-11 border-base-100/40 text-base-100">
+						<button type="button" onClick={close} className="btn btn-outline border-base-100/30 text-base-100 hover:border-neutral hover:bg-base-200 hover:text-base-100 min-h-11">
 							Keep it
 						</button>
 						<button type="button" onClick={confirm} disabled={pending} className="btn btn-error min-h-11">

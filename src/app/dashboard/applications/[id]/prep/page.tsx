@@ -32,7 +32,7 @@ export default async function PrepPage({ params }: Readonly<{ params: Promise<{ 
 				href={`/dashboard/applications/${app.id}`}
 				className="inline-flex min-h-11 items-center self-start text-neutral underline underline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-100"
 			>
-				Back to the application
+				Back to the role profile
 			</Link>
 			<PrepWorkspace
 				applicationId={app.id}

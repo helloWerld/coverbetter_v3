@@ -51,7 +51,7 @@ export default function PurchaseCards({
 						) : (
 							<SubmitButton
 								disabled={!configured}
-								className="btn btn-secondary mt-auto w-full"
+								className="btn btn-secondary mt-auto min-h-11 w-full"
 							>
 								Start Pro
 							</SubmitButton>
@@ -62,7 +62,7 @@ export default function PurchaseCards({
 
 			{hasCustomer && configured && (
 				<form action={openPortalAction} className="mt-6">
-					<SubmitButton className="btn btn-outline text-base-100">
+					<SubmitButton className="btn btn-outline border-base-100/30 text-base-100 hover:border-neutral hover:bg-base-200 hover:text-base-100 min-h-11">
 						Manage subscription
 					</SubmitButton>
 				</form>

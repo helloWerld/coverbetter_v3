@@ -41,7 +41,7 @@ export default function ResumesManager({ resumes }: Readonly<{ resumes: ResumeVi
 					{resumes.map((r) => (
 						<li
 							key={r.id}
-							className="rounded-box border border-base-100/10 bg-gradient-to-br from-primary to-base-300 p-6"
+							className="rounded-box border border-base-100/10 bg-gradient-to-br from-primary to-base-300 p-5 sm:p-6"
 						>
 							<h2 className="break-words text-xl text-base-100">{r.title}</h2>
 							<p className="mt-1 break-all text-sm text-base-100/70">
@@ -63,7 +63,7 @@ export default function ResumesManager({ resumes }: Readonly<{ resumes: ResumeVi
 								<button
 									type="button"
 									onClick={() => setDeleteId(r.id)}
-									className="btn btn-outline min-h-11 border-base-100/40 text-base-100"
+									className="btn btn-outline border-base-100/30 text-base-100 hover:border-neutral hover:bg-base-200 hover:text-base-100 min-h-11"
 								>
 									Delete
 									<span className="sr-only">, {r.title}</span>

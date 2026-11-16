@@ -166,10 +166,10 @@ export default function ResumeBuilder(props: Props) {
 				<aside className="hidden lg:block">
 					<div className="sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto rounded-box border border-base-100/10 bg-base-300 p-4">
 						<div className="flex items-center justify-between gap-3">
-							{leftOpen && <h2 className="text-lg text-base-100">Job post</h2>}
+							{leftOpen && <h2 className="text-xl text-base-100">Job post</h2>}
 							<button
 								type="button"
-								className={`${btn} btn-sm btn-ghost border border-base-100/20 text-base-100`}
+								className={`${btn} btn-sm btn-outline border-base-100/30 text-base-100 hover:border-neutral hover:bg-base-200 hover:text-base-100`}
 								aria-expanded={leftOpen}
 								aria-controls="rb-job-desktop"
 								onClick={() => setLeftOpen((v) => !v)}
@@ -224,7 +224,7 @@ export default function ResumeBuilder(props: Props) {
 					</section>
 
 					<section className="rounded-box border border-base-100/10 bg-base-300 p-4 sm:p-5">
-						<h2 className="text-lg text-base-100">Tailor with AI</h2>
+						<h2 className="text-xl text-base-100">Tailor with AI</h2>
 						{paid ? (
 							<>
 								<p className="mt-1 text-base-100/70">
@@ -259,7 +259,7 @@ export default function ResumeBuilder(props: Props) {
 							{aiResult.letterId && (
 								<p className="text-base-100/80">
 									Your cover letter is ready.{' '}
-									<Link href={`/dashboard/letters/${aiResult.letterId}`} className="link text-neutral">
+									<Link href={`/dashboard/letters/${aiResult.letterId}`} className="text-neutral underline underline-offset-2 hover:text-base-100">
 										Open the cover letter
 									</Link>
 								</p>
@@ -274,7 +274,7 @@ export default function ResumeBuilder(props: Props) {
 					<SkillsGroup profile={profile} sel={sel} update={update} />
 
 					<section aria-labelledby="rb-preview" className="flex flex-col gap-3">
-						<h2 id="rb-preview" className="text-lg text-base-100">
+						<h2 id="rb-preview" className="text-xl text-base-100">
 							Preview
 						</h2>
 						<p className={hint.warn ? 'text-accent' : 'text-base-100/70'}>{hint.text}</p>
@@ -286,10 +286,10 @@ export default function ResumeBuilder(props: Props) {
 							<button type="button" className={`${btn} btn-secondary`} onClick={save} disabled={saving}>
 								{saving ? 'Saving...' : 'Save resume'}
 							</button>
-							<button type="button" className={`${btn} btn-ghost border border-base-100/20 text-base-100`} onClick={() => exportAs('pdf')} disabled={exporting}>
+							<button type="button" className={`${btn} btn-outline border-base-100/30 text-base-100 hover:border-neutral hover:bg-base-200 hover:text-base-100`} onClick={() => exportAs('pdf')} disabled={exporting}>
 								Download PDF
 							</button>
-							<button type="button" className={`${btn} btn-ghost border border-base-100/20 text-base-100`} onClick={() => exportAs('docx')} disabled={exporting}>
+							<button type="button" className={`${btn} btn-outline border-base-100/30 text-base-100 hover:border-neutral hover:bg-base-200 hover:text-base-100`} onClick={() => exportAs('docx')} disabled={exporting}>
 								Download DOCX
 							</button>
 						</div>

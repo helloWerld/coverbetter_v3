@@ -9,7 +9,7 @@ export default async function NewApplicationPage() {
 	await requireUser();
 	return (
 		<PageShell title="Add a role" intro="Add a role that you want to apply for. Paste the job post. You can change everything later.">
-			<Link href="/dashboard/applications" className="w-fit text-neutral underline underline-offset-2">
+			<Link href="/dashboard/applications" className="inline-flex min-h-11 w-fit items-center text-neutral underline underline-offset-2 hover:text-base-100">
 				Back to Find Roles
 			</Link>
 			<ApplicationForm />

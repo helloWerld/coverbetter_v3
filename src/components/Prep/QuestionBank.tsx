@@ -52,7 +52,7 @@ export default function QuestionBank({
 						type="button"
 						aria-pressed={type === t.id}
 						onClick={() => setType(t.id)}
-						className={`btn min-h-11 ${focus} ${type === t.id ? 'btn-secondary' : 'btn-outline border-base-100/30 text-base-100'}`}
+						className={`btn min-h-11 ${focus} ${type === t.id ? 'btn-secondary' : 'btn-outline border-base-100/30 text-base-100 hover:border-neutral hover:bg-base-200 hover:text-base-100'}`}
 					>
 						{t.label}
 					</button>

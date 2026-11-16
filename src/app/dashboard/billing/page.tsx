@@ -31,7 +31,7 @@ export default async function BillingPage({
 					aria-labelledby="delete-heading"
 					className="mt-6 border-t border-base-100/10 pt-6"
 				>
-					<h2 id="delete-heading" className="text-lg font-semibold text-base-100">
+					<h2 id="delete-heading" className="text-xl text-base-100">
 						Delete account
 					</h2>
 					<p className="mb-4 mt-2 max-w-prose text-sm text-base-100/70">

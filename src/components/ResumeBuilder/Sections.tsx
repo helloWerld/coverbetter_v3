@@ -28,7 +28,7 @@ export function SummaryGroup({ profile, sel, update }: Props) {
 						<button
 							key={s.id}
 							type="button"
-							className={`btn btn-sm min-h-11 ${sel.summary === s.text ? 'btn-secondary' : 'btn-ghost border border-base-100/20 text-base-100'} ${focusRing}`}
+							className={`btn btn-sm min-h-11 ${sel.summary === s.text ? 'btn-secondary' : 'btn-outline border-base-100/30 text-base-100 hover:border-neutral hover:bg-base-200 hover:text-base-100'} ${focusRing}`}
 							aria-pressed={sel.summary === s.text}
 							onClick={() => update((x) => ({ ...x, summary: s.text }))}
 						>

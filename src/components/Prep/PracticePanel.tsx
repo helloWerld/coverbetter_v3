@@ -133,7 +133,7 @@ export default function PracticePanel({
 							type="button"
 							aria-pressed={mode === m}
 							onClick={() => setMode(m)}
-							className={`btn min-h-11 ${mode === m ? 'btn-secondary' : 'btn-outline border-base-100/30 text-base-100'}`}
+							className={`btn min-h-11 ${mode === m ? 'btn-secondary' : 'btn-outline border-base-100/30 text-base-100 hover:border-neutral hover:bg-base-200 hover:text-base-100'}`}
 						>
 							{m === 'star' ? 'STAR builder' : 'Free text'}
 						</button>

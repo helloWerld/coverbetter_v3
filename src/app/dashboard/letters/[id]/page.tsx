@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { FaArrowLeft } from 'react-icons/fa6';
 import FitScoreCard, { FitScoreLocked } from '@/components/Fit/FitScoreCard';
 import LetterEditor from '@/components/Letters/LetterEditor';
 import { hasPaidFeatures } from '@/lib/access';
@@ -26,9 +25,9 @@ export default async function LetterPage({
 		<div className="mx-auto w-full max-w-screen-xl">
 			<Link
 				href={letter.applicationId ? `/dashboard/applications/${letter.applicationId}` : '/dashboard/applications'}
-				className="mb-4 inline-flex min-h-11 items-center gap-2 text-base-100/70 hover:text-base-100"
+				className="mb-4 inline-flex min-h-11 w-fit items-center text-neutral underline underline-offset-2 hover:text-base-100"
 			>
-				<FaArrowLeft aria-hidden /> {letter.applicationId ? 'Back to the role profile' : 'Find Roles'}
+				{letter.applicationId ? 'Back to the role profile' : 'Back to Find Roles'}
 			</Link>
 			<h1 className="gradient-text mb-6 text-3xl font-extralight md:text-5xl">
 				{paid ? 'Edit letter' : 'Your letter'}

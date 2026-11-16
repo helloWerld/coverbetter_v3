@@ -95,7 +95,7 @@ export default function LettersCard({
 				</p>
 				<SubmitButton
 					disabled={!configured || n === null}
-					className="btn btn-primary mt-auto w-full"
+					className="btn btn-secondary mt-auto min-h-11 w-full"
 				>
 					{n === null ? 'Buy credits' : `Buy ${n} ${n === 1 ? 'credit' : 'credits'}`}
 				</SubmitButton>

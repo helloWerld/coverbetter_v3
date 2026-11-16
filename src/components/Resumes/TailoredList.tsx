@@ -54,7 +54,7 @@ export default function TailoredList({ items }: Readonly<{ items: TailoredView[]
 						<p className="mt-1 break-words text-sm text-base-100/60">
 							{r.applicationId && (
 								<>
-									<Link href={`/dashboard/applications/${r.applicationId}`} className="link text-neutral">
+									<Link href={`/dashboard/applications/${r.applicationId}`} className="text-neutral underline underline-offset-2 hover:text-base-100">
 										{r.applicationLabel || 'Application'}
 									</Link>
 									<span aria-hidden> · </span>
@@ -71,7 +71,7 @@ export default function TailoredList({ items }: Readonly<{ items: TailoredView[]
 							)}
 							<button
 								type="button"
-								className={`btn btn-ghost min-h-11 border border-base-100/20 text-base-100 ${focus}`}
+								className={`btn btn-outline border-base-100/30 text-base-100 hover:border-neutral hover:bg-base-200 hover:text-base-100 min-h-11 ${focus}`}
 								disabled={busy === r.id}
 								onClick={() => run(r.id, () => downloadResumePdf(r.doc, r.template, r.company))}
 							>
@@ -79,7 +79,7 @@ export default function TailoredList({ items }: Readonly<{ items: TailoredView[]
 							</button>
 							<button
 								type="button"
-								className={`btn btn-ghost min-h-11 border border-base-100/20 text-base-100 ${focus}`}
+								className={`btn btn-outline border-base-100/30 text-base-100 hover:border-neutral hover:bg-base-200 hover:text-base-100 min-h-11 ${focus}`}
 								disabled={busy === r.id}
 								onClick={() => run(r.id, () => downloadResumeDocx(r.doc, r.template, r.company))}
 							>

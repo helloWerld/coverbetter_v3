@@ -77,15 +77,15 @@ function Draft({ applicationId, m, contactEmail }: Readonly<{ applicationId: str
 							setNote('Select the text and copy it.');
 						}
 					}}
-					className="btn btn-outline btn-sm min-h-11 border-base-100/30 text-base-100 hover:bg-base-200"
+					className="btn btn-sm btn-outline border-base-100/30 text-base-100 hover:border-neutral hover:bg-base-200 hover:text-base-100 min-h-11"
 				>
 					Copy
 				</button>
-				<a href={mailtoLink(contactEmail, subject, body)} className="btn btn-outline btn-sm min-h-11 border-base-100/30 text-base-100 hover:bg-base-200">
+				<a href={mailtoLink(contactEmail, subject, body)} className="btn btn-sm btn-outline border-base-100/30 text-base-100 hover:border-neutral hover:bg-base-200 hover:text-base-100 min-h-11">
 					Open in my email app
 				</a>
 				{!m.sentAt && (
-					<button type="button" disabled={pending} onClick={() => run(() => markMessageSentAction(applicationId, m.id), 'Marked as sent.')} className="btn btn-outline btn-sm min-h-11 border-base-100/30 text-base-100 hover:bg-base-200">
+					<button type="button" disabled={pending} onClick={() => run(() => markMessageSentAction(applicationId, m.id), 'Marked as sent.')} className="btn btn-sm btn-outline border-base-100/30 text-base-100 hover:border-neutral hover:bg-base-200 hover:text-base-100 min-h-11">
 						Mark as sent
 					</button>
 				)}
@@ -93,7 +93,7 @@ function Draft({ applicationId, m, contactEmail }: Readonly<{ applicationId: str
 					type="button"
 					disabled={pending}
 					onClick={() => window.confirm('Delete this letter?') && run(() => deleteMessageAction(applicationId, m.id), 'Deleted.')}
-					className="btn btn-ghost btn-sm min-h-11 text-base-100/70"
+					className="btn btn-sm btn-ghost text-base-100/70 hover:bg-base-200 hover:text-base-100 min-h-11"
 				>
 					Delete
 				</button>
@@ -258,7 +258,7 @@ export default function MessagesPanel({
 									</option>
 								))}
 							</select>
-							<button type="button" disabled={pending} onClick={fromTemplate} className="btn btn-outline min-h-11 border-base-100/30 text-base-100 hover:bg-base-200">
+							<button type="button" disabled={pending} onClick={fromTemplate} className="btn btn-outline border-base-100/30 text-base-100 hover:border-neutral hover:bg-base-200 hover:text-base-100 min-h-11">
 								Use this template
 							</button>
 						</div>
@@ -275,7 +275,7 @@ export default function MessagesPanel({
 									{pending ? 'Writing…' : 'Write with AI'}
 								</button>
 							) : (
-								<Link href="/dashboard/billing" className="btn btn-outline min-h-11 border-base-100/30 text-base-100 hover:bg-base-200">
+								<Link href="/dashboard/billing" className="btn btn-outline border-base-100/30 text-base-100 hover:border-neutral hover:bg-base-200 hover:text-base-100 min-h-11">
 									See plans
 								</Link>
 							)}

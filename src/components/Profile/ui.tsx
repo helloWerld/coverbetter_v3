@@ -5,10 +5,10 @@ import type { Lens } from './lenses';
 import { useProfileApi } from './store';
 
 export const fieldClass =
-	'w-full min-h-11 rounded-box border border-base-100/10 bg-base-300 px-3 py-2 text-base text-base-100 placeholder:text-base-100/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-100 disabled:opacity-60';
+	'w-full min-h-11 rounded-box border border-base-100/10 bg-base-300 px-4 py-3 text-base text-base-100 placeholder:text-base-100/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-100 disabled:opacity-60';
 export const labelClass = 'mb-1 block text-sm font-medium text-base-100';
 export const btnClass =
-	'btn btn-outline btn-sm min-h-11 min-w-11 border-base-100/30 text-base-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-100';
+	'btn btn-sm btn-outline border-base-100/30 text-base-100 hover:border-neutral hover:bg-base-200 hover:text-base-100 min-h-11 min-w-11 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-100';
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
@@ -253,7 +253,7 @@ export function Section({ id, title, children }: Readonly<{ id: string; title: s
 		<section
 			id={id}
 			aria-labelledby={`${id}-h`}
-			className="scroll-mt-24 rounded-box border border-base-100/10 bg-gradient-to-br from-primary to-base-300 p-4 sm:p-6"
+			className="scroll-mt-24 rounded-box border border-base-100/10 bg-gradient-to-br from-primary to-base-300 p-5 sm:p-6"
 		>
 			<h2 id={`${id}-h`} className="mb-4 text-xl text-base-100">
 				{title}

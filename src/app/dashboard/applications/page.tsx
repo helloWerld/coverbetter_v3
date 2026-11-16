@@ -59,7 +59,7 @@ export default async function ApplicationsPage() {
 				<Link href="/dashboard/applications/new" className="btn btn-secondary min-h-11">
 					Add a role
 				</Link>
-				<a href="#fit" className="btn btn-outline min-h-11 border-base-100/30 text-base-100 hover:bg-base-200">
+				<a href="#fit" className="btn btn-outline border-base-100/30 text-base-100 hover:border-neutral hover:bg-base-200 hover:text-base-100 min-h-11">
 					Check the fit of saved roles
 				</a>
 			</div>

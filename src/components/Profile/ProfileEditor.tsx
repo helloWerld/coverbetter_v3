@@ -196,7 +196,7 @@ export default function ProfileEditor({ initial }: Readonly<{ initial: Profile }
 				{reviewing && (
 					<div role="status" className="flex flex-wrap items-center justify-between gap-3 rounded-box border border-warning/50 bg-base-300 p-4 text-base-100">
 						<p className="min-w-0">The import is not saved yet. Check the data. Then select Save profile.</p>
-						<button type="button" className="btn btn-outline min-h-11 border-base-100/30 text-base-100" onClick={undoImport}>
+						<button type="button" className="btn btn-outline border-base-100/30 text-base-100 hover:border-neutral hover:bg-base-200 hover:text-base-100 min-h-11" onClick={undoImport}>
 							Undo import
 						</button>
 					</div>

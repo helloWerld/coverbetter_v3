@@ -5,7 +5,7 @@ export default function FeaturesBox() {
 	return (
 		<section
 			aria-labelledby="paid-features-heading"
-			className="flex w-full flex-col rounded-lg border border-base-100/10 bg-gradient-to-br from-primary to-base-300 p-6 lg:w-72"
+			className="flex w-full flex-col rounded-box border border-base-100/10 bg-gradient-to-br from-primary to-base-300 p-5 sm:p-6 lg:w-72"
 		>
 			<h3 id="paid-features-heading" className="text-xl text-base-100">
 				Included with paid credits and Pro

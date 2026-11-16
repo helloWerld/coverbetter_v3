@@ -47,7 +47,7 @@ export default function AddResume({
 	return (
 		<section
 			aria-labelledby={`${uid}-heading`}
-			className="rounded-box border border-base-100/10 bg-gradient-to-br from-primary to-base-300 p-6"
+			className="rounded-box border border-base-100/10 bg-gradient-to-br from-primary to-base-300 p-5 sm:p-6"
 		>
 			<h2 id={`${uid}-heading`} className="mb-4 text-xl text-base-100">
 				Add a resume
@@ -69,7 +69,7 @@ export default function AddResume({
 								aria-controls={`${uid}-panel-${t}`}
 								tabIndex={tab === t ? 0 : -1}
 								onClick={() => onTabClick(t)}
-								className={`btn min-h-11 ${tab === t ? 'btn-secondary' : 'btn-outline border-base-100/40 text-base-100'}`}
+								className={`btn min-h-11 ${tab === t ? 'btn-secondary' : 'btn-outline border-base-100/30 text-base-100 hover:border-neutral hover:bg-base-200 hover:text-base-100'}`}
 							>
 								{t === 'upload' ? 'Upload a file' : 'Paste text'}
 							</button>

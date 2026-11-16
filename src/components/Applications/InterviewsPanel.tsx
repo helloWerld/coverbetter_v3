@@ -120,7 +120,7 @@ function InterviewForm({
 				<button type="submit" disabled={pending} className="btn btn-secondary min-h-11">
 					{pending ? 'Saving…' : interview ? 'Save interview' : 'Add interview'}
 				</button>
-				<button type="button" onClick={onDone} className="btn btn-ghost min-h-11 text-base-100">
+				<button type="button" onClick={onDone} className="btn btn-ghost text-base-100/70 hover:bg-base-200 hover:text-base-100 min-h-11">
 					Cancel
 				</button>
 			</div>
@@ -156,7 +156,7 @@ export default function InterviewsPanel({ applicationId, interviews }: Readonly<
 									{iv.topics && <p className="mt-1 whitespace-pre-line text-sm text-base-100/70">Topics: {iv.topics}</p>}
 								</div>
 								<div className="flex gap-2">
-									<button type="button" onClick={() => setEditing(iv.id)} className="btn btn-ghost btn-sm min-h-11 text-base-100">
+									<button type="button" onClick={() => setEditing(iv.id)} className="btn btn-sm btn-ghost text-base-100/70 hover:bg-base-200 hover:text-base-100 min-h-11">
 										Edit
 									</button>
 									<button
@@ -168,7 +168,7 @@ export default function InterviewsPanel({ applicationId, interviews }: Readonly<
 												await deleteInterviewAction(applicationId, iv.id);
 											});
 										}}
-										className="btn btn-ghost btn-sm min-h-11 text-base-100/70"
+										className="btn btn-sm btn-ghost text-base-100/70 hover:bg-base-200 hover:text-base-100 min-h-11"
 									>
 										Delete
 									</button>
@@ -181,7 +181,7 @@ export default function InterviewsPanel({ applicationId, interviews }: Readonly<
 			{editing === 'new' ? (
 				<InterviewForm applicationId={applicationId} onDone={() => setEditing(null)} />
 			) : (
-				<button type="button" onClick={() => setEditing('new')} className="btn btn-outline min-h-11 w-fit border-base-100/30 text-base-100 hover:bg-base-200">
+				<button type="button" onClick={() => setEditing('new')} className="btn btn-outline border-base-100/30 text-base-100 hover:border-neutral hover:bg-base-200 hover:text-base-100 min-h-11 w-fit">
 					Add an interview
 				</button>
 			)}

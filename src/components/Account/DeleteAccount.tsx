@@ -35,7 +35,7 @@ export default function DeleteAccount() {
 				onClose={() => setTyped('')}
 			>
 				<form action={action}>
-					<h2 id="delete-title" className="text-xl">
+					<h2 id="delete-title" className="text-xl text-base-100">
 						Delete your account?
 					</h2>
 					<p className="mt-3 text-base-100/70">
@@ -65,7 +65,7 @@ export default function DeleteAccount() {
 						<button
 							type="button"
 							onClick={() => dialog.current?.close()}
-							className={`btn btn-ghost min-h-11 ${focus}`}
+							className={`btn btn-ghost text-base-100/70 hover:bg-base-200 hover:text-base-100 min-h-11 ${focus}`}
 						>
 							Keep my account
 						</button>

@@ -66,7 +66,7 @@ export default function PrepWorkspace({
 						tabIndex={tab === id ? 0 : -1}
 						onClick={() => setTab(id)}
 						onKeyDown={(e) => onKey(e, i)}
-						className={`btn min-h-11 ${focus} ${tab === id ? 'btn-secondary' : 'btn-outline border-base-100/30 text-base-100'}`}
+						className={`btn min-h-11 ${focus} ${tab === id ? 'btn-secondary' : 'btn-outline border-base-100/30 text-base-100 hover:border-neutral hover:bg-base-200 hover:text-base-100'}`}
 					>
 						{label}
 					</button>

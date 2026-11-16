@@ -16,7 +16,7 @@ import TemplateSwitcher from './TemplateSwitcher';
 type Status = 'idle' | 'saving' | 'saved' | 'error';
 
 const field =
-	'input input-bordered min-h-11 w-full border-base-100/20 bg-base-300 text-base-100 focus:border-neutral';
+	'min-h-11 w-full rounded-box border border-base-100/10 bg-base-300 px-4 py-3 text-base text-base-100 placeholder:text-base-100/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-100 disabled:opacity-60';
 
 export default function LetterEditor({
 	id,
@@ -132,7 +132,7 @@ export default function LetterEditor({
 					</span>
 				</p>
 			)}
-			<div className="flex flex-col gap-4 rounded-box border border-base-100/10 bg-gradient-to-br from-primary to-base-300 p-4 md:p-6">
+			<div className="flex flex-col gap-4 rounded-box border border-base-100/10 bg-gradient-to-br from-primary to-base-300 p-5 sm:p-6 md:p-6">
 				<div className="grid gap-4 sm:grid-cols-2">
 					<div>
 						<label htmlFor="job-title" className="mb-1 block text-sm text-base-100/70">
@@ -175,7 +175,7 @@ export default function LetterEditor({
 					)}
 					<button
 						type="button"
-						className="btn btn-outline min-h-11 border-base-100/30 text-base-100 hover:border-base-100 hover:bg-base-100/10"
+						className="btn btn-outline border-base-100/30 text-base-100 hover:border-neutral hover:bg-base-200 hover:text-base-100 min-h-11"
 						onClick={copy}
 					>
 						{copied ? <FaCheck aria-hidden /> : <FaRegCopy aria-hidden />}
@@ -211,7 +211,7 @@ export default function LetterEditor({
 						type="button"
 						aria-pressed={view === v}
 						onClick={() => setView(v)}
-						className={`btn min-h-11 ${view === v ? 'btn-secondary' : 'btn-outline border-base-100/30 text-base-100'}`}
+						className={`btn min-h-11 ${view === v ? 'btn-secondary' : 'btn-outline border-base-100/30 text-base-100 hover:border-neutral hover:bg-base-200 hover:text-base-100'}`}
 					>
 						{v === 'edit' ? 'Edit' : 'Preview'}
 					</button>
@@ -232,7 +232,7 @@ export default function LetterEditor({
 						value={body}
 						readOnly={!paid}
 						onChange={(e) => setBody(e.target.value)}
-						className="textarea textarea-bordered w-full resize-none border-base-100/20 bg-base-300 text-base leading-relaxed text-base-100 focus:border-neutral"
+						className="w-full resize-none rounded-box border border-base-100/10 bg-base-300 px-4 py-3 text-base leading-relaxed text-base-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-100"
 						style={{ minHeight: 320 }}
 					/>
 				</div>

@@ -131,7 +131,7 @@ export default function GenerateForm({
 					</Link>
 				</div>
 
-				<section className="rounded-box border border-base-100/10 bg-gradient-to-br from-primary to-base-300 p-4 sm:p-6">
+				<section className="rounded-box border border-base-100/10 bg-gradient-to-br from-primary to-base-300 p-5 sm:p-6">
 					<div className="flex flex-col gap-4">
 						{/* Resume on the left, letter language on the right. */}
 						<div className="flex flex-col gap-4 md:flex-row">
@@ -234,7 +234,7 @@ export default function GenerateForm({
 					</div>
 				</section>
 
-				<section className="grid gap-6 rounded-box border border-base-100/10 bg-gradient-to-br from-primary to-base-300 p-4 sm:p-6 md:grid-cols-2">
+				<section className="grid gap-6 rounded-box border border-base-100/10 bg-gradient-to-br from-primary to-base-300 p-5 sm:p-6 md:grid-cols-2">
 					<SegmentedControl
 						legend="Tone"
 						name="tone"

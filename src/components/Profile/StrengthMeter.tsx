@@ -16,7 +16,7 @@ const SECTION_FOR_TIP: Record<string, string> = {
 export default function StrengthMeter({ profile, onGoTo }: Readonly<{ profile: Profile; onGoTo: (id: string) => void }>) {
 	const { score, tips } = useMemo(() => profileStrength(profile, new Date()), [profile]);
 	return (
-		<section aria-labelledby="strength-h" className="rounded-box border border-base-100/10 bg-gradient-to-br from-primary to-base-300 p-4 sm:p-6">
+		<section aria-labelledby="strength-h" className="rounded-box border border-base-100/10 bg-gradient-to-br from-primary to-base-300 p-5 sm:p-6">
 			<div className="flex items-baseline justify-between gap-3">
 				<h2 id="strength-h" className="text-xl text-base-100">
 					Profile strength

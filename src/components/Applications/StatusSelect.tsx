@@ -5,7 +5,7 @@ import { setStatusAction } from '@/app/dashboard/applications/actions';
 import { STATUSES, STATUS_LABEL, type Status } from '@/lib/applications/types';
 
 const field =
-	'rounded-lg border border-base-100/10 bg-base-300 px-3 py-2 text-base text-base-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-100 disabled:opacity-60';
+	'rounded-box border border-base-100/10 bg-base-300 px-4 py-2 text-base text-base-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-100 disabled:opacity-60';
 
 /** Changes the status at once. The server records the date of the change. */
 export default function StatusSelect({

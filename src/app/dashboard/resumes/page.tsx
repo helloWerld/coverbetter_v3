@@ -48,8 +48,8 @@ export default async function ResumesPage() {
 
 	return (
 		<PageShell title="Manage Resumes" intro="Upload up to 5 resumes. The tailored resume for each role is listed below.">
-			<Link href="/dashboard/profile" className="link inline-flex min-h-11 items-center text-neutral">
-				Edit your career profile
+			<Link href="/dashboard/profile" className="inline-flex min-h-11 w-fit items-center text-neutral underline underline-offset-2 hover:text-base-100">
+				Edit your profile
 			</Link>
 			<section aria-labelledby="uploaded-resumes" className="flex flex-col gap-4">
 				<h2 id="uploaded-resumes" className="text-2xl font-extralight text-base-100">

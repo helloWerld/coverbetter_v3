@@ -28,7 +28,7 @@ export function Card({
 	children,
 }: Readonly<{ title?: string; children: React.ReactNode }>) {
 	return (
-		<section className="rounded-box border border-base-100/10 bg-gradient-to-br from-primary to-base-300 p-6">
+		<section className="rounded-box border border-base-100/10 bg-gradient-to-br from-primary to-base-300 p-5 sm:p-6">
 			{title && <h2 className="mb-3 text-xl text-base-100">{title}</h2>}
 			<div className="text-base-100/70">{children}</div>
 		</section>

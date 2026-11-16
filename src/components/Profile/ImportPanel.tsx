@@ -62,8 +62,13 @@ export default function ImportPanel({
 
 	if (!open) {
 		return (
-			<div>
-				<button type="button" className="btn btn-outline min-h-11 border-base-100/30 text-base-100" onClick={() => setOpen(true)}>
+			<div className="flex flex-wrap items-center justify-between gap-3 rounded-box border border-base-100/10 bg-base-300 p-4">
+				<p className="min-w-0 text-base-100/70">Add your jobs, education, and skills fast with your LinkedIn data.</p>
+				<button
+					type="button"
+					className="btn btn-outline border-base-100/30 text-base-100 hover:border-neutral hover:bg-base-200 hover:text-base-100 min-h-11"
+					onClick={() => setOpen(true)}
+				>
 					Import from LinkedIn
 				</button>
 			</div>
@@ -71,7 +76,7 @@ export default function ImportPanel({
 	}
 
 	return (
-		<section aria-labelledby="import-h" className="rounded-box border border-base-100/10 bg-gradient-to-br from-primary to-base-300 p-4 sm:p-6">
+		<section aria-labelledby="import-h" className="rounded-box border border-base-100/10 bg-gradient-to-br from-primary to-base-300 p-5 sm:p-6">
 			<div className="flex items-center justify-between gap-3">
 				<h2 id="import-h" className="text-xl text-base-100">
 					{result ? `Check what we found in ${result.source}` : 'Import from LinkedIn'}
@@ -79,7 +84,7 @@ export default function ImportPanel({
 				{hasData && (
 					<button
 						type="button"
-						className="btn btn-ghost min-h-11 text-base-100"
+						className="btn btn-ghost text-base-100/70 hover:bg-base-200 hover:text-base-100 min-h-11"
 						onClick={() => {
 							setOpen(false);
 							setResult(null);
@@ -291,7 +296,7 @@ function Review({
 				<button type="button" className="btn btn-secondary min-h-11" onClick={onApply}>
 					Use this data
 				</button>
-				<button type="button" className="btn btn-outline min-h-11 border-base-100/30 text-base-100" onClick={onCancel}>
+				<button type="button" className="btn btn-outline border-base-100/30 text-base-100 hover:border-neutral hover:bg-base-200 hover:text-base-100 min-h-11" onClick={onCancel}>
 					Cancel
 				</button>
 			</div>
