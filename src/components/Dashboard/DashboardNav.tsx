@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import {
 	FaBars,
 	FaXmark,
@@ -155,7 +155,7 @@ function NavList({
 	items,
 	isActive,
 }: Readonly<{
-	items: readonly { href: string; label: string; icon: NavIcon }[];
+	items: readonly { href: string; label: string; icon: NavIcon; divider?: boolean }[];
 	isActive: (href: string) => boolean;
 }>) {
 	return (
@@ -164,8 +164,9 @@ function NavList({
 				const Icon = ICONS[item.icon];
 				const active = isActive(item.href);
 				return (
-					<li key={item.href}>
-						<Link
+					<Fragment key={item.href}>
+						<li>
+							<Link
 							href={item.href}
 							aria-current={active ? 'page' : undefined}
 							className={`${linkBase} ${
@@ -177,7 +178,14 @@ function NavList({
 							<Icon className="text-base" aria-hidden="true" />
 							{item.label}
 						</Link>
-					</li>
+						</li>
+						{/* A line between the steps of the job search. */}
+						{item.divider && (
+							<li role="presentation" className="my-2 px-3">
+								<hr className="border-base-100/15" />
+							</li>
+						)}
+					</Fragment>
 				);
 			})}
 		</ul>
