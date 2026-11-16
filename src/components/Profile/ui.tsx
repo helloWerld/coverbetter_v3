@@ -8,7 +8,7 @@ export const fieldClass =
 	'w-full min-h-11 rounded-box border border-base-100/10 bg-base-300 px-3 py-2 text-base text-base-100 placeholder:text-base-100/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-100 disabled:opacity-60';
 export const labelClass = 'mb-1 block text-sm font-medium text-base-100';
 export const btnClass =
-	'btn btn-outline btn-sm min-h-11 min-w-11 border-base-100/30 text-base-100 disabled:border-base-100/10 disabled:bg-transparent disabled:text-base-100/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-100';
+	'btn btn-outline btn-sm min-h-11 min-w-11 border-base-100/30 text-base-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-100';
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 

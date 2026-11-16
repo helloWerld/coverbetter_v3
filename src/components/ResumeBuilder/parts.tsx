@@ -6,7 +6,7 @@ import { FaArrowDown, FaArrowLeft, FaArrowRight, FaArrowUp } from 'react-icons/f
 export const focusRing =
 	'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-100';
 export const fieldClass = `w-full rounded-box border border-base-100/10 bg-base-300 px-4 py-3 text-base text-base-100 placeholder:text-base-100/40 ${focusRing} disabled:opacity-60`;
-export const smallBtn = `btn btn-sm btn-ghost min-h-11 min-w-11 border border-base-100/20 text-base-100 disabled:bg-transparent disabled:text-base-100/30 ${focusRing}`;
+export const smallBtn = `btn btn-sm btn-ghost min-h-11 min-w-11 border border-base-100/20 text-base-100 ${focusRing}`;
 
 /** Move buttons. Each label names the item. */
 export function MoveButtons({

@@ -30,6 +30,24 @@ a:focus {
 	@apply bg-gradient-to-br from-secondary to-purple-950;
 }
 
+/*
+ * One look for every disabled or loading button: a grey fill with dark text.
+ * The gradient of .btn-secondary is a background image, so it must be removed too.
+ * !important beats DaisyUI's own disabled colors and the outline and ghost variants.
+ */
+.btn:disabled,
+.btn[disabled],
+.btn.btn-disabled,
+fieldset:disabled .btn {
+	background-image: none !important;
+	background-color: #7a7a80 !important;
+	border-color: #7a7a80 !important;
+	color: #0a0a0a !important;
+	opacity: 1 !important;
+	box-shadow: none !important;
+	cursor: not-allowed;
+}
+
 .gradient-text {
 	@apply bg-gradient-to-br from-base-100 from-40% to-secondary bg-clip-text text-transparent;
 }
