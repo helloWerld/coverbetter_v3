@@ -1,16 +1,17 @@
 import Image from 'next/image';
 import DashboardNav from '@/components/Dashboard/DashboardNav';
+import { isAdminEmail } from '@/lib/admin-email';
 import { requireUser } from '@/lib/user';
 
 export default async function DashboardLayout({
 	children,
 }: Readonly<{ children: React.ReactNode }>) {
 	// Makes sure the users row exists before any page reads it.
-	await requireUser();
+	const user = await requireUser();
 
 	return (
 		<div className="min-h-screen bg-primary md:flex">
-			<DashboardNav />
+			<DashboardNav isAdmin={isAdminEmail(user.email)} />
 			{/* The grid background is the same image the homepage sections use. */}
 			<div className="relative min-w-0 flex-1 overflow-hidden">
 				<Image

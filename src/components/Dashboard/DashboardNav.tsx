@@ -16,9 +16,11 @@ import {
 	FaCircleQuestion,
 	FaPaperPlane,
 	FaMagnifyingGlass,
+	FaHeadset,
+	FaUserShield,
 } from 'react-icons/fa6';
 import { UserButton } from '@clerk/nextjs';
-import { ACCOUNT_NAV, MAIN_NAV, type NavIcon } from './nav';
+import { ACCOUNT_NAV, ADMIN_NAV, MAIN_NAV, type NavIcon } from './nav';
 import { SOON_FEATURES } from '@/lib/soon';
 import Logo from '@/components/ui/Logo';
 
@@ -35,12 +37,14 @@ const ICONS: Record<NavIcon, React.ComponentType<{ className?: string }>> = {
 	followups: FaPaperPlane,
 	search: FaMagnifyingGlass,
 	billing: FaCreditCard,
+	support: FaHeadset,
+	admin: FaUserShield,
 };
 
 const linkBase =
 	'flex min-h-11 items-center gap-3 rounded-lg px-3 py-2 text-sm transition duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral';
 
-export default function DashboardNav() {
+export default function DashboardNav({ isAdmin = false }: Readonly<{ isAdmin?: boolean }>) {
 	const pathname = usePathname();
 	const [open, setOpen] = useState(false);
 
@@ -138,10 +142,10 @@ export default function DashboardNav() {
 					</ul>
 				</nav>
 
-				{/* Settings and Billing sit at the bottom, just above the avatar. */}
+				{/* Settings, Billing, and Support sit at the bottom, just above the avatar. */}
 				<div className="mt-auto pt-6">
 					<nav aria-label="Account">
-						<NavList items={ACCOUNT_NAV} isActive={isActive} />
+						<NavList items={isAdmin ? [...ACCOUNT_NAV, ...ADMIN_NAV] : ACCOUNT_NAV} isActive={isActive} />
 					</nav>
 					<div className="mt-3 hidden items-center gap-3 border-t border-base-100/10 px-3 pt-4 md:flex">
 						<UserButton />

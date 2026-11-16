@@ -50,7 +50,7 @@ const sections: LegalSection[] = [
 		heading: 'Cancel and refunds',
 		body: [
 			'You can cancel Pro at any time from the Billing page. You keep Pro access until the end of the period you paid for.',
-			'Credits that you have used are not refundable. If a payment went wrong, write to support@coverbetter.io and we will look into it.',
+			'Credits that you have used are not refundable. If a payment went wrong, write to hello@coverbetter.io and we will look into it.',
 		],
 	},
 	{
@@ -80,7 +80,7 @@ const sections: LegalSection[] = [
 	},
 	{
 		heading: 'Contact',
-		body: ['Write to support@coverbetter.io with any question about these terms.'],
+		body: ['Write to hello@coverbetter.io with any question about these terms.'],
 	},
 ];
 

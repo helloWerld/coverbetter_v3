@@ -14,6 +14,7 @@ const sections: LegalSection[] = [
 			'Account: your email address, and your name if you sign in with Google or LinkedIn. We do not see your password.',
 			'Your content: the resumes you upload or paste, the job posts you paste, and the letters we write for you.',
 			'Payments: Stripe handles your card details. We store only your Stripe customer ID, your plan, and your credit balance. We never see your card number.',
+			'Support: the requests that you send from the Support page, with your email address, so that we can answer you.',
 			'Usage: basic technical data such as your IP address, browser type, and the pages you visit, so that we can run and protect the service.',
 		],
 	},
@@ -73,7 +74,7 @@ const sections: LegalSection[] = [
 	},
 	{
 		heading: 'Contact',
-		body: ['Write to support@coverbetter.io with any question about your data.'],
+		body: ['Write to hello@coverbetter.io with any question about your data.'],
 	},
 ];
 

@@ -14,6 +14,10 @@ export const MAIN_NAV = [
 export const ACCOUNT_NAV = [
 	{ href: '/dashboard/settings', label: 'Settings', icon: 'settings' },
 	{ href: '/dashboard/billing', label: 'Billing', icon: 'billing' },
+	{ href: '/dashboard/support', label: 'Support', icon: 'support' },
 ] as const;
 
-export type NavIcon = (typeof MAIN_NAV)[number]['icon'] | (typeof ACCOUNT_NAV)[number]['icon'];
+/** Shown only to the admin account. The page also checks the account on the server. */
+export const ADMIN_NAV = [{ href: '/dashboard/admin', label: 'Admin', icon: 'admin' }] as const;
+
+export type NavIcon = (typeof MAIN_NAV)[number]['icon'] | (typeof ACCOUNT_NAV)[number]['icon'] | (typeof ADMIN_NAV)[number]['icon'];

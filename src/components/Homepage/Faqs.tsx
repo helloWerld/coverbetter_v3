@@ -175,7 +175,8 @@ const Faqs = () => {
             <div className="collapse-content">
               <p>
                 Credits that you used are not refundable. If something went
-                wrong with a payment, write to support@coverbetter.io.
+                wrong with a payment, send a request from the Support page in
+                your dashboard, or write to hello@coverbetter.io.
               </p>
             </div>
           </div>
@@ -189,7 +190,10 @@ const Faqs = () => {
               How do I get help?
             </div>
             <div className="collapse-content">
-              <p>Write to support@coverbetter.io. We answer by email.</p>
+              <p>
+                Sign in and open Support in your dashboard to send a request.
+                Or write to hello@coverbetter.io. We answer by email.
+              </p>
             </div>
           </div>
         </div>

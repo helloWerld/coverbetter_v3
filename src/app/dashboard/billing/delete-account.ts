@@ -3,7 +3,7 @@
 import { redirect } from 'next/navigation';
 import { clerkClient } from '@clerk/nextjs/server';
 import { eq } from 'drizzle-orm';
-import { aiCalls, extensionTokens, fitChecks, letters, resumes, users, waitlist } from '@/db/schema';
+import { aiCalls, extensionTokens, fitChecks, letters, resumes, supportRequests, users, waitlist } from '@/db/schema';
 import { deleteDashboardData } from '@/lib/applications/db';
 import { deleteProfile } from '@/lib/profile/db';
 import { getDb, getEnv } from '@/lib/cf';
@@ -55,6 +55,7 @@ export async function deleteAccountAction(
 		await deleteDashboardData(user.id);
 		await deleteProfile(user.id);
 		await db.delete(aiCalls).where(eq(aiCalls.userId, user.id));
+		await db.delete(supportRequests).where(eq(supportRequests.userId, user.id));
 		await db.delete(fitChecks).where(eq(fitChecks.userId, user.id));
 		await db.delete(extensionTokens).where(eq(extensionTokens.userId, user.id));
 		await db.delete(letters).where(eq(letters.userId, user.id));

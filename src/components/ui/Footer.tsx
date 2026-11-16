@@ -45,9 +45,9 @@ const Footer = () => {
           </Link>
         </nav>
         <nav aria-label="Contact">
-          <h6 className="footer-title">Support</h6>
-          <a href="mailto:support@coverbetter.io" className="link link-hover">
-            support@coverbetter.io
+          <h6 className="footer-title">Contact</h6>
+          <a href="mailto:hello@coverbetter.io" className="link link-hover">
+            hello@coverbetter.io
           </a>
         </nav>
       </div>

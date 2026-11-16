@@ -314,3 +314,26 @@ export type Interview = typeof interviews.$inferSelect;
 export type Message = typeof messages.$inferSelect;
 export type PrepPack = typeof prepPacks.$inferSelect;
 export type PrepAnswer = typeof prepAnswers.$inferSelect;
+
+/** Help requests from the Support page. Only signed-in users can send one. */
+export const supportRequests = sqliteTable(
+	'support_requests',
+	{
+		id: text('id').primaryKey(),
+		userId: text('user_id').notNull(),
+		email: text('email').notNull().default(''),
+		topic: text('topic').notNull(),
+		subject: text('subject').notNull(),
+		message: text('message').notNull(),
+		status: text('status', { enum: ['open', 'closed'] })
+			.notNull()
+			.default('open'),
+		createdAt: createdAt(),
+	},
+	(t) => [
+		index('support_requests_status_idx').on(t.status, t.createdAt),
+		index('support_requests_user_idx').on(t.userId, t.createdAt),
+	],
+);
+
+export type SupportRequest = typeof supportRequests.$inferSelect;
