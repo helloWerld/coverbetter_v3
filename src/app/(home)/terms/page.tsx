@@ -39,8 +39,10 @@ const sections: LegalSection[] = [
 		heading: 'Plans and payments',
 		body: [
 			'Free: 3 letters for each account.',
-			'Pro: $19.97 a month, for up to 200 letters a month.',
-			'Pay as you go: $1.50 per letter. Paid letters never expire.',
+			'Pro: $19.97 a month, for up to 200 credits a month.',
+			'Pay as you go: $1.50 per credit. Credits that you buy never expire.',
+			'1 credit writes 1 letter with its Job Fit Score. A Job Fit Score check without a letter also uses 1 credit. A check that fails uses no credit.',
+			'The Job Fit Score compares your resume with the job post. It does not predict a hiring decision.',
 			'Stripe processes all payments. Prices may change. A change to the price of Pro applies from your next billing period, and we tell you before it starts.',
 		],
 	},
@@ -86,7 +88,7 @@ export default function Terms() {
 	return (
 		<LegalPage
 			title="Terms of Service"
-			updated="2026-11-13"
+			updated="2026-11-15"
 			intro="These terms govern your use of CoverBetter, an AI service that writes cover letters from your resume and a job post."
 			sections={sections}
 		/>
