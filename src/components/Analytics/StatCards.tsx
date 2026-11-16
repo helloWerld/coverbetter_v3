@@ -48,7 +48,7 @@ export default function StatCards({ stats }: Readonly<{ stats: SummaryStats }>) 
 	const median = stats.medianDaysToResponse;
 	return (
 		<div className="flex flex-col gap-4">
-			<dl className="grid grid-cols-1 gap-4 min-[420px]:grid-cols-2 lg:grid-cols-4">
+			<dl className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
 				<Hero label="Applied" value={String(applied)} note={`of ${stats.total} in your list`} />
 				<Hero
 					label="Response rate"
