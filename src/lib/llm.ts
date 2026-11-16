@@ -69,6 +69,7 @@ async function callAnthropic(
 	env: Env,
 	p: { system: string; user: string },
 	model: (typeof ANTHROPIC_MODELS)[ModelKey],
+	maxTokens: number,
 ) {
 	const data = (await post(
 		`${base(env, 'anthropic')}/v1/messages`,
@@ -79,7 +80,7 @@ async function callAnthropic(
 		},
 		{
 			model: model.id,
-			max_tokens: MAX_TOKENS,
+			max_tokens: maxTokens,
 			thinking: model.thinking,
 			system: p.system,
 			messages: [{ role: 'user', content: p.user }],
@@ -99,13 +100,13 @@ async function callAnthropic(
 	return text;
 }
 
-async function callOpenAI(env: Env, p: { system: string; user: string }) {
+async function callOpenAI(env: Env, p: { system: string; user: string }, maxTokens: number) {
 	const data = (await post(
 		`${base(env, 'openai')}/chat/completions`,
 		{ Authorization: `Bearer ${env.OPENAI_API_KEY}`, ...gatewayHeaders(env) },
 		{
 			model: OPENAI_FALLBACK_MODEL,
-			max_completion_tokens: MAX_TOKENS,
+			max_completion_tokens: maxTokens,
 			messages: [
 				{ role: 'system', content: p.system },
 				{ role: 'user', content: p.user },
@@ -125,12 +126,14 @@ export async function generateLetter(
 	env: Env,
 	prompt: { system: string; user: string },
 	modelKey: ModelKey = 'sonnet',
+	/** Larger calls (resume + letter + fit score) need more room than a letter. */
+	maxTokens: number = MAX_TOKENS,
 ): Promise<LlmResult> {
 	const model = ANTHROPIC_MODELS[modelKey];
 	try {
-		return { text: await callAnthropic(env, prompt, model), model: model.id };
+		return { text: await callAnthropic(env, prompt, model, maxTokens), model: model.id };
 	} catch (e) {
 		if (!(e instanceof RetryableError)) throw e;
 	}
-	return { text: await callOpenAI(env, prompt), model: OPENAI_FALLBACK_MODEL };
+	return { text: await callOpenAI(env, prompt, maxTokens), model: OPENAI_FALLBACK_MODEL };
 }

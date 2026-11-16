@@ -49,7 +49,8 @@ export async function createResume(
 	const existing = await db
 		.select({ id: resumes.id })
 		.from(resumes)
-		.where(eq(resumes.userId, userId));
+		// Tailored versions from the career profile do not count against the upload limit.
+		.where(and(eq(resumes.userId, userId), eq(resumes.kind, 'uploaded')));
 	if (!canAddResume(existing.length)) throw new ResumeLimitError();
 
 	const id = crypto.randomUUID();

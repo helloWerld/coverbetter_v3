@@ -29,7 +29,7 @@ export async function POST(req: Request) {
 
 	// Makes sure the users row exists, then check the limit before any parsing work.
 	await requireUser();
-	if ((await listResumes(userId)).length >= MAX_RESUMES) return fail(MESSAGES.limit, 409);
+	if ((await listResumes(userId)).filter((r) => r.kind === 'uploaded').length >= MAX_RESUMES) return fail(MESSAGES.limit, 409);
 
 	const bytes = new Uint8Array(await file.arrayBuffer());
 	const result = await extractResumeText(bytes, file.type, file.name);

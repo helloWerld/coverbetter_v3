@@ -1,7 +1,7 @@
 import 'server-only';
 import { and, count, eq, gt } from 'drizzle-orm';
 import { z } from 'zod';
-import { fitChecks, letters, resumes, type User } from '@/db/schema';
+import { aiCalls, fitChecks, letters, resumes, type User } from '@/db/schema';
 import { generateOptions, hasPaidFeatures } from '@/lib/access';
 import { getDb, getEnv } from '@/lib/cf';
 import { checkEntitlement, consumeEntitlement } from '@/lib/entitlements';
@@ -10,6 +10,7 @@ import { canPickModel, resolveModelKey } from '@/lib/model-access';
 import { LANGUAGE_CODES } from '@/lib/languages';
 import { LENGTHS, TONES, buildPrompt, parseModelOutput } from '@/lib/prompt';
 import { serializeFit, type FitResult } from '@/lib/fit';
+import { createApplication, getApplication, linkToApplication } from '@/lib/applications/db';
 
 export type GenerateErrorCode = 'no_credits' | 'rate_limit' | 'pro_cap';
 
@@ -17,6 +18,7 @@ export type GenerateOutcome =
 	| {
 			ok: true;
 			letterId: string;
+			applicationId: string;
 			jobTitle: string;
 			company: string;
 			body: string;
@@ -34,6 +36,8 @@ export interface GenerateRequest {
 	length?: unknown;
 	language?: unknown;
 	model?: unknown;
+	/** Links the letter to this application. Without it, a new application is made. */
+	applicationId?: unknown;
 }
 
 const inputSchema = z.object({
@@ -155,6 +159,11 @@ export async function generateForUser(
 		return { ok: false, error: MESSAGES.no_credits, code: 'no_credits' };
 	}
 
+	const app =
+		typeof req.applicationId === 'string' && req.applicationId
+			? await getApplication(user.id, req.applicationId)
+			: null;
+
 	const letterId = crypto.randomUUID();
 	await db.insert(letters).values({
 		id: letterId,
@@ -171,11 +180,42 @@ export async function generateForUser(
 		model: result.model,
 		fitScore: parsedOut.fit?.score ?? null,
 		fitJson: parsedOut.fit ? serializeFit(parsedOut.fit) : null,
+		applicationId: app?.id ?? null,
 	});
+
+	// Every letter belongs to an application, so the tracker sees it.
+	let applicationId = app?.id ?? '';
+	const fitLink = parsedOut.fit ? { fitScore: parsedOut.fit.score, fitJson: serializeFit(parsedOut.fit) } : {};
+	try {
+		if (app) {
+			await linkToApplication(user.id, app.id, { letterId, ...(resumeId && !app.resumeId ? { resumeId } : {}), ...fitLink });
+		} else {
+			const created = await createApplication(
+				user.id,
+				{
+					company: parsedOut.company,
+					jobTitle: parsedOut.jobTitle,
+					jobUrl: '',
+					source: 'other',
+					jobDescription: input.jobDescription,
+					notes: '',
+					contactName: '',
+					contactEmail: '',
+				},
+				{ letterId, resumeId, fitScore: parsedOut.fit?.score ?? null, fitJson: fitLink.fitJson ?? null },
+			);
+			applicationId = created.id;
+			await db.update(letters).set({ applicationId }).where(eq(letters.id, letterId));
+		}
+	} catch (e) {
+		// The user paid for the letter. A tracker error must not lose it.
+		console.error('could not link the letter to an application', e);
+	}
 
 	return {
 		ok: true,
 		letterId,
+		applicationId,
 		jobTitle: parsedOut.jobTitle,
 		company: parsedOut.company,
 		body: parsedOut.body,
@@ -183,11 +223,11 @@ export async function generateForUser(
 	};
 }
 
-/** Letters plus fit checks in the last hour, for the hourly limit. */
+/** Letters, fit checks, and other AI calls in the last hour, for the hourly limit. */
 export async function usesInLastHour(userId: string, now: Date): Promise<number> {
 	const db = getDb();
 	const since = new Date(now.getTime() - 60 * 60 * 1000);
-	const [[l], [f]] = await Promise.all([
+	const [[l], [f], [c]] = await Promise.all([
 		db
 			.select({ n: count() })
 			.from(letters)
@@ -196,6 +236,10 @@ export async function usesInLastHour(userId: string, now: Date): Promise<number>
 			.select({ n: count() })
 			.from(fitChecks)
 			.where(and(eq(fitChecks.userId, userId), gt(fitChecks.createdAt, since))),
+		db
+			.select({ n: count() })
+			.from(aiCalls)
+			.where(and(eq(aiCalls.userId, userId), gt(aiCalls.createdAt, since))),
 	]);
-	return l.n + f.n;
+	return l.n + f.n + c.n;
 }
