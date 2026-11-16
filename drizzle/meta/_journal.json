@@ -29,6 +29,13 @@
       "when": 1794766941823,
       "tag": "0003_job_fit_score",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1794799204894,
+      "tag": "0004_job_dashboard",
+      "breakpoints": true
     }
   ]
 }
