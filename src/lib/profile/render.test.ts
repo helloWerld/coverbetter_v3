@@ -93,3 +93,17 @@ describe('defaultSelection and text', () => {
 		expect(docToText({ name: '', headline: '', contactLine: '', summary: '', sections: [] })).toBe('');
 	});
 });
+
+describe('headline', () => {
+	it('uses the main headline when the resume picks none', () => {
+		expect(selectionToDoc(profile(), defaultSelection(profile())).headline).toBe('Data analyst');
+	});
+	it('uses the headline of the resume, and an empty one means no headline', () => {
+		const p = profile();
+		expect(selectionToDoc(p, { ...defaultSelection(p), headline: 'BI developer' }).headline).toBe('BI developer');
+		expect(selectionToDoc(p, { ...defaultSelection(p), headline: '' }).headline).toBe('');
+	});
+	it('keeps old profiles valid: other headlines default to none', () => {
+		expect(profile().headlines).toEqual([]);
+	});
+});

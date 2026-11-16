@@ -88,3 +88,13 @@ describe('cleanProfile', () => {
 		expect(out.skills).toHaveLength(0);
 	});
 });
+
+describe('headlines', () => {
+	it('adds new headlines from an import, drops repeats, and cleans empty ones', () => {
+		// The editor can hold an empty headline before it is saved.
+		const current = { ...emptyProfile(), headlines: [{ id: 'hl_a', text: 'Data analyst' }, { id: 'hl_b', text: ' ' }] };
+		const incoming = profileSchema.parse({ headlines: [{ id: 'hl_c', text: 'data  analyst' }, { id: 'hl_d', text: 'BI developer' }] });
+		const merged = mergeProfiles(current, incoming);
+		expect(cleanProfile(merged).headlines.map((h) => h.text)).toEqual(['Data analyst', 'BI developer']);
+	});
+});

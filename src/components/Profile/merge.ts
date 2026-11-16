@@ -43,6 +43,7 @@ export function mergeProfiles(current: Profile, incoming: Profile): Profile {
 		...current,
 		basics,
 		summaries: union(current.summaries, incoming.summaries, (s) => norm(s.text), 'sum', 10),
+		headlines: union(current.headlines, incoming.headlines, (h) => norm(h.text), 'hl', 10),
 		positions: union(
 			current.positions,
 			incoming.positions,
@@ -82,6 +83,7 @@ export function cleanProfile(p: Profile): Profile {
 	return {
 		...p,
 		summaries: p.summaries.filter((s) => s.text.trim()),
+		headlines: p.headlines.filter((h) => h.text.trim()),
 		positions: p.positions.map((x) => ({ ...x, bullets: bullets(x.bullets) })),
 		projects: p.projects.map((x) => ({ ...x, bullets: bullets(x.bullets) })),
 		skills: p.skills.filter((s) => s.name.trim()),

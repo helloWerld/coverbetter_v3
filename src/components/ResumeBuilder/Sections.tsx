@@ -19,6 +19,42 @@ function Group({ title, hint, children }: Readonly<{ title: string; hint?: strin
 	);
 }
 
+export function HeadlineGroup({ profile, sel, update }: Props) {
+	const main = profile.basics.headline.trim();
+	const options = [...(main ? [main] : []), ...profile.headlines.map((h) => h.text.trim()).filter(Boolean)];
+	const current = sel.headline ?? profile.basics.headline;
+	if (options.length === 0 && !current) return null;
+	return (
+		<Group title="Headline" hint="Pick a headline from your profile, or write one for this job. Leave it empty for no headline.">
+			{options.length > 1 && (
+				<div className="mb-3 flex flex-wrap gap-2">
+					{options.map((text, i) => (
+						<button
+							key={`${i}-${text}`}
+							type="button"
+							className={`btn btn-sm min-h-11 ${current === text ? 'btn-secondary' : 'btn-outline border-base-100/30 text-base-100 hover:border-neutral hover:bg-base-200 hover:text-base-100'} ${focusRing}`}
+							aria-pressed={current === text}
+							onClick={() => update((x) => ({ ...x, headline: text }))}
+						>
+							{text}
+						</button>
+					))}
+				</div>
+			)}
+			<label htmlFor="rb-headline" className="mb-1 block text-sm text-base-100/70">
+				Headline text
+			</label>
+			<input
+				id="rb-headline"
+				className={`${fieldClass} min-h-11`}
+				maxLength={200}
+				value={current}
+				onChange={(e) => update((x) => ({ ...x, headline: e.target.value }))}
+			/>
+		</Group>
+	);
+}
+
 export function SummaryGroup({ profile, sel, update }: Props) {
 	return (
 		<Group title="Summary" hint="Pick a summary from your profile, or write one for this job. Leave it empty for no summary.">

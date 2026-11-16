@@ -131,7 +131,7 @@ export function selectionToDoc(p: Profile, s: TailoredSelection): ResumeDoc {
 	const b = p.basics;
 	return {
 		name: b.name,
-		headline: b.headline,
+		headline: s.headline ?? b.headline,
 		contactLine: join([b.email, b.phone, b.location, ...b.links.map((l) => l.url || l.label)], ' | '),
 		summary: s.summary,
 		sections,

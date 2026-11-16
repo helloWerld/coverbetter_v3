@@ -10,6 +10,7 @@ import { ProfileApiContext, type ProfileApi } from './store';
 import StrengthMeter from './StrengthMeter';
 import {
 	BasicsSection,
+	LinksSection,
 	CertificationsSection,
 	EducationSection,
 	OtherSection,
@@ -207,6 +208,7 @@ export default function ProfileEditor({ initial }: Readonly<{ initial: Profile }
 				{empty && <p className="-my-2 text-base-100/70">No LinkedIn data? Fill in the sections below by hand.</p>}
 
 				<BasicsSection profile={profile} />
+				<LinksSection profile={profile} />
 				<SummariesSection profile={profile} />
 				<PositionsSection profile={profile} />
 				<EducationSection profile={profile} />

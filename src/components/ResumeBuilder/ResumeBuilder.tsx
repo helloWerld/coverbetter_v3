@@ -14,7 +14,7 @@ import { downloadResumeDocx, downloadResumePdf } from './download';
 import { pageHint, pruneRewrites } from './helpers';
 import { fieldClass, focusRing } from './parts';
 import ResumePreview from './ResumePreview';
-import { ExperienceGroup, ListGroups, ProjectsGroup, SkillsGroup, SummaryGroup } from './Sections';
+import { ExperienceGroup, HeadlineGroup, ListGroups, ProjectsGroup, SkillsGroup, SummaryGroup } from './Sections';
 
 type Props = Readonly<{
 	applicationId: string;
@@ -267,6 +267,7 @@ export default function ResumeBuilder(props: Props) {
 						</>
 					)}
 
+					<HeadlineGroup profile={profile} sel={sel} update={update} />
 					<SummaryGroup profile={profile} sel={sel} update={update} />
 					<ExperienceGroup profile={profile} sel={sel} update={update} />
 					<ProjectsGroup profile={profile} sel={sel} update={update} />

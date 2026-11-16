@@ -28,6 +28,7 @@ import {
 } from './ui';
 
 const summariesLens = listLens('summaries');
+const headlinesLens = listLens('headlines');
 const positionsLens = listLens('positions');
 const educationLens = listLens('education');
 const certsLens = listLens('certifications');
@@ -45,32 +46,96 @@ export function BasicsSection({ profile }: Readonly<{ profile: Profile }>) {
 		<Section id="section-basics" title="Basics">
 			<div className="grid gap-4 sm:grid-cols-2">
 				<TextField label="Full name" value={b.name} autoComplete="name" onChange={(name) => api.patchBasics({ name })} />
-				<TextField label="Headline" value={b.headline} placeholder="For example: Data analyst" onChange={(headline) => api.patchBasics({ headline })} />
+				<TextField label="Main headline" value={b.headline} placeholder="For example: Data analyst" onChange={(headline) => api.patchBasics({ headline })} />
 				<TextField label="Email" type="email" value={b.email} autoComplete="email" onChange={(email) => api.patchBasics({ email })} />
 				<TextField label="Phone" type="tel" value={b.phone} autoComplete="tel" onChange={(phone) => api.patchBasics({ phone })} />
 				<TextField label="Location" value={b.location} autoComplete="address-level2" onChange={(location) => api.patchBasics({ location })} />
 			</div>
 			<div>
-				<h3 className="mb-2 text-base text-base-100">Links</h3>
+				<h3 className="mb-1 text-base text-base-100">Other headlines</h3>
+				<p className="mb-3">Add a headline for each type of role that you apply for. Each resume can use a different headline.</p>
 				<ul className="flex flex-col gap-3">
-					{b.links.map((l: Link, i) => (
-						<li key={i} className="rounded-box border border-base-100/10 p-3">
-							<div className="grid gap-3 sm:grid-cols-2">
-								<TextField label={`Link ${i + 1} name`} value={l.label} placeholder="LinkedIn" onChange={(label) => api.patch(linksLens, i, { label })} />
-								<TextField label={`Link ${i + 1} address`} type="url" value={l.url} placeholder="https://" onChange={(url) => api.patch(linksLens, i, { url })} />
-							</div>
+					{profile.headlines.map((h, i) => (
+						<li key={h.id} className="rounded-box border border-base-100/10 p-3">
+							<TextField label={`Headline ${i + 2}`} value={h.text} maxLength={200} placeholder="For example: Business intelligence lead" onChange={(text) => api.patch(headlinesLens, i, { text })} />
 							<div className="mt-3">
-								<RowControls lens={linksLens} index={i} count={b.links.length} label={`link ${i + 1}`} />
+								<RowControls lens={headlinesLens} index={i} count={profile.headlines.length} label={`headline ${i + 2}`} />
 							</div>
 						</li>
 					))}
 				</ul>
-				{b.links.length < 8 && (
+				{profile.headlines.length < 10 && (
 					<div className="mt-3">
-						<AddButton onClick={() => api.add(linksLens, { label: '', url: '' })}>Add link</AddButton>
+						<AddButton
+							onClick={() => {
+								const id = newItemId('hl');
+								api.add(headlinesLens, { id, text: '' }, id);
+							}}
+						>
+							Add a headline
+						</AddButton>
 					</div>
 				)}
 			</div>
+		</Section>
+	);
+}
+
+/** Common links. A click adds the link with this name. "Other link" adds one with no name. */
+const LINK_SUGGESTIONS = ['LinkedIn', 'Portfolio', 'Personal website', 'GitHub', 'X (Twitter)', 'Instagram', 'Behance', 'Dribbble', 'YouTube'];
+
+export function LinksSection({ profile }: Readonly<{ profile: Profile }>) {
+	const api = useProfileApi();
+	const links = profile.basics.links;
+	const used = new Set(links.map((l) => l.label.trim().toLowerCase()));
+	const full = links.length >= 8;
+	return (
+		<Section id="section-links" title="Links">
+			<p>Add the links that an employer can open, for example your LinkedIn profile or your portfolio. You can add up to 8.</p>
+			{links.length > 0 && (
+				<ul className="flex flex-col gap-3">
+					{links.map((l: Link, i) => (
+						<li key={i} className="rounded-box border border-base-100/10 p-3">
+							<div className="grid gap-3 sm:grid-cols-2">
+								<TextField label={`Link ${i + 1} name`} value={l.label} placeholder="For example: Portfolio" onChange={(label) => api.patch(linksLens, i, { label })} />
+								<TextField label={`Link ${i + 1} address`} type="url" value={l.url} placeholder="https://" onChange={(url) => api.patch(linksLens, i, { url })} />
+							</div>
+							<div className="mt-3">
+								<RowControls lens={linksLens} index={i} count={links.length} label={`link ${i + 1}`} />
+							</div>
+						</li>
+					))}
+				</ul>
+			)}
+			{full ? (
+				<p>You have 8 links. Delete a link to add another one.</p>
+			) : (
+				<div>
+					<h3 className="mb-2 text-base text-base-100">Add a link</h3>
+					<ul className="flex flex-wrap gap-2">
+						{LINK_SUGGESTIONS.filter((name) => !used.has(name.toLowerCase())).map((name) => (
+							<li key={name}>
+								<button
+									type="button"
+									onClick={() => api.add(linksLens, { label: name, url: '' })}
+									className="btn btn-sm btn-outline border-base-100/30 text-base-100 hover:border-neutral hover:bg-base-200 hover:text-base-100 min-h-11"
+								>
+									<span aria-hidden="true">+</span> {name}
+								</button>
+							</li>
+						))}
+						<li>
+							<button
+								type="button"
+								onClick={() => api.add(linksLens, { label: '', url: '' })}
+								className="btn btn-sm btn-secondary min-h-11"
+							>
+								<span aria-hidden="true">+</span> Other link
+							</button>
+						</li>
+					</ul>
+				</div>
+			)}
 		</Section>
 	);
 }

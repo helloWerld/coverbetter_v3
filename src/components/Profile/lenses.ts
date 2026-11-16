@@ -4,7 +4,7 @@ import type { Basics, Bullet, Profile } from '@/lib/profile/types';
 export type Lens<T> = { get: (p: Profile) => T[]; set: (p: Profile, items: T[]) => Profile };
 
 export type Link = Basics['links'][number];
-type ListKey = 'summaries' | 'positions' | 'education' | 'certifications' | 'skills' | 'projects' | 'other';
+type ListKey = 'summaries' | 'headlines' | 'positions' | 'education' | 'certifications' | 'skills' | 'projects' | 'other';
 
 export function listLens<K extends ListKey>(key: K): Lens<Profile[K][number]> {
 	return {

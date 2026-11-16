@@ -96,3 +96,24 @@ I am writing about the Senior Analyst role.`;
 		expect(out.selection.positions).toEqual([]);
 	});
 });
+
+describe('headlines', () => {
+	const withHeadlines = profileSchema.parse({
+		...profile,
+		basics: { ...profile.basics, headline: 'Data analyst' },
+		headlines: [{ id: 'hl_1', text: 'BI developer' }],
+	});
+	const answer = (h: string) => `JOB: BI role | COMPANY: Fabrikam\nRESUME HEADLINE: ${h}\nRESUME SUMMARY: x\nPOS: pos_a | b_1\n---\nDear Hiring Manager,`;
+
+	it('lists every headline as an option', () => {
+		const t = profileForPrompt(withHeadlines);
+		expect(t).toContain('HEADLINE OPTION: Data analyst');
+		expect(t).toContain('HEADLINE OPTION: BI developer');
+	});
+	it('uses the headline that the AI picked from the profile', () => {
+		expect(parseTailorOutput(answer('bi developer'), withHeadlines).selection.headline).toBe('BI developer');
+	});
+	it('ignores a headline that is not in the profile', () => {
+		expect(parseTailorOutput(answer('Chief Data Wizard'), withHeadlines).selection.headline).toBeUndefined();
+	});
+});

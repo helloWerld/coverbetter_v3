@@ -20,7 +20,8 @@ export function profileForPrompt(p: Profile): string {
 	out.push(`NAME: ${b.name}`);
 	const contact = [b.email, b.phone, b.location, ...b.links.map((l) => l.url)].filter(Boolean).join(' | ');
 	if (contact) out.push(`CONTACT: ${contact}`);
-	if (b.headline) out.push(`HEADLINE: ${b.headline}`);
+	if (b.headline) out.push(`HEADLINE OPTION: ${b.headline}`);
+	for (const h of p.headlines) out.push(`HEADLINE OPTION: ${h.text}`);
 	for (const s of p.summaries) out.push(`SUMMARY OPTION: ${s.text}`);
 	if (p.positions.length) out.push('', 'POSITIONS:');
 	for (const pos of p.positions) {
@@ -64,6 +65,7 @@ Step 2: pick the resume content for this job.
 - For each kept position, pick the 2 to 6 most relevant bullets, most relevant first. Recent positions get more bullets.
 - Pick the relevant skills (most relevant first), and the education, certifications, projects, and other items that help.
 - You may reword a bullet to use the words of the job post. Keep every fact. Never add a number, a tool, a result, or a skill that is not in that bullet. Reword at most 8 bullets.
+- Pick the headline option that fits this job best. Copy it exactly. Do not write a new headline.
 - Write a resume summary of 2 or 3 sentences, in English, from facts in the profile only.
 
 Step 3: write the cover letter.
@@ -83,6 +85,7 @@ Safety rules:
 Output format, exactly, with no markdown:
 JOB: <job title> | COMPANY: <company>
 ${FIT_FORMAT}
+RESUME HEADLINE: <one headline option, copied exactly, or empty when there is none>
 RESUME SUMMARY: <2 or 3 sentences>
 POS: <position id> | <bullet id>, <bullet id>, ...
 (one POS line for each kept position, in display order)
@@ -159,6 +162,8 @@ export function parseTailorOutput(raw: string, profile: Profile): TailorOutput {
 	const otherIds = known(profile.other);
 
 	let summary = '';
+	let headline: string | undefined;
+	const headlineOptions = [profile.basics.headline, ...profile.headlines.map((h) => h.text)].map((t) => t.trim()).filter(Boolean);
 	const positions: { id: string; bullets: string[] }[] = [];
 	const projects: { id: string; bullets: string[] }[] = [];
 	const rewrites: Record<string, string> = {};
@@ -180,7 +185,11 @@ export function parseTailorOutput(raw: string, profile: Profile): TailorOutput {
 	};
 
 	for (const line of head) {
-		if (/^RESUME SUMMARY:/i.test(line)) summary = line.replace(/^RESUME SUMMARY:\s*/i, '').slice(0, 1500);
+		if (/^RESUME HEADLINE:/i.test(line)) {
+			// Only a headline from the profile. The AI may not write a new one.
+			const want = line.replace(/^RESUME HEADLINE:\s*/i, '').trim().toLowerCase();
+			headline = headlineOptions.find((h) => h.toLowerCase() === want);
+		} else if (/^RESUME SUMMARY:/i.test(line)) summary = line.replace(/^RESUME SUMMARY:\s*/i, '').slice(0, 1500);
 		else if (/^POS:/i.test(line)) pickBlock(line, posById, positions);
 		else if (/^PRJ:/i.test(line)) pickBlock(line, prjById, projects);
 		else if (/^REWRITE:/i.test(line)) {
@@ -207,6 +216,7 @@ export function parseTailorOutput(raw: string, profile: Profile): TailorOutput {
 	if (education.length === 0) education = profile.education.map((e) => e.id);
 
 	const selection = tailoredSelectionSchema.parse({
+		headline,
 		summary,
 		positions,
 		projects,

@@ -98,6 +98,12 @@ export const summarySchema = z.object({
 	text: z.string().trim().min(1).max(1500),
 });
 
+/** A headline other than the main one (basics.headline), for a different type of role. */
+export const headlineSchema = z.object({
+	id,
+	text: z.string().trim().min(1).max(200),
+});
+
 export const basicsSchema = z.object({
 	name: short(120),
 	headline: short(200),
@@ -111,6 +117,8 @@ export const profileSchema = z.object({
 	version: z.literal(1).default(1),
 	basics: basicsSchema.default({ name: '', headline: '', email: '', phone: '', location: '', links: [] }),
 	summaries: z.array(summarySchema).max(10).default([]),
+	/** Other headlines. The main headline is basics.headline. */
+	headlines: z.array(headlineSchema).max(10).default([]),
 	positions: z.array(positionSchema).max(60).default([]),
 	education: z.array(educationSchema).max(20).default([]),
 	certifications: z.array(certificationSchema).max(60).default([]),
@@ -127,6 +135,7 @@ export type Skill = z.infer<typeof skillSchema>;
 export type Project = z.infer<typeof projectSchema>;
 export type OtherItem = z.infer<typeof otherSchema>;
 export type Summary = z.infer<typeof summarySchema>;
+export type Headline = z.infer<typeof headlineSchema>;
 export type Basics = z.infer<typeof basicsSchema>;
 export type Profile = z.infer<typeof profileSchema>;
 
@@ -149,6 +158,8 @@ export function newItemId(prefix: string): string {
  */
 export const tailoredSelectionSchema = z.object({
 	version: z.literal(1).default(1),
+	/** The headline for this version. Not set means the main headline. Empty means no headline. */
+	headline: z.string().trim().max(200).optional(),
 	/** The summary text for this version. Empty means no summary. */
 	summary: z.string().trim().max(1500).default(''),
 	/** Position ids in display order. */
