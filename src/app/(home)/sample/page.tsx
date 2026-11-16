@@ -11,6 +11,7 @@ export const metadata: Metadata = {
 	title: 'Try a sample | CoverBetter',
 	description:
 		'See a finished cover letter from a sample resume and job post. Pick a template and download it as PDF or DOCX.',
+	alternates: { canonical: 'https://coverbetter.io/sample' },
 };
 
 const box =

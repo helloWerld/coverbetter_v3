@@ -10,6 +10,9 @@ import {
 	Faqs,
 } from '../../components/Homepage';
 
+// The www host redirects here. Tell search engines the one address to index.
+export const metadata = { alternates: { canonical: 'https://coverbetter.io/' } };
+
 const Home = () => {
 	return (
 		<div className="relative">

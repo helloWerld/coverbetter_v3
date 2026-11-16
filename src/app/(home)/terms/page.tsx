@@ -4,6 +4,7 @@ import LegalPage, { type LegalSection } from '@/components/ui/LegalPage';
 export const metadata: Metadata = {
 	title: 'Terms of Service — CoverBetter',
 	description: 'The terms for using CoverBetter.',
+	alternates: { canonical: 'https://coverbetter.io/terms' },
 };
 
 const sections: LegalSection[] = [
