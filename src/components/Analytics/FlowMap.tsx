@@ -67,6 +67,10 @@ export default function FlowMap({
 	const [zoom, setZoom] = useState(1);
 	const zoomRef = useRef(1);
 	const center = useRef<{ x: number; y: number } | null>(null);
+	const padRef = useRef(0);
+	const mapW = useRef(0);
+	const drag = useRef<{ x: number; y: number; left: number; top: number; id: number } | null>(null);
+	const [dragging, setDragging] = useState(false);
 	const [full, setFull] = useState(false);
 	const [boxH, setBoxH] = useState(0);
 	const [width, setWidth] = useState(900);
@@ -91,6 +95,10 @@ export default function FlowMap({
 	}, []);
 
 	const layout = useMemo(() => flowLayout(nodes, links, width), [nodes, links, width]);
+	// When the zoomed map is narrower than the box, center it in the box.
+	const pad = Math.max(0, (view.width - layout.width * zoom) / 2);
+	padRef.current = pad;
+	mapW.current = layout.width;
 	// In full screen the map fills the screen height.
 	const height = Math.max(layout.height, MIN_H, full ? boxH / zoom : 0);
 	const offsetY = (height - layout.height) / 2;
@@ -102,7 +110,7 @@ export default function FlowMap({
 		timer.current = null;
 	};
 	const hoverOpen = (id: string) => {
-		if (pinned) return;
+		if (pinned || drag.current) return;
 		clear();
 		timer.current = setTimeout(() => setActive(id), 120);
 	};
@@ -124,13 +132,13 @@ export default function FlowMap({
 	);
 	useEffect(() => () => clear(), []);
 
-	// Zoom around the center of the visible part, so the view does not jump.
+	// Zoom around the point of the map at the center of the box, so that point stays in the center.
 	const zoomTo = useCallback((next: number) => {
 		const el = boxRef.current;
 		const z = clampZoom(next);
 		if (!el || z === zoomRef.current) return;
 		center.current = {
-			x: (el.scrollLeft + el.clientWidth / 2) / zoomRef.current,
+			x: (el.scrollLeft + el.clientWidth / 2 - padRef.current) / zoomRef.current,
 			y: (el.scrollTop + el.clientHeight / 2) / zoomRef.current,
 		};
 		zoomRef.current = z;
@@ -141,10 +149,35 @@ export default function FlowMap({
 		const c = center.current;
 		if (!el || !c) return;
 		center.current = null;
-		el.scrollLeft = c.x * zoom - el.clientWidth / 2;
+		const pad = Math.max(0, (el.clientWidth - mapW.current * zoom) / 2);
+		el.scrollLeft = c.x * zoom + pad - el.clientWidth / 2;
 		el.scrollTop = c.y * zoom - el.clientHeight / 2;
 		setView({ left: el.scrollLeft, width: el.clientWidth });
 	}, [zoom]);
+
+	// Drag the empty part of the map with the mouse to move it. Touch screens scroll it natively.
+	const onDragStart = (e: React.PointerEvent<HTMLDivElement>) => {
+		const el = boxRef.current;
+		if (!el || e.pointerType !== 'mouse' || e.button !== 0) return;
+		if ((e.target as HTMLElement).closest('button, a, [role="region"]')) return;
+		drag.current = { x: e.clientX, y: e.clientY, left: el.scrollLeft, top: el.scrollTop, id: e.pointerId };
+		el.setPointerCapture(e.pointerId);
+		setDragging(true);
+		e.preventDefault();
+	};
+	const onDragMove = (e: React.PointerEvent<HTMLDivElement>) => {
+		const el = boxRef.current;
+		const d = drag.current;
+		if (!el || !d || d.id !== e.pointerId) return;
+		el.scrollLeft = d.left - (e.clientX - d.x);
+		el.scrollTop = d.top - (e.clientY - d.y);
+	};
+	const onDragEnd = (e: React.PointerEvent<HTMLDivElement>) => {
+		if (!drag.current || drag.current.id !== e.pointerId) return;
+		drag.current = null;
+		boxRef.current?.releasePointerCapture(e.pointerId);
+		setDragging(false);
+	};
 
 	// Ctrl or Cmd + scroll, and a pinch on a trackpad, zoom the map.
 	useEffect(() => {
@@ -212,7 +245,7 @@ export default function FlowMap({
 
 	// Keep the list inside the visible part of the chart, also when the chart scrolls sideways.
 	const panelPos = (c: CardBox) => {
-		const vLeft = view.left / zoom;
+		const vLeft = (view.left - pad) / zoom;
 		const vWidth = view.width / zoom;
 		const minLeft = vLeft + 8;
 		const maxLeft = Math.max(minLeft, vLeft + vWidth - PANEL_W - 8);
@@ -256,14 +289,18 @@ export default function FlowMap({
 					)}
 				</div>
 			</div>
-			{layout.width * zoom > view.width + 4 && <p className="-mb-2 text-xs text-base-100/50">Scroll to see all stages. Ctrl or Cmd + scroll also zooms.</p>}
+			<p className="-mb-2 text-xs text-base-100/50">Drag the map to move it. Ctrl or Cmd + scroll also zooms.</p>
 			<div
 				ref={boxRef}
 				onScroll={(e) => setView({ left: e.currentTarget.scrollLeft, width: e.currentTarget.clientWidth })}
-				className={`fm-grid relative overflow-auto rounded-box border border-secondary/20 bg-[radial-gradient(ellipse_at_center,rgba(147,51,234,0.12),transparent_70%)] ${full ? 'min-h-0 flex-1' : 'max-h-[70vh]'}`}>
+				onPointerDown={onDragStart}
+				onPointerMove={onDragMove}
+				onPointerUp={onDragEnd}
+				onPointerCancel={onDragEnd}
+				className={`fm-grid relative overflow-auto scroll-auto ${dragging ? 'cursor-grabbing select-none' : 'cursor-grab'} rounded-box border border-secondary/20 bg-[radial-gradient(ellipse_at_center,rgba(147,51,234,0.12),transparent_70%)] ${full ? 'min-h-0 flex-1' : 'max-h-[70vh]'}`}>
 				{/* The outer box has the zoomed size, so the scroll bars match the zoom. */}
-				<div className="relative" style={{ width: layout.width * zoom, height: height * zoom }}>
-				<div className="relative origin-top-left" style={{ width: layout.width, height, transform: zoom === 1 ? undefined : `scale(${zoom})` }} onPointerLeave={(e) => e.pointerType === 'mouse' && hoverClose()}>
+				<div className="relative" style={{ width: Math.max(layout.width * zoom, view.width), height: height * zoom }}>
+				<div className="absolute top-0 origin-top-left" style={{ left: pad, width: layout.width, height, transform: zoom === 1 ? undefined : `scale(${zoom})` }} onPointerLeave={(e) => e.pointerType === 'mouse' && hoverClose()}>
 					<svg width={layout.width} height={height} className="pointer-events-none absolute inset-0" aria-hidden="true">
 						<defs>
 							<filter id={`${uid}-glow`} x="-20%" y="-50%" width="140%" height="200%">
