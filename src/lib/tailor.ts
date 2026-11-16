@@ -15,7 +15,7 @@ import { buildTailorPrompt, parseTailorOutput } from '@/lib/tailor-prompt';
 
 const MAX_TAILORED = 300;
 
-function profileHasContent(p: Profile): boolean {
+export function profileHasContent(p: Profile): boolean {
 	return p.positions.some((x) => x.bullets.some((b) => !b.hidden)) || p.skills.length > 0;
 }
 

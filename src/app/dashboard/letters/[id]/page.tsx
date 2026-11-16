@@ -25,10 +25,10 @@ export default async function LetterPage({
 	return (
 		<div className="mx-auto w-full max-w-screen-xl">
 			<Link
-				href="/dashboard/letters"
+				href={letter.applicationId ? `/dashboard/applications/${letter.applicationId}` : '/dashboard/applications'}
 				className="mb-4 inline-flex min-h-11 items-center gap-2 text-base-100/70 hover:text-base-100"
 			>
-				<FaArrowLeft aria-hidden /> Letters
+				<FaArrowLeft aria-hidden /> {letter.applicationId ? 'Back to the role profile' : 'Find Roles'}
 			</Link>
 			<h1 className="gradient-text mb-6 text-3xl font-extralight md:text-5xl">
 				{paid ? 'Edit letter' : 'Your letter'}

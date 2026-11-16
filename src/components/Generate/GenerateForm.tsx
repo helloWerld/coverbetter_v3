@@ -95,7 +95,7 @@ export default function GenerateForm({
 			const res = await generateLetterAction(fd);
 			if (res.ok) {
 				setDone(true);
-				router.push('/dashboard/letters/' + res.letterId);
+				router.push(res.applicationId ? `/dashboard/applications/${res.applicationId}#letter` : '/dashboard/letters/' + res.letterId);
 				return;
 			}
 			setError({
@@ -118,7 +118,7 @@ export default function GenerateForm({
 					<p className="rounded-box border border-secondary/50 bg-base-300 px-4 py-3 text-base-100">
 						This letter is for: <span className="font-medium">{application.label}</span>.{' '}
 						<Link href={`/dashboard/applications/${application.id}`} className={link}>
-							Back to the application
+							Open the role profile
 						</Link>
 					</p>
 				)}

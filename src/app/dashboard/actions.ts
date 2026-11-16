@@ -4,7 +4,7 @@ import { generateForUser, type GenerateErrorCode } from '@/lib/generate';
 import { requireUser } from '@/lib/user';
 
 export type GenerateResult =
-	| { ok: true; letterId: string }
+	| { ok: true; letterId: string; applicationId: string }
 	| { ok: false; error: string; code?: GenerateErrorCode };
 
 export async function generateLetterAction(
@@ -21,5 +21,5 @@ export async function generateLetterAction(
 		model: formData.get('model'),
 		applicationId: formData.get('applicationId') ?? undefined,
 	});
-	return out.ok ? { ok: true, letterId: out.letterId } : out;
+	return out.ok ? { ok: true, letterId: out.letterId, applicationId: out.applicationId } : out;
 }

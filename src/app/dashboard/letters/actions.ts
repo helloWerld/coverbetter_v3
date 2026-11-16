@@ -35,7 +35,7 @@ export async function saveLetter(
 		company: patch.company?.trim(),
 	});
 	if (!done) return { ok: false, error: 'Letter not found.' };
-	revalidatePath('/dashboard/letters');
+	revalidatePath('/dashboard/applications', 'layout');
 	return { ok: true };
 }
 
@@ -54,7 +54,7 @@ export async function setLetterTemplate(
 		template: parsed.data.template,
 	});
 	if (!done) return { ok: false, error: 'Letter not found.' };
-	revalidatePath('/dashboard/letters');
+	revalidatePath('/dashboard/applications', 'layout');
 	return { ok: true };
 }
 
@@ -65,6 +65,6 @@ export async function removeLetter(letterId: string): Promise<ActionResult> {
 	const user = await requireUser();
 	const done = await deleteLetter(user.id, parsed.data);
 	if (!done) return { ok: false, error: 'Letter not found.' };
-	revalidatePath('/dashboard/letters');
+	revalidatePath('/dashboard/applications', 'layout');
 	return { ok: true };
 }
