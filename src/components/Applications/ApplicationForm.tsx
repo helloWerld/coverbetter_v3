@@ -136,7 +136,7 @@ export default function ApplicationForm({
 			)}
 			<div className="flex flex-wrap items-center gap-3">
 				<button type="submit" disabled={pending} className="btn btn-secondary min-h-11">
-					{pending ? 'Saving…' : editing ? 'Save changes' : 'Add application'}
+					{pending ? 'Saving…' : editing ? 'Save changes' : 'Add role'}
 				</button>
 				<p aria-live="polite" className="text-base-100/70">
 					{saved && editing ? 'Saved.' : ''}

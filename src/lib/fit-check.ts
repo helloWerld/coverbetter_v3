@@ -36,6 +36,25 @@ const jobSchema = z
 	.min(50, 'The job description is too short. Paste at least 50 characters.')
 	.max(20000, 'The job description is too long. The limit is 20,000 characters.');
 
+/** The text of a saved resume, or of the career profile for PROFILE_RESUME_ID. */
+export async function resolveResumeText(
+	userId: string,
+	resumeId: string,
+): Promise<{ ok: true; text: string; resumeId: string | null } | { ok: false; error: string }> {
+	if (resumeId === PROFILE_RESUME_ID) {
+		const text = profileToText(await getProfile(userId));
+		if (text.trim().length < 50) {
+			return { ok: false, error: 'Your profile is almost empty. Add your jobs first, or pick a saved resume.' };
+		}
+		return { ok: true, text, resumeId: null };
+	}
+	const resume = await getDb().query.resumes.findFirst({
+		where: and(eq(resumes.id, resumeId.slice(0, 100)), eq(resumes.userId, userId)),
+	});
+	if (!resume) return { ok: false, error: 'We could not find that resume.' };
+	return { ok: true, text: resume.text, resumeId: resume.id };
+}
+
 /**
  * Checks the fit of a saved resume (or the career profile) against a job post. Uses 1 credit on success only.
  * With `applicationId`, the job post comes from that application, and the score is saved on it.
@@ -55,21 +74,9 @@ export async function runFitCheck(
 	if (typeof req.resumeId !== 'string' || !req.resumeId) {
 		return { ok: false, error: 'Pick a saved resume first.' };
 	}
-	let resumeText: string;
-	let resumeId: string | null = null;
-	if (req.resumeId === PROFILE_RESUME_ID) {
-		resumeText = profileToText(await getProfile(user.id));
-		if (resumeText.trim().length < 50) {
-			return { ok: false, error: 'Your career profile is almost empty. Add your jobs first, or pick a saved resume.' };
-		}
-	} else {
-		const resume = await db.query.resumes.findFirst({
-			where: and(eq(resumes.id, req.resumeId.slice(0, 100)), eq(resumes.userId, user.id)),
-		});
-		if (!resume) return { ok: false, error: 'We could not find that resume.' };
-		resumeText = resume.text;
-		resumeId = resume.id;
-	}
+	const source = await resolveResumeText(user.id, req.resumeId);
+	if (!source.ok) return { ok: false, error: source.error };
+	const { text: resumeText, resumeId } = source;
 
 	const app = typeof req.applicationId === 'string' && req.applicationId ? await getApplication(user.id, req.applicationId.slice(0, 100)) : null;
 	if (typeof req.applicationId === 'string' && req.applicationId && !app) {

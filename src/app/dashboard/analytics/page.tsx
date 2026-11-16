@@ -21,7 +21,7 @@ export default async function AnalyticsPage() {
 			<PageShell title="Analytics" intro={intro}>
 				<Card title="No data yet">
 					<p>This page shows your response rate, your interview rate, and the path of each application.</p>
-					<p className="mt-2">Add an application to see your numbers.</p>
+					<p className="mt-2">Add a role to see your numbers.</p>
 					<Link href="/dashboard/applications" className="btn btn-secondary mt-4 min-h-11">
 						Add your first application
 					</Link>

@@ -47,7 +47,7 @@ export default async function ResumesPage() {
 	}
 
 	return (
-		<PageShell title="Resumes" intro="Upload up to 5 resumes. Tailored resumes for each job are listed below.">
+		<PageShell title="Manage Resumes" intro="Upload up to 5 resumes. The tailored resume for each role is listed below.">
 			<Link href="/dashboard/profile" className="link inline-flex min-h-11 items-center text-neutral">
 				Edit your career profile
 			</Link>

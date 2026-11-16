@@ -54,7 +54,7 @@ export default function ApplicationsList({ rows }: Readonly<{ rows: AppRow[] }>)
 	return (
 		<section aria-labelledby={`${id}-h`} className="flex flex-col gap-4">
 			<h2 id={`${id}-h`} className="sr-only">
-				Your applications
+				Your roles
 			</h2>
 			<div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
 				<div role="group" aria-label="Filter by status" className="flex flex-wrap gap-2">
@@ -88,7 +88,7 @@ export default function ApplicationsList({ rows }: Readonly<{ rows: AppRow[] }>)
 			</div>
 
 			{shown.length === 0 ? (
-				<p className="text-base-100/70">No applications match this filter.</p>
+				<p className="text-base-100/70">No roles match this filter.</p>
 			) : (
 				<ul className="flex flex-col gap-3">
 					{shown.map((r) => {
@@ -126,7 +126,7 @@ export default function ApplicationsList({ rows }: Readonly<{ rows: AppRow[] }>)
 				</ul>
 			)}
 			<p className="sr-only" aria-live="polite">
-				{shown.length} applications shown. Filter: {FILTERS.find((f) => f.id === filter)?.label}.
+				{shown.length} roles shown. Filter: {FILTERS.find((f) => f.id === filter)?.label}.
 			</p>
 		</section>
 	);

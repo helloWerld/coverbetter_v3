@@ -18,7 +18,7 @@ import { getProfile } from '@/lib/profile/db';
 import { getResume } from '@/lib/resumes';
 import { requireUser } from '@/lib/user';
 
-export const metadata = { title: 'Application | CoverBetter' };
+export const metadata = { title: 'Role profile | CoverBetter' };
 
 const dateFmt = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 
@@ -93,7 +93,7 @@ export default async function ApplicationPage({ params }: Readonly<{ params: Pro
 	return (
 		<PageShell title={title} intro={app.company || undefined}>
 			<Link href="/dashboard/applications" className="w-fit text-neutral underline underline-offset-2">
-				Back to applications
+				Back to Find Roles
 			</Link>
 
 			<div className="flex flex-col gap-4 rounded-box border border-base-100/10 bg-base-300 p-5 sm:flex-row sm:items-center sm:justify-between">

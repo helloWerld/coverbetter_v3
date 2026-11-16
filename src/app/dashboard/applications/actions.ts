@@ -19,6 +19,7 @@ import {
 } from '@/lib/applications/db';
 import { applicationInput, formDate, interviewInput, statusInput } from '@/lib/applications/input';
 import { MESSAGE_KINDS, type MessageKind } from '@/lib/applications/types';
+import { runBatchFit, type BatchFitRow } from '@/lib/fit-batch';
 import { writeMessageWithAi } from '@/lib/messages/ai';
 import type { PaidAiErrorCode } from '@/lib/paid-ai';
 import { requireUser } from '@/lib/user';
@@ -165,4 +166,19 @@ export async function deleteMessageAction(applicationId: string, id: string): Pr
 	await deleteMessage(user.id, id);
 	refresh(applicationId);
 	return { ok: true };
+}
+
+export type BatchFitOutcome =
+	| { ok: true; rows: BatchFitRow[] }
+	| { ok: false; error: string; code?: PaidAiErrorCode };
+
+/** A quick Job Fit Score for up to 20 saved roles, 1 credit in total. */
+export async function batchFitAction(roleIds: string[], resumeId: string): Promise<BatchFitOutcome> {
+	const user = await requireUser();
+	if (!Array.isArray(roleIds) || typeof resumeId !== 'string' || !resumeId) return { ok: false, error: 'Pick a resume and at least one role.' };
+	const out = await runBatchFit(user, roleIds, resumeId);
+	if (!out.ok) return { ok: false, error: out.error, code: out.code };
+	revalidatePath('/dashboard/applications');
+	revalidatePath('/dashboard/analytics');
+	return { ok: true, rows: out.value };
 }
