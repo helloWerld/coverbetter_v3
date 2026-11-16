@@ -311,3 +311,11 @@ export async function linkedTitles(userId: string, apps: Application[]) {
 export async function listMessages(userId: string, limit = 50): Promise<Message[]> {
 	return getDb().select().from(messages).where(eq(messages.userId, userId)).orderBy(desc(messages.createdAt), desc(messages.id)).limit(limit);
 }
+
+/** Saves the contact person of a role, for example the recipient of a follow-up. */
+export async function setContact(userId: string, id: string, name: string, email: string): Promise<void> {
+	await getDb()
+		.update(applications)
+		.set({ contactName: name.trim().slice(0, 200), contactEmail: email.trim().slice(0, 200), updatedAt: new Date() })
+		.where(and(eq(applications.id, id), eq(applications.userId, userId)));
+}

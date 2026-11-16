@@ -9,7 +9,7 @@ const KIND_LABEL = {
 
 const dateFmt = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' });
 
-/** The follow-ups and thank-you letters that are due. Each row opens the letters of its application. */
+/** The follow-ups and thank-you letters that are due. Each row opens the writer for its role. */
 export default function DueList({
 	due,
 	titles,
@@ -23,7 +23,7 @@ export default function DueList({
 				return (
 					<li key={`${r.appId}-${r.kind}`}>
 						<Link
-							href={`/dashboard/applications/${r.appId}#letters`}
+							href={`/dashboard/follow-ups?role=${encodeURIComponent(r.appId)}#write`}
 							className="flex min-h-11 flex-wrap items-center justify-between gap-2 rounded-lg px-3 py-2 text-base-100 hover:bg-base-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-neutral"
 						>
 							<span className="min-w-0 break-words">

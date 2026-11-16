@@ -19,6 +19,7 @@ export async function writeMessageWithAi(
 	applicationId: string,
 	kind: MessageKind,
 	interviewId?: string,
+	extra: { details?: string } = {},
 ): Promise<PaidAiResult<Message>> {
 	const app = await getApplication(user.id, applicationId);
 	if (!app) return { ok: false, error: 'We could not find that application.', code: 'failed' };
@@ -58,6 +59,7 @@ export async function writeMessageWithAi(
 						rating: interview.rating,
 					}
 				: undefined,
+			details: extra.details,
 			language,
 		});
 		const result = await generateLetter(getEnv(), prompt, 'sonnet', 1200);

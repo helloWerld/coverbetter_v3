@@ -125,8 +125,12 @@ export default function MessagesPanel({
 	const [kind, setKind] = useState<MessageKind>(suggestedKind);
 	const [interviewId, setInterviewId] = useState(interviews.at(-1)?.id ?? '');
 	const [variant, setVariant] = useState(MESSAGE_TEMPLATES[suggestedKind][0]?.id ?? 'short');
+	const [recipientName, setRecipientName] = useState(template.contactName);
+	const [recipientEmail, setRecipientEmail] = useState(template.contactEmail);
+	const [details, setDetails] = useState('');
 	const [error, setError] = useState('');
 	const [showBuy, setShowBuy] = useState(false);
+	const recipient = { name: recipientName, email: recipientEmail };
 	const [pending, startTransition] = useTransition();
 
 	const interview = interviews.find((i) => i.id === interviewId);
@@ -141,7 +145,7 @@ export default function MessagesPanel({
 			company: template.company,
 			jobTitle: template.jobTitle,
 			appliedOn: template.appliedOn ? new Date(template.appliedOn) : undefined,
-			contactName: template.contactName || undefined,
+			contactName: recipientName.trim() || undefined,
 			interviewDate: interview ? new Date(interview.at) : undefined,
 			interviewerName: interview?.interviewers.split(/[,(]/)[0]?.trim() || undefined,
 			topic: interview?.topics.split(/[\n,.;]/)[0]?.trim() || undefined,
@@ -149,7 +153,7 @@ export default function MessagesPanel({
 			strength: template.strength || undefined,
 		});
 		startTransition(async () => {
-			const out = await saveTemplateMessageAction(applicationId, kind, needsInterview ? interviewId : null, filled.subject, filled.body);
+			const out = await saveTemplateMessageAction(applicationId, kind, needsInterview ? interviewId : null, filled.subject, filled.body, recipient);
 			if (!out.ok) setError(out.error);
 		});
 	}
@@ -158,7 +162,7 @@ export default function MessagesPanel({
 		setError('');
 		setShowBuy(false);
 		startTransition(async () => {
-			const out = await writeMessageWithAiAction(applicationId, kind, needsInterview ? interviewId : null);
+			const out = await writeMessageWithAiAction(applicationId, kind, needsInterview ? interviewId : null, recipient, details);
 			if (!out.ok) {
 				setError(out.error);
 				setShowBuy(out.code === 'no_credits' || out.code === 'pro_cap' || out.code === 'premium');
@@ -205,6 +209,38 @@ export default function MessagesPanel({
 							</select>
 						</div>
 					)}
+				</div>
+				<div className="grid gap-4 sm:grid-cols-2">
+					<div>
+						<label htmlFor={`${id}-rn`} className={labelClass}>
+							Recipient name
+						</label>
+						<input id={`${id}-rn`} value={recipientName} onChange={(e) => setRecipientName(e.target.value)} maxLength={200} autoComplete="off" placeholder="For example, the recruiter" className={`${field} min-h-11`} />
+					</div>
+					<div>
+						<label htmlFor={`${id}-re`} className={labelClass}>
+							Recipient email
+						</label>
+						<input id={`${id}-re`} type="email" value={recipientEmail} onChange={(e) => setRecipientEmail(e.target.value)} maxLength={200} autoComplete="off" className={`${field} min-h-11`} />
+					</div>
+					<div className="sm:col-span-2">
+						<label htmlFor={`${id}-det`} className={labelClass}>
+							Details to include (optional)
+						</label>
+						<textarea
+							id={`${id}-det`}
+							value={details}
+							onChange={(e) => setDetails(e.target.value)}
+							maxLength={600}
+							rows={3}
+							aria-describedby={`${id}-det-help`}
+							placeholder="For example: we met at the job fair, or I finished the portfolio project since I applied."
+							className={field}
+						/>
+						<p id={`${id}-det-help`} className="mt-1 text-sm text-base-100/60">
+							The AI uses these details. A template uses only the recipient name. The name and email are saved on the role.
+						</p>
+					</div>
 				</div>
 				{blocked ? (
 					<p className="text-base-100/70">Add the interview first. The thank-you letter uses your notes about it.</p>

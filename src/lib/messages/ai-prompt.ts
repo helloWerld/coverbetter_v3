@@ -24,6 +24,8 @@ export type MessageAiInput = {
 		clarify: string;
 		rating: number;
 	};
+	/** Facts that the applicant typed for this email, for example where they met the contact. */
+	details?: string;
 	language?: LanguageCode;
 };
 
@@ -68,6 +70,7 @@ SUBJECT: <subject line>
 		`Company: ${input.company}`,
 		input.appliedOn ? `Applied on: ${input.appliedOn}` : '',
 		input.contactName ? `Contact person: ${input.contactName}` : '',
+		input.details?.trim() ? `Details from the applicant to use in the email:\n${input.details.trim().slice(0, 600)}` : '',
 		input.strengths.length ? `Strengths that match the job:\n- ${input.strengths.join('\n- ')}` : '',
 		iv
 			? [

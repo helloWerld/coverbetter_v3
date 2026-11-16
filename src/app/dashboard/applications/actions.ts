@@ -12,6 +12,7 @@ import {
 	getInterview,
 	markMessageSent,
 	saveMessage,
+	setContact,
 	setStatus,
 	updateApplication,
 	updateInterview,
@@ -29,7 +30,18 @@ type Result = { ok: true } | { ok: false; error: string };
 function refresh(id?: string) {
 	revalidatePath('/dashboard/applications');
 	revalidatePath('/dashboard/analytics');
+	revalidatePath('/dashboard/follow-ups');
 	if (id) revalidatePath(`/dashboard/applications/${id}`);
+}
+
+export type Recipient = { name: string; email: string };
+
+/** Saves the recipient as the contact of the role when it changed. */
+async function saveRecipient(userId: string, app: { id: string; contactName: string; contactEmail: string }, r?: Recipient) {
+	if (!r || typeof r.name !== 'string' || typeof r.email !== 'string') return;
+	const email = r.email.trim();
+	if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return;
+	if (r.name.trim() !== app.contactName || email !== app.contactEmail) await setContact(userId, app.id, r.name, email);
 }
 
 function readApp(formData: FormData) {
@@ -119,11 +131,13 @@ export async function saveTemplateMessageAction(
 	interviewId: string | null,
 	subject: string,
 	body: string,
+	recipient?: Recipient,
 ): Promise<{ ok: true; id: string } | { ok: false; error: string }> {
 	const user = await requireUser();
 	if (!isKind(kind)) return { ok: false, error: 'Pick a letter type.' };
 	const app = await getApplication(user.id, applicationId);
-	if (!app) return { ok: false, error: 'We could not find that application.' };
+	if (!app) return { ok: false, error: 'We could not find that role.' };
+	await saveRecipient(user.id, app, recipient);
 	if (interviewId) {
 		const iv = await getInterview(user.id, interviewId);
 		if (!iv || iv.applicationId !== app.id) interviewId = null;
@@ -139,10 +153,17 @@ export async function writeMessageWithAiAction(
 	applicationId: string,
 	kind: string,
 	interviewId: string | null,
+	recipient?: Recipient,
+	details?: string,
 ): Promise<{ ok: true; id: string } | { ok: false; error: string; code?: PaidAiErrorCode }> {
 	const user = await requireUser();
 	if (!isKind(kind)) return { ok: false, error: 'Pick a letter type.' };
-	const out = await writeMessageWithAi(user, applicationId, kind, interviewId ?? undefined);
+	const app = await getApplication(user.id, applicationId);
+	if (!app) return { ok: false, error: 'We could not find that role.' };
+	await saveRecipient(user.id, app, recipient);
+	const out = await writeMessageWithAi(user, applicationId, kind, interviewId ?? undefined, {
+		details: typeof details === 'string' ? details.slice(0, 600) : undefined,
+	});
 	refresh(applicationId);
 	return out.ok ? { ok: true, id: out.value.id } : { ok: false, error: out.error, code: out.code };
 }

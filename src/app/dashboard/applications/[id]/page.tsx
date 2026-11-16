@@ -4,14 +4,15 @@ import { FaArrowUpRightFromSquare } from 'react-icons/fa6';
 import PageShell from '@/components/Dashboard/PageShell';
 import ApplicationForm from '@/components/Applications/ApplicationForm';
 import DeleteApplicationButton from '@/components/Applications/DeleteApplicationButton';
-import InterviewsPanel, { type InterviewView } from '@/components/Applications/InterviewsPanel';
-import MessagesPanel, { type MessageView } from '@/components/Applications/MessagesPanel';
+import InterviewsPanel from '@/components/Applications/InterviewsPanel';
+import MessagesPanel from '@/components/Applications/MessagesPanel';
 import StatusSelect from '@/components/Applications/StatusSelect';
 import FitScoreCard from '@/components/Fit/FitScoreCard';
 import { hasPaidFeatures } from '@/lib/access';
 import { reminders } from '@/lib/applications/analytics';
 import { getApplicationDetail, getSettings, loadSnapshots } from '@/lib/applications/db';
-import { SOURCE_LABEL, STATUS_LABEL, type InterviewFormat, type InterviewRound, type MessageKind, type Source, type Status } from '@/lib/applications/types';
+import { followUpView } from '@/lib/applications/messages-view';
+import { SOURCE_LABEL, STATUS_LABEL, type Source, type Status } from '@/lib/applications/types';
 import { deserializeFit } from '@/lib/fit';
 import { getLetter } from '@/lib/letters';
 import { getProfile } from '@/lib/profile/db';
@@ -67,28 +68,7 @@ export default async function ApplicationPage({ params }: Readonly<{ params: Pro
 	const due = reminders(snaps.filter((s) => s.id === app.id), now, settings)[0];
 	const hasProfile = profile.positions.length > 0;
 
-	const interviewViews: InterviewView[] = interviews.map((i) => ({
-		id: i.id,
-		at: i.at.toISOString(),
-		round: i.round as InterviewRound,
-		format: i.format as InterviewFormat,
-		interviewers: i.interviewers,
-		topics: i.topics,
-		wentWell: i.wentWell,
-		clarify: i.clarify,
-		rating: i.rating,
-	}));
-	const messageViews: MessageView[] = messages.map((m) => ({
-		id: m.id,
-		kind: m.kind as MessageKind,
-		subject: m.subject,
-		body: m.body,
-		mode: m.mode === 'ai' ? 'ai' : 'template',
-		sentAt: m.sentAt ? m.sentAt.toISOString() : null,
-		createdAt: m.createdAt.toISOString(),
-	}));
-	const suggestedKind: MessageKind = due?.kind ?? (interviews.length > 0 ? 'thank_you' : 'follow_up');
-	const strength = fit?.requirements.find((r) => r.status === 'met')?.requirement ?? '';
+	const { interviewViews, messageViews, suggestedKind, template } = followUpView(app, interviews, messages, profile, due);
 
 	return (
 		<PageShell title={title} intro={app.company || undefined}>
@@ -255,15 +235,7 @@ export default async function ApplicationPage({ params }: Readonly<{ params: Pro
 					interviews={interviewViews}
 					paid={paid}
 					suggestedKind={suggestedKind}
-					template={{
-						applicantName: profile.basics.name || '',
-						company: app.company,
-						jobTitle: app.jobTitle,
-						appliedOn: app.appliedAt ? app.appliedAt.toISOString() : null,
-						contactName: app.contactName,
-						contactEmail: app.contactEmail,
-						strength,
-					}}
+					template={template}
 				/>
 			</section>
 
