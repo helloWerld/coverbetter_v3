@@ -11,15 +11,23 @@ import {
 	FaFileLines,
 	FaCreditCard,
 	FaBullseye,
+	FaBriefcase,
+	FaChartSimple,
+	FaIdCard,
+	FaGear,
 } from 'react-icons/fa6';
 import { UserButton } from '@clerk/nextjs';
 import { ACCOUNT_NAV, MAIN_NAV, type NavIcon } from './nav';
 import { SOON_FEATURES } from '@/lib/soon';
 import Logo from '@/components/ui/Logo';
 
-// Each icon matches its page: pen for writing, letter for letters, file for resumes,
-// target for the Job Fit Score, card for billing.
+// Each icon matches its page: briefcase for applications, chart for analytics, pen for writing,
+// letter for letters, file for resumes, ID card for the profile, target for the Job Fit Score.
 const ICONS: Record<NavIcon, React.ComponentType<{ className?: string }>> = {
+	applications: FaBriefcase,
+	analytics: FaChartSimple,
+	profile: FaIdCard,
+	settings: FaGear,
 	generate: FaPenNib,
 	letters: FaEnvelopeOpenText,
 	resumes: FaFileLines,
@@ -128,9 +136,9 @@ export default function DashboardNav() {
 					</ul>
 				</nav>
 
-				{/* Billing sits at the bottom, just above the avatar. */}
+				{/* Settings and Billing sit at the bottom, just above the avatar. */}
 				<div className="mt-auto pt-6">
-					<nav aria-label="Billing">
+					<nav aria-label="Account">
 						<NavList items={ACCOUNT_NAV} isActive={isActive} />
 					</nav>
 					<div className="mt-3 hidden items-center gap-3 border-t border-base-100/10 px-3 pt-4 md:flex">
