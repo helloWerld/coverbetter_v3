@@ -13,6 +13,8 @@ export const metadata: Metadata = {
     type: "website",
     siteName: "CoverBetter",
   },
+  // Bing Webmaster Tools site verification. Keep it, or Bing drops the verification.
+  verification: { other: { "msvalidate.01": "46FD25C69300EA86E9AC7E8672B77911" } },
   twitter: {
     card: "summary",
     title: "CoverBetter — AI cover letters tailored to every job",
