@@ -6,56 +6,50 @@ export const metadata = { title: 'How it works | CoverBetter' };
 
 const STEPS = [
 	{
-		title: 'Fill in your career profile',
+		title: 'Build your profile',
 		text: 'Add all your jobs, bullets, education, and skills one time. To start fast, import your LinkedIn data or a resume file. The strength meter tells you what to add next.',
 		href: '/dashboard/profile',
-		action: 'Open career profile',
+		action: 'Build your profile',
 	},
 	{
-		title: 'Add your resumes',
-		text: 'Upload up to 5 resumes, for example one for each type of job. The tailored resumes that you build for each job are also kept on this page.',
+		title: 'Manage your resumes',
+		text: 'Upload up to 5 resumes, for example one for each type of job. The tailored resume for each role is also kept here.',
 		href: '/dashboard/resumes',
-		action: 'Open resumes',
+		action: 'Manage resumes',
 	},
 	{
-		title: 'Save the roles you find',
-		text: 'Add an application for each role that you want. Paste the full job post, because the fit score, the resume, the letter, and the interview prep use it.',
-		href: '/dashboard/applications/new',
-		action: 'Add an application',
-	},
-	{
-		title: 'Check the fit of your saved roles',
-		text: 'Pick several saved roles and check them against one resume or your career profile. The best fit comes first. Each check uses 1 credit.',
-		href: '/dashboard/fit-score#saved-roles',
-		action: 'Check your saved roles',
-	},
-	{
-		title: 'Build the resume and write the letter',
-		text: 'For the best roles, pick the jobs and bullets that match the post, then download the resume. Write the cover letter. With credits, the AI does both in one step.',
+		title: 'Find roles',
+		text: 'Save each role that you want, with its full job post. Then check the Job Fit Score of up to 20 saved roles for 1 credit, and pick the best ones.',
 		href: '/dashboard/applications',
-		action: 'See your applications',
+		action: 'Find roles',
+	},
+	{
+		title: 'Customize the application',
+		text: 'Pick a role. With credits, one step writes a tailored resume and a cover letter, with the full Job Fit Score included, for 1 credit. Or build the resume by hand for free.',
+		href: '/dashboard',
+		action: 'Customize an application',
 	},
 	{
 		title: 'Apply, then update the status',
-		text: 'After you apply, set the status to "Applied". Change it when the company answers: Interview, Offer, Rejected, or Withdrawn. The date of each change is saved.',
+		text: 'After you apply, set the status to "Applied" on the role. Change it when the company answers: Interview, Offer, Rejected, or Withdrawn. The date of each change is saved.',
 		href: '/dashboard/applications',
 		action: 'Update a status',
 	},
 	{
 		title: 'Follow up and say thank you',
-		text: 'The Follow-ups page shows each follow-up and thank-you letter that is due. Start from a free template, or let the AI write it. Then send it from your own email.',
+		text: 'Find the role, pick the type of letter, and add the recipient and any details. Start from a free template, or let the AI write it for 1 credit. Then send it from your own email.',
 		href: '/dashboard/follow-ups',
 		action: 'Open follow-ups',
 	},
 	{
 		title: 'Prepare for the interview',
-		text: 'Open the interview prep of an application. Practice with the question bank and the STAR answer builder. With credits, the AI makes questions for this exact job.',
+		text: 'Open the role profile, then the interview prep. Practice with the question bank and the STAR answer builder. With credits, the AI makes questions for this exact job.',
 		href: '/dashboard/applications',
-		action: 'Pick an application',
+		action: 'Pick a role',
 	},
 	{
-		title: 'Learn from your results',
-		text: 'Analytics shows how many applications reach each stage. Select a stage to see its jobs, and select a job to see all its details.',
+		title: 'Track your results',
+		text: 'Analytics shows your numbers and how your roles move from saved to offer. Search for a role by title, company, or keywords, and select it to see everything about it.',
 		href: '/dashboard/analytics',
 		action: 'Open analytics',
 	},
@@ -63,7 +57,7 @@ const STEPS = [
 
 const FREE = [
 	'3 cover letters',
-	'Application tracker and analytics',
+	'Role tracking and analytics',
 	'Career profile, with LinkedIn and resume import',
 	'Tailored resumes that you build by hand',
 	'Follow-up and thank-you letter templates',
@@ -71,9 +65,9 @@ const FREE = [
 ];
 
 const CREDIT = [
-	'A cover letter, with the Job Fit Score for paid letters',
-	'The AI package: tailored resume, cover letter, and Job Fit Score together',
-	'A Job Fit Score check for one saved role or one job post',
+	'A customized application: tailored resume, cover letter, and Job Fit Score together',
+	'A cover letter alone, with its Job Fit Score',
+	'A Job Fit Score check of up to 20 saved roles',
 	'A follow-up or thank-you letter written by AI',
 	'An AI interview prep pack for one job',
 ];

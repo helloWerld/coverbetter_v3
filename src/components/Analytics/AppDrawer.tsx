@@ -22,7 +22,7 @@ function Block({ title, children }: Readonly<{ title: string; children: React.Re
 	);
 }
 
-/** A sidebar with the whole application. It loads the data when it opens. */
+/** A sidebar with everything about one role. It loads the data when it opens. */
 export default function AppDrawer({ appId, onClose }: Readonly<{ appId: string | null; onClose: () => void }>) {
 	const id = useId();
 	const router = useRouter();
@@ -83,11 +83,11 @@ export default function AppDrawer({ appId, onClose }: Readonly<{ appId: string |
 
 	if (!open) return null;
 	const d = data && data.id === appId ? data : null;
-	const title = d ? d.jobTitle || 'Untitled job' : 'Application';
+	const title = d ? d.jobTitle || 'Untitled job' : 'Role';
 
 	return (
 		<div className="fixed inset-0 z-50">
-			<button type="button" aria-label="Close the application details" tabIndex={-1} onClick={onClose} className="fb-backdrop absolute inset-0 cursor-default bg-black/60 backdrop-blur-[2px]" />
+			<button type="button" aria-label="Close the role details" tabIndex={-1} onClick={onClose} className="fb-backdrop absolute inset-0 cursor-default bg-black/60 backdrop-blur-[2px]" />
 			<div
 				ref={panelRef}
 				role="dialog"
@@ -97,7 +97,7 @@ export default function AppDrawer({ appId, onClose }: Readonly<{ appId: string |
 			>
 				<div className="flex items-start justify-between gap-3 border-b border-secondary/20 p-5">
 					<div className="min-w-0">
-						<p className="text-xs text-neutral">Application</p>
+						<p className="text-xs text-neutral">Role</p>
 						<h2 id={`${id}-t`} className="break-words text-xl text-base-100">
 							{title}
 						</h2>
@@ -115,8 +115,8 @@ export default function AppDrawer({ appId, onClose }: Readonly<{ appId: string |
 				</div>
 
 				<div className="flex-1 overflow-y-auto p-5" aria-busy={state === 'loading'}>
-					{state === 'loading' && !d && <p className="text-base-100/70">Loading the application…</p>}
-					{state === 'error' && <p role="alert" className="text-error">We could not load this application. Close the panel and try again.</p>}
+					{state === 'loading' && !d && <p className="text-base-100/70">Loading the role…</p>}
+					{state === 'error' && <p role="alert" className="text-error">We could not load this role. Close the panel and try again.</p>}
 					{d && (
 						<div className="flex flex-col gap-4">
 							<div className="flex flex-wrap items-end gap-3">
@@ -135,13 +135,13 @@ export default function AppDrawer({ appId, onClose }: Readonly<{ appId: string |
 
 							<div className="grid grid-cols-2 gap-2">
 								<Link href={`/dashboard/applications/${d.id}`} className={`${linkBtn} col-span-2`}>
-									Open the full application
+									Open the role profile
 								</Link>
 								<Link href={d.letter ? `/dashboard/letters/${d.letter.id}` : `/dashboard?applicationId=${d.id}`} className={linkBtn}>
-									{d.letter ? 'Cover letter' : 'Write a letter'}
+									{d.letter ? 'Edit the letter' : 'Customize'}
 								</Link>
 								<Link href={`/dashboard/applications/${d.id}/resume`} className={linkBtn}>
-									{d.resume?.tailored ? 'Tailored resume' : 'Build a resume'}
+									{d.resume?.tailored ? 'Edit the resume' : 'Build a resume'}
 								</Link>
 								<Link href={`/dashboard/applications/${d.id}/prep`} className={linkBtn}>
 									Interview prep
@@ -152,7 +152,7 @@ export default function AppDrawer({ appId, onClose }: Readonly<{ appId: string |
 										<span className="sr-only">(opens in a new tab)</span>
 									</a>
 								) : (
-									<Link href={`/dashboard/applications/${d.id}#letters`} className={linkBtn}>
+									<Link href={`/dashboard/follow-ups?role=${encodeURIComponent(d.id)}#write`} className={linkBtn}>
 										Follow-ups
 									</Link>
 								)}
@@ -170,6 +170,32 @@ export default function AppDrawer({ appId, onClose }: Readonly<{ appId: string |
 								</Block>
 							)}
 
+							<Block title="Resume used">
+								{d.resume ? (
+									<p>
+										<Link href={d.resume.tailored ? `/dashboard/applications/${d.id}/resume` : '/dashboard/resumes'} className="text-neutral underline underline-offset-2">
+											{d.resume.title}
+										</Link>
+										{!d.resume.tailored && <span className="text-base-100/60"> (uploaded)</span>}
+									</p>
+								) : (
+									<p className="text-base-100/60">No resume yet.</p>
+								)}
+							</Block>
+
+							<Block title="Cover letter">
+								{d.letter ? (
+									<>
+										<p className="mb-2 text-base-100/60">Written {day.format(new Date(d.letter.createdAt))}</p>
+										<div tabIndex={0} role="region" aria-label="Cover letter text" className="max-h-56 overflow-y-auto whitespace-pre-line break-words rounded-lg bg-primary p-3 focus-visible:outline focus-visible:outline-2 focus-visible:outline-neutral">
+											{d.letter.body}
+										</div>
+									</>
+								) : (
+									<p className="text-base-100/60">No cover letter yet.</p>
+								)}
+							</Block>
+
 							<Block title="Interviews">
 								{d.interviews.length === 0 ? (
 									<p className="text-base-100/60">No interviews yet.</p>
@@ -186,17 +212,31 @@ export default function AppDrawer({ appId, onClose }: Readonly<{ appId: string |
 								)}
 							</Block>
 
-							{d.messages.length > 0 && (
-								<Block title="Follow-up and thank-you letters">
-									<ul className="flex flex-col gap-1">
-										{d.messages.map((m, i) => (
-											<li key={i}>
-												{KIND[m.kind] ?? m.kind} <span className="text-base-100/60">· {m.sent ? 'sent' : 'draft'}</span>
+							<Block title="Follow-ups">
+								{d.messages.length === 0 ? (
+									<p className="text-base-100/60">No follow-ups yet.</p>
+								) : (
+									<ul className="flex flex-col gap-2">
+										{d.messages.map((m) => (
+											<li key={m.id}>
+												<details className="rounded-lg bg-primary px-3 py-1">
+													<summary className="flex min-h-11 cursor-pointer flex-wrap items-center gap-x-2">
+														<span className="text-base-100">{KIND[m.kind] ?? m.kind}</span>
+														<span className="text-base-100/60">
+															· {m.sent ? 'sent' : 'draft'}, {day.format(new Date(m.createdAt))}
+														</span>
+													</summary>
+													{m.subject && <p className="font-medium text-base-100">{m.subject}</p>}
+													<p className="whitespace-pre-line break-words pb-2">{m.body}</p>
+												</details>
 											</li>
 										))}
 									</ul>
-								</Block>
-							)}
+								)}
+								<Link href={`/dashboard/follow-ups?role=${encodeURIComponent(d.id)}#write`} className="mt-2 inline-flex min-h-11 items-center text-neutral underline underline-offset-2">
+									Write a follow-up
+								</Link>
+							</Block>
 
 							{(d.contactName || d.contactEmail) && (
 								<Block title="Contact">

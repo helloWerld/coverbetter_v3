@@ -22,9 +22,9 @@ export type AppSummary = {
 	jobPost: string;
 	fit: { score: number; band: string; summary: string; met: string[]; missing: string[] } | null;
 	resume: { id: string; title: string; tailored: boolean } | null;
-	letter: { id: string; createdAt: string } | null;
+	letter: { id: string; createdAt: string; body: string } | null;
 	interviews: { id: string; at: string; round: string; interviewers: string; rating: number }[];
-	messages: { kind: string; sent: boolean; createdAt: string }[];
+	messages: { id: string; kind: string; sent: boolean; createdAt: string; subject: string; body: string }[];
 	timeline: { at: string; text: string }[];
 };
 
@@ -34,7 +34,7 @@ const EVENT_TEXT: Record<string, string> = {
 	interview_added: 'Interview added',
 };
 
-/** Everything the analytics sidebar shows about one application. */
+/** Everything the analytics sidebar shows about one role. */
 export async function getApplicationSummaryAction(id: string): Promise<AppSummary | null> {
 	const user = await requireUser();
 	const detail = await getApplicationDetail(user.id, id);
@@ -68,7 +68,7 @@ export async function getApplicationSummaryAction(id: string): Promise<AppSummar
 				}
 			: null,
 		resume: resume ? { id: resume.id, title: resume.title, tailored: resume.kind === 'tailored' } : null,
-		letter: letter ? { id: letter.id, createdAt: letter.createdAt.toISOString() } : null,
+		letter: letter ? { id: letter.id, createdAt: letter.createdAt.toISOString(), body: letter.body.slice(0, 8000) } : null,
 		interviews: interviews.map((i) => ({
 			id: i.id,
 			at: i.at.toISOString(),
@@ -76,7 +76,14 @@ export async function getApplicationSummaryAction(id: string): Promise<AppSummar
 			interviewers: i.interviewers,
 			rating: i.rating,
 		})),
-		messages: messages.map((m) => ({ kind: m.kind, sent: Boolean(m.sentAt), createdAt: m.createdAt.toISOString() })),
+		messages: messages.map((m) => ({
+			id: m.id,
+			kind: m.kind,
+			sent: Boolean(m.sentAt),
+			createdAt: m.createdAt.toISOString(),
+			subject: m.subject,
+			body: m.body.slice(0, 4000),
+		})),
 		timeline: events
 			.map((e) => ({
 				at: e.at.toISOString(),

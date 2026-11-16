@@ -130,7 +130,7 @@ const Faqs = () => {
                 You get 3 letters free. After that, pay as you go at $1.50 a
                 credit, or go Pro at $19.97 a month for up to 200 credits a
                 month. 1 credit writes 1 letter with its Job Fit Score. A Job
-                Fit Score check without a letter also uses 1 credit.
+                Fit Score check of up to 20 saved roles also uses 1 credit.
               </p>
             </div>
           </div>
