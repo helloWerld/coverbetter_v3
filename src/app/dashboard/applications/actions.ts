@@ -30,6 +30,7 @@ type Result = { ok: true } | { ok: false; error: string };
 function refresh(id?: string) {
 	revalidatePath('/dashboard/applications');
 	revalidatePath('/dashboard/analytics');
+	revalidatePath('/dashboard/search');
 	revalidatePath('/dashboard/follow-ups');
 	if (id) revalidatePath(`/dashboard/applications/${id}`);
 }
@@ -201,5 +202,6 @@ export async function batchFitAction(roleIds: string[], resumeId: string): Promi
 	if (!out.ok) return { ok: false, error: out.error, code: out.code };
 	revalidatePath('/dashboard/applications');
 	revalidatePath('/dashboard/analytics');
+	revalidatePath('/dashboard/search');
 	return { ok: true, rows: out.value };
 }

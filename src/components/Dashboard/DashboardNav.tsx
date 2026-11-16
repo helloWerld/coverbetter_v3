@@ -15,14 +15,15 @@ import {
 	FaGear,
 	FaCircleQuestion,
 	FaPaperPlane,
+	FaMagnifyingGlass,
 } from 'react-icons/fa6';
 import { UserButton } from '@clerk/nextjs';
 import { ACCOUNT_NAV, MAIN_NAV, type NavIcon } from './nav';
 import { SOON_FEATURES } from '@/lib/soon';
 import Logo from '@/components/ui/Logo';
 
-// Each icon matches its page: briefcase for applications, chart for analytics, pen for writing,
-// letter for letters, file for resumes, ID card for the profile, target for the Job Fit Score.
+// Each icon matches its page: briefcase for roles, chart for the pipeline, pen for writing,
+// file for resumes, ID card for the profile, magnifying glass for the role search.
 const ICONS: Record<NavIcon, React.ComponentType<{ className?: string }>> = {
 	help: FaCircleQuestion,
 	applications: FaBriefcase,
@@ -32,6 +33,7 @@ const ICONS: Record<NavIcon, React.ComponentType<{ className?: string }>> = {
 	generate: FaPenNib,
 	resumes: FaFileLines,
 	followups: FaPaperPlane,
+	search: FaMagnifyingGlass,
 	billing: FaCreditCard,
 };
 

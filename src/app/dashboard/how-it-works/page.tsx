@@ -51,9 +51,14 @@ const STEPS = [
 		summary: 'See what works, and change your plan.',
 		pages: [
 			{
-				name: 'Analytics',
+				name: 'Application Pipeline',
 				href: '/dashboard/analytics',
-				text: 'See your numbers and how your roles move from saved to offer. Search for a role by title, company, or keywords. Select it to see the resume, the letter, the follow-ups, and the timeline.',
+				text: 'See how your roles move from saved to offer, and see your numbers in total and for each week.',
+			},
+			{
+				name: 'Search',
+				href: '/dashboard/search',
+				text: 'Find a role by title, company, or keywords. Select it to see the resume, the letter, the follow-ups, and the timeline.',
 			},
 		],
 	},
@@ -61,7 +66,7 @@ const STEPS = [
 
 const FREE = [
 	'3 cover letters',
-	'Role tracking and analytics',
+	'Role tracking and the application pipeline',
 	'Career profile, with LinkedIn import',
 	'Tailored resumes that you build by hand',
 	'Follow-up and thank-you letter templates',

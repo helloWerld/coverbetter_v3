@@ -6,7 +6,8 @@ export const MAIN_NAV = [
 	{ href: '/dashboard/applications', label: 'Find Roles', icon: 'applications' },
 	{ href: '/dashboard', label: 'Customize Application', icon: 'generate' },
 	{ href: '/dashboard/follow-ups', label: 'Follow-ups', icon: 'followups', divider: true },
-	{ href: '/dashboard/analytics', label: 'Analytics', icon: 'analytics' },
+	{ href: '/dashboard/analytics', label: 'Application Pipeline', icon: 'analytics' },
+	{ href: '/dashboard/search', label: 'Search', icon: 'search' },
 ] as const;
 
 /** Shown at the bottom of the sidebar, above the avatar. The avatar opens the Clerk account dialog. */
