@@ -306,3 +306,8 @@ export async function linkedTitles(userId: string, apps: Application[]) {
 		.where(and(eq(resumes.userId, userId), inArray(resumes.id, resumeIds.slice(0, 90))));
 	return new Map(rows.map((r) => [r.id, r.title]));
 }
+
+/** The user's follow-up and thank-you letters, newest first. */
+export async function listMessages(userId: string, limit = 50): Promise<Message[]> {
+	return getDb().select().from(messages).where(eq(messages.userId, userId)).orderBy(desc(messages.createdAt), desc(messages.id)).limit(limit);
+}

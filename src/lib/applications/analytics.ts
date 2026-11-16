@@ -90,6 +90,26 @@ export function reminders(apps: AppSnapshot[], now: Date, settings: UserSettings
 	);
 }
 
+export interface UpcomingFollowUp {
+	appId: string;
+	kind: Extract<MessageKind, 'follow_up' | 'follow_up_2'>;
+	dueOn: Date;
+}
+
+/** Follow-ups that are not due yet, soonest first. Due ones come from `reminders`. */
+export function upcomingFollowUps(apps: AppSnapshot[], now: Date, settings: UserSettings): UpcomingFollowUp[] {
+	const out: UpcomingFollowUp[] = [];
+	for (const a of apps) {
+		if (a.status !== 'applied' || !a.appliedAt || isNoResponse(a, now, settings.noResponseDays)) continue;
+		const sent = a.events.filter((e) => e.type === 'follow_up_sent').length;
+		if (sent > 1) continue;
+		const kind = sent === 0 ? 'follow_up' : 'follow_up_2';
+		const dueOn = addDays(a.appliedAt, sent === 0 ? settings.followUpDays : settings.secondFollowUpDays);
+		if (dueOn > now) out.push({ appId: a.id, kind, dueOn });
+	}
+	return out.sort((x, y) => x.dueOn.getTime() - y.dueOn.getTime() || x.appId.localeCompare(y.appId));
+}
+
 export type FitBand = 'strong' | 'good' | 'partial' | 'low' | 'none';
 
 export function fitBand(score: number | null): FitBand {

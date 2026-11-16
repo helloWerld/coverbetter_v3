@@ -16,6 +16,7 @@ import {
 	FaIdCard,
 	FaGear,
 	FaCircleQuestion,
+	FaPaperPlane,
 } from 'react-icons/fa6';
 import { UserButton } from '@clerk/nextjs';
 import { ACCOUNT_NAV, NAV_SECTIONS, type NavIcon } from './nav';
@@ -34,6 +35,7 @@ const ICONS: Record<NavIcon, React.ComponentType<{ className?: string }>> = {
 	letters: FaEnvelopeOpenText,
 	resumes: FaFileLines,
 	fit: FaBullseye,
+	followups: FaPaperPlane,
 	billing: FaCreditCard,
 };
 

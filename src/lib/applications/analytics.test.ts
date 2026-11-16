@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { isNoResponse, reminders, sankeyData, sankeyMembers, summaryStats } from './analytics';
+import { isNoResponse, reminders, sankeyData, sankeyMembers, summaryStats, upcomingFollowUps } from './analytics';
 import { DEFAULT_SETTINGS, type AppSnapshot, type InterviewRound, type Source, type Status } from './types';
 
 // Sunday 2026-11-15, noon UTC. The week starts Monday 2026-11-09.
@@ -442,5 +442,33 @@ describe('sankeyMembers', () => {
 
 	it('gives an empty object for no apps', () => {
 		expect(sankeyMembers([], NOW, S)).toEqual({});
+	});
+});
+
+describe('upcomingFollowUps', () => {
+	it('gives the first follow-up date for a new application', () => {
+		const a = app({ appliedDaysAgo: 3 });
+		expect(upcomingFollowUps([a], NOW, S)).toEqual([{ appId: a.id, kind: 'follow_up', dueOn: ago(-4) }]);
+	});
+	it('gives the second follow-up date after one follow-up', () => {
+		const a = app({ appliedDaysAgo: 9, followUps: [1] });
+		expect(upcomingFollowUps([a], NOW, S)).toEqual([{ appId: a.id, kind: 'follow_up_2', dueOn: ago(-5) }]);
+	});
+	it('skips follow-ups that are due now, because reminders shows them', () => {
+		expect(upcomingFollowUps([app({ appliedDaysAgo: 7 })], NOW, S)).toEqual([]);
+	});
+	it('skips saved, closed, and no-response applications, and two sent follow-ups', () => {
+		const list = [
+			app({ status: 'saved' }),
+			app({ status: 'rejected', appliedDaysAgo: 2 }),
+			app({ appliedDaysAgo: 40 }),
+			app({ appliedDaysAgo: 3, followUps: [2, 1] }),
+		];
+		expect(upcomingFollowUps(list, NOW, S)).toEqual([]);
+	});
+	it('sorts by date, soonest first', () => {
+		const later = app({ appliedDaysAgo: 1 });
+		const sooner = app({ appliedDaysAgo: 5 });
+		expect(upcomingFollowUps([later, sooner], NOW, S).map((u) => u.appId)).toEqual([sooner.id, later.id]);
 	});
 });
