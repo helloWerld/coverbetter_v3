@@ -99,8 +99,9 @@ export default function FlowMap({
 	const pad = Math.max(0, (view.width - layout.width * zoom) / 2);
 	padRef.current = pad;
 	mapW.current = layout.width;
-	// In full screen the map fills the screen height.
-	const height = Math.max(layout.height, MIN_H, full ? boxH / zoom : 0);
+	// The box keeps the 100% size at every zoom. When zoomed out, the map fills the box height.
+	const baseH = Math.max(layout.height, MIN_H);
+	const height = Math.max(baseH, boxH / zoom);
 	const offsetY = (height - layout.height) / 2;
 	const hl = useMemo(() => (active ? pathThrough(active, links) : null), [active, links]);
 	const card = layout.cards.find((c) => c.id === active) ?? null;
@@ -179,17 +180,54 @@ export default function FlowMap({
 		setDragging(false);
 	};
 
-	// Ctrl or Cmd + scroll, and a pinch on a trackpad, zoom the map.
+	// The scroll wheel and a trackpad pinch zoom the map. Drag to move it.
 	useEffect(() => {
 		const el = boxRef.current;
 		if (!el) return;
 		const onWheel = (e: WheelEvent) => {
-			if (!(e.ctrlKey || e.metaKey)) return;
 			e.preventDefault();
-			zoomTo(zoomRef.current * Math.exp(-e.deltaY * 0.01));
+			// Line mode (some mouse wheels in Firefox) sends about 3 for each notch, pixel mode about 100.
+			const dy = e.deltaMode === 1 ? e.deltaY * 33 : e.deltaY;
+			// A trackpad pinch sends small steps with ctrlKey, so it needs a larger factor.
+			zoomTo(zoomRef.current * Math.exp(-dy * (e.ctrlKey ? 0.01 : 0.002)));
 		};
 		el.addEventListener('wheel', onWheel, { passive: false });
 		return () => el.removeEventListener('wheel', onWheel);
+	}, [zoomTo]);
+
+	// Two fingers on a touch screen zoom the map. One finger moves it.
+	useEffect(() => {
+		const el = boxRef.current;
+		if (!el) return;
+		let start: { dist: number; zoom: number } | null = null;
+		const dist = (t: TouchList) => Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY);
+		const onStart = (e: TouchEvent) => {
+			if (e.touches.length === 2) start = { dist: dist(e.touches), zoom: zoomRef.current };
+		};
+		const onMove = (e: TouchEvent) => {
+			if (e.touches.length !== 2 || !start || start.dist === 0) return;
+			e.preventDefault();
+			zoomTo((start.zoom * dist(e.touches)) / start.dist);
+		};
+		const onEnd = (e: TouchEvent) => {
+			if (e.touches.length < 2) start = null;
+		};
+		// Safari zooms the whole page with its own gesture events. Stop that on the map.
+		const noPageZoom = (e: Event) => e.preventDefault();
+		el.addEventListener('touchstart', onStart, { passive: true });
+		el.addEventListener('touchmove', onMove, { passive: false });
+		el.addEventListener('touchend', onEnd);
+		el.addEventListener('touchcancel', onEnd);
+		el.addEventListener('gesturestart', noPageZoom);
+		el.addEventListener('gesturechange', noPageZoom);
+		return () => {
+			el.removeEventListener('touchstart', onStart);
+			el.removeEventListener('touchmove', onMove);
+			el.removeEventListener('touchend', onEnd);
+			el.removeEventListener('touchcancel', onEnd);
+			el.removeEventListener('gesturestart', noPageZoom);
+			el.removeEventListener('gesturechange', noPageZoom);
+		};
 	}, [zoomTo]);
 
 	const enterFull = () => {
@@ -289,7 +327,7 @@ export default function FlowMap({
 					)}
 				</div>
 			</div>
-			<p className="-mb-2 text-xs text-base-100/50">Drag the map to move it. Ctrl or Cmd + scroll also zooms.</p>
+			<p className="-mb-2 text-xs text-base-100/50">Drag the map to move it. Scroll, or pinch with two fingers, to zoom.</p>
 			<div
 				ref={boxRef}
 				onScroll={(e) => setView({ left: e.currentTarget.scrollLeft, width: e.currentTarget.clientWidth })}
@@ -297,7 +335,8 @@ export default function FlowMap({
 				onPointerMove={onDragMove}
 				onPointerUp={onDragEnd}
 				onPointerCancel={onDragEnd}
-				className={`fm-grid relative overflow-auto scroll-auto ${dragging ? 'cursor-grabbing select-none' : 'cursor-grab'} rounded-box border border-secondary/20 bg-[radial-gradient(ellipse_at_center,rgba(147,51,234,0.12),transparent_70%)] ${full ? 'min-h-0 flex-1' : 'max-h-[70vh]'}`}>
+				className={`fm-grid relative touch-pan-x touch-pan-y overflow-auto overscroll-contain scroll-auto ${dragging ? 'cursor-grabbing select-none' : 'cursor-grab'} rounded-box border border-secondary/20 bg-[radial-gradient(ellipse_at_center,rgba(147,51,234,0.12),transparent_70%)] ${full ? 'min-h-0 flex-1' : ''}`}
+				style={full ? undefined : { height: baseH + 2 }}>
 				{/* The outer box has the zoomed size, so the scroll bars match the zoom. */}
 				<div className="relative" style={{ width: Math.max(layout.width * zoom, view.width), height: height * zoom }}>
 				<div className="absolute top-0 origin-top-left" style={{ left: pad, width: layout.width, height, transform: zoom === 1 ? undefined : `scale(${zoom})` }} onPointerLeave={(e) => e.pointerType === 'mouse' && hoverClose()}>
