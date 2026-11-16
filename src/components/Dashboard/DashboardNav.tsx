@@ -15,15 +15,17 @@ import {
 	FaChartSimple,
 	FaIdCard,
 	FaGear,
+	FaCircleQuestion,
 } from 'react-icons/fa6';
 import { UserButton } from '@clerk/nextjs';
-import { ACCOUNT_NAV, MAIN_NAV, type NavIcon } from './nav';
+import { ACCOUNT_NAV, NAV_SECTIONS, type NavIcon } from './nav';
 import { SOON_FEATURES } from '@/lib/soon';
 import Logo from '@/components/ui/Logo';
 
 // Each icon matches its page: briefcase for applications, chart for analytics, pen for writing,
 // letter for letters, file for resumes, ID card for the profile, target for the Job Fit Score.
 const ICONS: Record<NavIcon, React.ComponentType<{ className?: string }>> = {
+	help: FaCircleQuestion,
 	applications: FaBriefcase,
 	analytics: FaChartSimple,
 	profile: FaIdCard,
@@ -97,8 +99,13 @@ export default function DashboardNav() {
 				>
 					<Logo className="h-16 w-auto" priority />
 				</Link>
-				<nav aria-label="Dashboard">
-					<NavList items={MAIN_NAV} isActive={isActive} />
+				<nav aria-label="Dashboard" className="flex flex-col gap-5">
+					{NAV_SECTIONS.map((section) => (
+						<div key={section.title}>
+							<h2 className="mb-1 px-3 text-xs font-semibold text-base-100/60">{section.title}</h2>
+							<NavList items={section.items} isActive={isActive} />
+						</div>
+					))}
 				</nav>
 
 				<div className="divider my-4 opacity-10" />

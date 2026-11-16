@@ -1,9 +1,9 @@
 import type { SankeyLink, SankeyNode } from '@/lib/applications/analytics';
 
-export const CARD_W = 128;
+export const CARD_W = 116;
 export const CARD_H = 68;
 const ROW_GAP = 16;
-const MIN_COL_GAP = 40;
+const MIN_COL_GAP = 28;
 const PAD_Y = 24;
 
 export type CardBox = SankeyNode & { x: number; y: number; w: number; h: number; col: number };

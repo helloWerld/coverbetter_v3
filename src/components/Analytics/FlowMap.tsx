@@ -192,7 +192,7 @@ export default function FlowMap({
 								className={`fm-card absolute flex flex-col justify-between rounded-xl border px-3 py-2 text-left backdrop-blur focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral ${cardClass(c.kind)} ${active === c.id ? 'fm-on' : ''}`}
 								style={{ left: c.x, top: c.y + offsetY, width: c.w, height: CARD_H, opacity: on ? 1 : 0.28, ['--d' as string]: `${c.col * 0.08}s` }}
 							>
-								<span className={`truncate text-xs ${c.kind === 'end' ? 'text-base-100/55' : 'text-base-100/80'}`}>{c.label}</span>
+								<span title={fullName(c.id, c.label)} className={`truncate text-xs ${c.kind === 'end' ? 'text-base-100/55' : 'text-base-100/80'}`}>{c.label}</span>
 								<span className="flex items-baseline justify-between gap-2">
 									<span className={`text-2xl font-light tabular-nums ${c.kind === 'win' ? 'text-accent' : c.kind === 'go' ? 'text-base-100' : 'text-base-100/70'}`}>{c.value}</span>
 									<span className="text-xs tabular-nums text-base-100/45">{percentOf(c.value, total)}%</span>
