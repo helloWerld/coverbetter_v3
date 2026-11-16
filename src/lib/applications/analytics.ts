@@ -312,3 +312,12 @@ export function sankeyData(
 	}));
 	return { nodes, links };
 }
+
+/** The application ids that pass through each flow-chart node, in input order. Same paths as sankeyData. */
+export function sankeyMembers(apps: AppSnapshot[], now: Date, settings: UserSettings): Record<string, string[]> {
+	const out: Record<string, string[]> = {};
+	for (const a of apps) {
+		for (const id of flowPath(a, now, settings)) (out[id] ??= []).push(a.id);
+	}
+	return out;
+}

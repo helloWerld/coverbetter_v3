@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { sankey, sankeyLeft } from 'd3-sankey';
+import { flowLayout } from './flow-layout';
 import { sankeyData } from '@/lib/applications/analytics';
 import { DEFAULT_SETTINGS, type AppSnapshot } from '@/lib/applications/types';
 import {
@@ -111,7 +111,7 @@ describe('flowSummary', () => {
 	});
 });
 
-describe('d3-sankey layout for the sankeyData shape', () => {
+describe('flow map layout for the sankeyData shape', () => {
 	const d = (days: number) => new Date(Date.UTC(2026, 10, 1) + days * 86400000);
 	const app = (id: string, over: Partial<AppSnapshot>): AppSnapshot => ({
 		id,
@@ -141,26 +141,10 @@ describe('d3-sankey layout for the sankeyData shape', () => {
 			}),
 		];
 		const data = sankeyData(apps, d(10), DEFAULT_SETTINGS);
-		const size = chartSize(false);
-		const layout = sankey<{ id: string }, object>()
-			.nodeId((n) => n.id)
-			.nodeAlign(sankeyLeft)
-			.nodeWidth(size.nodeWidth)
-			.nodePadding(size.nodePadding)
-			.extent([
-				[0, 0],
-				[size.width, size.height],
-			]);
-		const g = layout({
-			nodes: data.nodes.map((n) => ({ ...n })),
-			links: data.links.map((l) => ({ ...l })),
-		});
-		for (const n of g.nodes) {
-			for (const v of [n.x0, n.x1, n.y0, n.y1]) expect(Number.isFinite(v)).toBe(true);
-		}
-		for (const l of g.links) {
-			expect(Number.isFinite(l.y0)).toBe(true);
-			expect(l.width).toBeGreaterThan(0);
-		}
+		const out = flowLayout(data.nodes, data.links, 900);
+		expect(out.cards).toHaveLength(data.nodes.length);
+		expect(out.edges).toHaveLength(data.links.length);
+		for (const c of out.cards) for (const v of [c.x, c.y]) expect(Number.isFinite(v)).toBe(true);
+		for (const e of out.edges) expect(e.width).toBeGreaterThan(0);
 	});
 });

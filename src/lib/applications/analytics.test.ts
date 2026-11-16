@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { isNoResponse, reminders, sankeyData, summaryStats } from './analytics';
+import { isNoResponse, reminders, sankeyData, sankeyMembers, summaryStats } from './analytics';
 import { DEFAULT_SETTINGS, type AppSnapshot, type InterviewRound, type Source, type Status } from './types';
 
 // Sunday 2026-11-15, noon UTC. The week starts Monday 2026-11-09.
@@ -421,5 +421,26 @@ describe('sankeyData', () => {
 		expectConserved(f, apps.length);
 		expect(node(f, 'saved')?.value).toBe(apps.length);
 		expect(link(f, 'saved', 'applied') + link(f, 'saved', 'not-applied')).toBe(apps.length);
+	});
+});
+
+describe('sankeyMembers', () => {
+	it('lists each app under every node it passes, and matches the node values', () => {
+		const apps = [
+			app({ status: 'saved' }),
+			app({ appliedDaysAgo: 5 }),
+			app({ status: 'interview', statuses: [['applied', 20], ['interview', 10]], interviews: [['first', 10]] }),
+			app({ status: 'rejected', statuses: [['applied', 20], ['rejected', 5]] }),
+		];
+		const m = sankeyMembers(apps, NOW, S);
+		const flow = sankeyData(apps, NOW, S);
+		for (const n of flow.nodes) expect(m[n.id]?.length ?? 0).toBe(n.value);
+		expect(m.saved).toEqual(apps.map((a) => a.id));
+		expect(m['not-applied']).toEqual([apps[0].id]);
+		expect(m.interview).toEqual([apps[2].id]);
+	});
+
+	it('gives an empty object for no apps', () => {
+		expect(sankeyMembers([], NOW, S)).toEqual({});
 	});
 });

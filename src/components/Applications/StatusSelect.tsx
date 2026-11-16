@@ -13,7 +13,8 @@ export default function StatusSelect({
 	status,
 	label,
 	className = '',
-}: Readonly<{ applicationId: string; status: Status; label: string; className?: string }>) {
+	onChanged,
+}: Readonly<{ applicationId: string; status: Status; label: string; className?: string; onChanged?: (s: Status) => void }>) {
 	const [value, setValue] = useState<Status>(status);
 	const [error, setError] = useState('');
 	const [pending, startTransition] = useTransition();
@@ -27,7 +28,7 @@ export default function StatusSelect({
 			if (!out.ok) {
 				setValue(prev);
 				setError(out.error);
-			}
+			} else onChanged?.(next);
 		});
 	}
 
