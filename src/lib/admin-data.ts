@@ -1,4 +1,5 @@
 import 'server-only';
+import { clerkClient } from '@clerk/nextjs/server';
 import { desc, inArray, sql } from 'drizzle-orm';
 import { supportRequests, users, type SupportRequest } from '@/db/schema';
 import { getDb, getEnv } from '@/lib/cf';
@@ -13,9 +14,50 @@ const AI_CALLS = sql`(
 	UNION ALL SELECT kind, user_id, created_at FROM ai_calls
 )`;
 
+/** Charges before this time were tests. Stripe cannot delete charges, so the admin page hides them. */
+export const CHARGES_FROM = Date.UTC(2026, 10, 15) / 1000;
+
+export type ClerkUser = { id: string; email: string; name: string; createdAt: number; lastSignInAt: number | null };
+
+/** All sign-in accounts, newest first, read from Clerk. Clerk has the current email of each user. */
+export async function getClerkUsers(): Promise<{ ok: true; users: ClerkUser[] } | { ok: false; error: string }> {
+	try {
+		const clerk = await clerkClient();
+		const users: ClerkUser[] = [];
+		for (let offset = 0; offset < 1000; offset += 100) {
+			const page = await clerk.users.getUserList({ limit: 100, offset, orderBy: '-created_at' });
+			for (const u of page.data) {
+				const primary = u.emailAddresses.find((e) => e.id === u.primaryEmailAddressId) ?? u.emailAddresses[0];
+				users.push({
+					id: u.id,
+					email: primary?.emailAddress ?? '',
+					name: [u.firstName, u.lastName].filter(Boolean).join(' '),
+					createdAt: Math.floor(u.createdAt / 1000),
+					lastSignInAt: u.lastSignInAt ? Math.floor(u.lastSignInAt / 1000) : null,
+				});
+			}
+			if (page.data.length < 100) break;
+		}
+		return { ok: true, users };
+	} catch (e) {
+		console.error('admin: Clerk users failed', e);
+		return { ok: false, error: 'Clerk did not answer. Reload the page to try again.' };
+	}
+}
+
+export type AppUser = { id: string; plan: 'free' | 'pro'; credits: number; stripeCustomerId: string | null; aiCalls: number };
+
+/** Plan, credits, and AI calls of each user from D1. */
+export async function getAppUsers(): Promise<AppUser[]> {
+	return getDb().all<AppUser>(sql`
+		SELECT u.id, u.plan, u.credits, u.stripe_customer_id AS stripeCustomerId, COUNT(x.user_id) AS aiCalls
+		FROM users u LEFT JOIN ${AI_CALLS} x ON x.user_id = u.id
+		GROUP BY u.id`);
+}
+
 export type Overview = { users: number; pro: number; newUsers30: number; creditsHeld: number };
 export type UsageRow = { kind: string; d1: number; d7: number; d30: number; total: number };
-export type TopUser = { email: string; n: number };
+export type TopUser = { userId: string; email: string; n: number };
 
 export async function getOverview(now = Math.floor(Date.now() / 1000)): Promise<Overview> {
 	const [row] = await getDb().all<Overview>(sql`
@@ -38,7 +80,7 @@ export async function getUsage(now = Math.floor(Date.now() / 1000)): Promise<{ r
 				COUNT(*) AS total
 			FROM ${AI_CALLS} GROUP BY kind ORDER BY total DESC`),
 		db.all<TopUser>(sql`
-			SELECT COALESCE(NULLIF(u.email, ''), x.user_id) AS email, COUNT(*) AS n
+			SELECT x.user_id AS userId, COALESCE(u.email, '') AS email, COUNT(*) AS n
 			FROM ${AI_CALLS} x LEFT JOIN users u ON u.id = x.user_id
 			WHERE x.created_at >= ${now - 30 * DAY}
 			GROUP BY x.user_id ORDER BY n DESC LIMIT 10`),
@@ -49,6 +91,7 @@ export async function getUsage(now = Math.floor(Date.now() / 1000)): Promise<{ r
 export type Charge = {
 	id: string;
 	created: number;
+	customerId: string | null;
 	email: string;
 	description: string;
 	amount: number;
@@ -58,12 +101,12 @@ export type Charge = {
 	receiptUrl: string | null;
 };
 
-/** The last 100 charges, read live from Stripe. Stripe keeps the full history, so no copy is kept in D1. */
+/** The last 100 charges since CHARGES_FROM, read live from Stripe. Stripe keeps the full history, so no copy is kept in D1. */
 export async function getCharges(): Promise<{ ok: true; charges: Charge[]; testMode: boolean } | { ok: false; error: string }> {
 	const env = getEnv();
 	if (!env.STRIPE_SECRET_KEY) return { ok: false, error: 'Stripe is not set up.' };
 	try {
-		const list = await getStripe(env).charges.list({ limit: 100 });
+		const list = await getStripe(env).charges.list({ limit: 100, created: { gte: CHARGES_FROM } });
 		const customerIds = [...new Set(list.data.map((c) => (typeof c.customer === 'string' ? c.customer : c.customer?.id)).filter((x): x is string => Boolean(x)))];
 		const known = customerIds.length
 			? await getDb().select({ id: users.stripeCustomerId, email: users.email }).from(users).where(inArray(users.stripeCustomerId, customerIds))
@@ -74,6 +117,7 @@ export async function getCharges(): Promise<{ ok: true; charges: Charge[]; testM
 			return {
 				id: c.id,
 				created: c.created,
+				customerId: customer ?? null,
 				email: (customer && emailOf.get(customer)) || c.billing_details?.email || '',
 				description: c.description ?? c.calculated_statement_descriptor ?? '',
 				amount: c.amount,

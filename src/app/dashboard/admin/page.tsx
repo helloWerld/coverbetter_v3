@@ -1,6 +1,6 @@
 import PageShell, { Card } from '@/components/Dashboard/PageShell';
 import { requireAdmin } from '@/lib/admin';
-import { getCharges, getOverview, getSupportRequests, getUsage } from '@/lib/admin-data';
+import { CHARGES_FROM, getAppUsers, getCharges, getClerkUsers, getOverview, getSupportRequests, getUsage } from '@/lib/admin-data';
 import { topicLabel } from '@/lib/support/validate';
 import StatusButton from './StatusButton';
 
@@ -27,7 +27,20 @@ const num = `${td} text-right tabular-nums`;
 export default async function AdminPage() {
 	await requireAdmin();
 	const now = Math.floor(Date.now() / 1000);
-	const [overview, usage, charges, requests] = await Promise.all([getOverview(now), getUsage(now), getCharges(), getSupportRequests()]);
+	const [overview, usage, charges, requests, clerk, appUsers] = await Promise.all([
+		getOverview(now),
+		getUsage(now),
+		getCharges(),
+		getSupportRequests(),
+		getClerkUsers(),
+		getAppUsers(),
+	]);
+	// Clerk has the current email of each user. D1 keeps a copy from the last visit.
+	const clerkById = new Map(clerk.ok ? clerk.users.map((u) => [u.id, u]) : []);
+	const appById = new Map(appUsers.map((u) => [u.id, u]));
+	const userByCustomer = new Map(appUsers.filter((u) => u.stripeCustomerId).map((u) => [u.stripeCustomerId!, u.id]));
+	const emailOf = (userId: string | null | undefined, fallback = '') => (userId && clerkById.get(userId)?.email) || fallback || userId || 'Unknown';
+	const fromDate = new Date(CHARGES_FROM * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
 	const open = requests.filter((r) => r.status === 'open').length;
 
 	const paid30 = charges.ok
@@ -36,7 +49,7 @@ export default async function AdminPage() {
 	const currency = charges.ok ? (charges.charges[0]?.currency ?? 'usd') : 'usd';
 
 	const stats = [
-		{ label: 'Users', value: overview.users.toLocaleString('en-US') },
+		{ label: 'Users', value: (clerk.ok ? clerk.users.length : overview.users).toLocaleString('en-US') },
 		{ label: 'Pro users', value: overview.pro.toLocaleString('en-US') },
 		{ label: 'New users, 30 days', value: overview.newUsers30.toLocaleString('en-US') },
 		{ label: 'Credits not used yet', value: overview.creditsHeld.toLocaleString('en-US') },
@@ -72,7 +85,7 @@ export default async function AdminPage() {
 									<div className="flex flex-wrap gap-2">
 										{r.email && (
 											<a
-												href={`mailto:${r.email}?subject=${encodeURIComponent(`Re: ${r.subject}`)}`}
+												href={`mailto:${emailOf(r.userId, r.email)}?subject=${encodeURIComponent(`Re: ${r.subject}`)}`}
 												className="btn btn-sm btn-secondary min-h-11"
 											>
 												Reply by email
@@ -81,11 +94,54 @@ export default async function AdminPage() {
 										<StatusButton id={r.id} status={r.status} subject={r.subject} />
 									</div>
 								</div>
-								<p className="break-all text-sm text-base-100/80">{r.email || r.userId}</p>
+								<p className="break-all text-sm text-base-100/80">{emailOf(r.userId, r.email)}</p>
 								<p className="whitespace-pre-wrap break-words text-base-100/90">{r.message}</p>
 							</li>
 						))}
 					</ul>
+				)}
+			</Card>
+
+			<Card title={`Users (${clerk.ok ? clerk.users.length : appUsers.length})`}>
+				{!clerk.ok ? (
+					<p role="alert">{clerk.error}</p>
+				) : clerk.users.length === 0 ? (
+					<p>No users yet.</p>
+				) : (
+					<>
+						<p className="mb-3 text-sm">Emails come live from Clerk. Plan, credits, and AI calls come from the database.</p>
+						<div className="overflow-x-auto rounded-lg border border-base-100/10">
+							<table className="w-full min-w-[44rem] text-sm">
+								<thead className="bg-base-300">
+									<tr>
+										<th scope="col" className={th}>Email</th>
+										<th scope="col" className={th}>Name</th>
+										<th scope="col" className={th}>Joined</th>
+										<th scope="col" className={th}>Last sign-in</th>
+										<th scope="col" className={th}>Plan</th>
+										<th scope="col" className={`${th} text-right`}>Credits</th>
+										<th scope="col" className={`${th} text-right`}>AI calls</th>
+									</tr>
+								</thead>
+								<tbody className="divide-y divide-base-100/10 text-base-100">
+									{clerk.users.map((u) => {
+										const app = appById.get(u.id);
+										return (
+											<tr key={u.id}>
+												<th scope="row" className={`${td} break-all text-left font-normal`}>{u.email || 'No email'}</th>
+												<td className={td}>{u.name || 'Not given'}</td>
+												<td className={`${td} whitespace-nowrap`}>{dateTime(u.createdAt)}</td>
+												<td className={`${td} whitespace-nowrap`}>{u.lastSignInAt ? dateTime(u.lastSignInAt) : 'Never'}</td>
+												<td className={td}>{app ? (app.plan === 'pro' ? 'Pro' : 'Free') : 'Never opened the app'}</td>
+												<td className={num}>{app?.credits ?? 0}</td>
+												<td className={num}>{app?.aiCalls ?? 0}</td>
+											</tr>
+										);
+									})}
+								</tbody>
+							</table>
+						</div>
+					</>
 				)}
 			</Card>
 
@@ -95,7 +151,7 @@ export default async function AdminPage() {
 				) : (
 					<>
 						<p className="mb-3 text-sm">
-							The last {charges.charges.length} charges, read live from Stripe.{charges.testMode && ' Stripe is in test mode.'}{' '}
+							The last {charges.charges.length} charges since {fromDate}, read live from Stripe. Older charges were tests and are hidden.{charges.testMode && ' Stripe is in test mode.'}{' '}
 							<a href="https://dashboard.stripe.com/payments" target="_blank" rel="noreferrer" className="text-neutral underline underline-offset-2">
 								Open Stripe
 							</a>
@@ -118,7 +174,7 @@ export default async function AdminPage() {
 										{charges.charges.map((c) => (
 											<tr key={c.id}>
 												<td className={`${td} whitespace-nowrap`}>{dateTime(c.created)}</td>
-												<td className={`${td} break-all`}>{c.email || 'Unknown'}</td>
+												<td className={`${td} break-all`}>{emailOf(c.customerId ? userByCustomer.get(c.customerId) : null, c.email)}</td>
 												<td className={td}>{c.description || 'Not given'}</td>
 												<td className={num}>
 													{money(c.amount, c.currency)}
@@ -178,8 +234,8 @@ export default async function AdminPage() {
 						<h3 className="mb-2 mt-5 text-lg text-base-100">Most AI calls, 30 days</h3>
 						<ol className="flex flex-col divide-y divide-base-100/10 rounded-lg border border-base-100/10">
 							{usage.top.map((u) => (
-								<li key={u.email} className="flex items-baseline justify-between gap-4 px-3 py-2">
-									<span className="min-w-0 break-all text-base-100">{u.email}</span>
+								<li key={u.userId} className="flex items-baseline justify-between gap-4 px-3 py-2">
+									<span className="min-w-0 break-all text-base-100">{emailOf(u.userId, u.email)}</span>
 									<span className="tabular-nums">{u.n}</span>
 								</li>
 							))}
