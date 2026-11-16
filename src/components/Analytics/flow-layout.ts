@@ -5,6 +5,8 @@ export const CARD_H = 68;
 const ROW_GAP = 16;
 const MIN_COL_GAP = 28;
 const PAD_Y = 24;
+/** Space at the left and the right, so the cards do not touch the edges of the box. */
+export const PAD_X = 32;
 
 export type CardBox = SankeyNode & { x: number; y: number; w: number; h: number; col: number };
 export type Edge = {
@@ -20,7 +22,7 @@ export type Edge = {
 
 /** The smallest width that keeps a gap of MIN_COL_GAP between the columns. */
 export function minFlowWidth(cols: number): number {
-	return cols * CARD_W + Math.max(0, cols - 1) * MIN_COL_GAP;
+	return PAD_X * 2 + cols * CARD_W + Math.max(0, cols - 1) * MIN_COL_GAP;
 }
 
 /** Column of each node: the longest path from "saved", so every link goes left to right. */
@@ -51,7 +53,7 @@ export function flowLayout(
 	const col = columns(nodes, links);
 	const cols = Math.max(...col.values()) + 1;
 	const w = Math.max(width, minFlowWidth(cols));
-	const gap = cols > 1 ? (w - cols * CARD_W) / (cols - 1) : 0;
+	const gap = cols > 1 ? (w - PAD_X * 2 - cols * CARD_W) / (cols - 1) : 0;
 
 	const byCol: SankeyNode[][] = Array.from({ length: cols }, () => []);
 	for (const n of nodes) byCol[col.get(n.id) ?? 0].push(n);
@@ -63,7 +65,7 @@ export function flowLayout(
 		const colH = list.length * CARD_H + (list.length - 1) * ROW_GAP;
 		let y = (height - colH) / 2;
 		for (const n of list) {
-			cards.push({ ...n, x: c * (CARD_W + gap), y, w: CARD_W, h: CARD_H, col: c });
+			cards.push({ ...n, x: PAD_X + c * (CARD_W + gap), y, w: CARD_W, h: CARD_H, col: c });
 			y += CARD_H + ROW_GAP;
 		}
 	});

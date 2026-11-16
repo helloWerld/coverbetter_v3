@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { CARD_W, columns, flowLayout, minFlowWidth, pathThrough } from './flow-layout';
+import { CARD_W, PAD_X, columns, flowLayout, minFlowWidth, pathThrough } from './flow-layout';
 import type { SankeyLink, SankeyNode } from '@/lib/applications/analytics';
 
 const n = (id: string, value: number, kind: SankeyNode['kind'] = 'go'): SankeyNode => ({ id, label: id, kind, value });
@@ -24,8 +24,8 @@ describe('flowLayout', () => {
 		const out = flowLayout(nodes, links, 900);
 		expect(out.cards).toHaveLength(6);
 		for (const c of out.cards) {
-			expect(c.x).toBeGreaterThanOrEqual(0);
-			expect(c.x + c.w).toBeLessThanOrEqual(900 + 0.001);
+			expect(c.x).toBeGreaterThanOrEqual(PAD_X);
+			expect(c.x + c.w).toBeLessThanOrEqual(900 - PAD_X + 0.001);
 			expect(c.y).toBeGreaterThanOrEqual(0);
 			expect(c.y + c.h).toBeLessThanOrEqual(out.height);
 		}
@@ -36,7 +36,7 @@ describe('flowLayout', () => {
 	it('grows to the minimum width when the box is too small', () => {
 		const out = flowLayout(nodes, links, 300);
 		expect(out.width).toBe(minFlowWidth(4));
-		expect(out.width).toBeGreaterThan(4 * CARD_W);
+		expect(out.width).toBeGreaterThan(4 * CARD_W + PAD_X * 2);
 	});
 
 	it('makes one thin edge for each link, thickest for the biggest flow', () => {

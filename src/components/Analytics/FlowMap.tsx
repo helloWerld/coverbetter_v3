@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { FaXmark } from 'react-icons/fa6';
+import { FaCompress, FaExpand, FaMagnifyingGlassMinus, FaMagnifyingGlassPlus, FaXmark } from 'react-icons/fa6';
 import type { SankeyLink, SankeyNode } from '@/lib/applications/analytics';
 import { STATUS_LABEL, type Status } from '@/lib/applications/types';
 import AppDrawer from './AppDrawer';
@@ -12,6 +12,13 @@ export type AppBrief = { id: string; company: string; jobTitle: string; status: 
 
 const PANEL_W = 300;
 const MIN_H = 360;
+const MIN_ZOOM = 0.5;
+const MAX_ZOOM = 2;
+/** The zoom buttons move between these levels. Ctrl or Cmd + scroll zooms freely. */
+const ZOOM_LEVELS = [0.5, 0.75, 1, 1.25, 1.5, 2];
+const clampZoom = (z: number) => Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, Math.round(z * 100) / 100));
+const ctrl =
+	'flex min-h-11 min-w-11 items-center justify-center rounded-lg border border-base-100/20 px-3 text-sm text-base-100 hover:border-neutral hover:bg-base-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral disabled:opacity-40';
 
 const LINE: Record<SankeyNode['kind'], string> = { go: '#a855f7', win: '#f5cf0f', end: '#5b5470' };
 
@@ -54,6 +61,14 @@ export default function FlowMap({
 }: Readonly<{ nodes: SankeyNode[]; links: SankeyLink[]; total: number; members: Record<string, AppBrief[]> }>) {
 	const uid = useId();
 	const boxRef = useRef<HTMLDivElement>(null);
+	const shellRef = useRef<HTMLDivElement>(null);
+	const fullBtn = useRef<HTMLButtonElement>(null);
+	const exitBtn = useRef<HTMLButtonElement>(null);
+	const [zoom, setZoom] = useState(1);
+	const zoomRef = useRef(1);
+	const center = useRef<{ x: number; y: number } | null>(null);
+	const [full, setFull] = useState(false);
+	const [boxH, setBoxH] = useState(0);
 	const [width, setWidth] = useState(900);
 	const [active, setActive] = useState<string | null>(null);
 	const [pinned, setPinned] = useState(false);
@@ -68,6 +83,7 @@ export default function FlowMap({
 		if (!el) return;
 		const ro = new ResizeObserver(([e]) => {
 			setWidth(Math.floor(e.contentRect.width));
+			setBoxH(Math.floor(e.contentRect.height));
 			setView({ left: el.scrollLeft, width: el.clientWidth });
 		});
 		ro.observe(el);
@@ -75,7 +91,8 @@ export default function FlowMap({
 	}, []);
 
 	const layout = useMemo(() => flowLayout(nodes, links, width), [nodes, links, width]);
-	const height = Math.max(layout.height, MIN_H);
+	// In full screen the map fills the screen height.
+	const height = Math.max(layout.height, MIN_H, full ? boxH / zoom : 0);
 	const offsetY = (height - layout.height) / 2;
 	const hl = useMemo(() => (active ? pathThrough(active, links) : null), [active, links]);
 	const card = layout.cards.find((c) => c.id === active) ?? null;
@@ -107,6 +124,74 @@ export default function FlowMap({
 	);
 	useEffect(() => () => clear(), []);
 
+	// Zoom around the center of the visible part, so the view does not jump.
+	const zoomTo = useCallback((next: number) => {
+		const el = boxRef.current;
+		const z = clampZoom(next);
+		if (!el || z === zoomRef.current) return;
+		center.current = {
+			x: (el.scrollLeft + el.clientWidth / 2) / zoomRef.current,
+			y: (el.scrollTop + el.clientHeight / 2) / zoomRef.current,
+		};
+		zoomRef.current = z;
+		setZoom(z);
+	}, []);
+	useLayoutEffect(() => {
+		const el = boxRef.current;
+		const c = center.current;
+		if (!el || !c) return;
+		center.current = null;
+		el.scrollLeft = c.x * zoom - el.clientWidth / 2;
+		el.scrollTop = c.y * zoom - el.clientHeight / 2;
+		setView({ left: el.scrollLeft, width: el.clientWidth });
+	}, [zoom]);
+
+	// Ctrl or Cmd + scroll, and a pinch on a trackpad, zoom the map.
+	useEffect(() => {
+		const el = boxRef.current;
+		if (!el) return;
+		const onWheel = (e: WheelEvent) => {
+			if (!(e.ctrlKey || e.metaKey)) return;
+			e.preventDefault();
+			zoomTo(zoomRef.current * Math.exp(-e.deltaY * 0.01));
+		};
+		el.addEventListener('wheel', onWheel, { passive: false });
+		return () => el.removeEventListener('wheel', onWheel);
+	}, [zoomTo]);
+
+	const enterFull = () => {
+		setFull(true);
+		// Some phones have no browser full screen. The fixed layer is the fallback.
+		shellRef.current?.requestFullscreen?.().catch(() => {});
+		setTimeout(() => exitBtn.current?.focus(), 30);
+	};
+	const exitFull = useCallback(() => {
+		if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+		setFull(false);
+		setTimeout(() => fullBtn.current?.focus(), 30);
+	}, []);
+	useEffect(() => {
+		const onChange = () => {
+			if (!document.fullscreenElement) setFull(false);
+		};
+		document.addEventListener('fullscreenchange', onChange);
+		return () => document.removeEventListener('fullscreenchange', onChange);
+	}, []);
+	useEffect(() => {
+		if (!full) return;
+		const prev = document.body.style.overflow;
+		document.body.style.overflow = 'hidden';
+		return () => {
+			document.body.style.overflow = prev;
+		};
+	}, [full]);
+	useEffect(() => {
+		if (!full || active || drawer) return;
+		const onKey = (e: KeyboardEvent) => e.key === 'Escape' && !document.fullscreenElement && exitFull();
+		document.addEventListener('keydown', onKey);
+		return () => document.removeEventListener('keydown', onKey);
+	}, [full, active, drawer, exitFull]);
+
 	useEffect(() => {
 		if (!active || drawer) return;
 		const onKey = (e: KeyboardEvent) => e.key === 'Escape' && close(true);
@@ -127,9 +212,11 @@ export default function FlowMap({
 
 	// Keep the list inside the visible part of the chart, also when the chart scrolls sideways.
 	const panelPos = (c: CardBox) => {
-		const minLeft = view.left + 8;
-		const maxLeft = Math.max(minLeft, view.left + view.width - PANEL_W - 8);
-		const right = c.x + PANEL_W > view.left + view.width - 8;
+		const vLeft = view.left / zoom;
+		const vWidth = view.width / zoom;
+		const minLeft = vLeft + 8;
+		const maxLeft = Math.max(minLeft, vLeft + vWidth - PANEL_W - 8);
+		const right = c.x + PANEL_W > vLeft + vWidth - 8;
 		const want = right ? c.x + c.w - PANEL_W : c.x;
 		const left = Math.min(Math.max(want, minLeft), maxLeft);
 		const top = Math.max(8, Math.min(c.y + offsetY - 8, height - 300));
@@ -139,15 +226,44 @@ export default function FlowMap({
 	const apps = card ? (members[card.id] ?? []) : [];
 
 	return (
-		<div className="flex flex-col gap-4">
+		<div
+			ref={shellRef}
+			role={full ? 'region' : undefined}
+			aria-label={full ? 'Application pipeline map, full screen' : undefined}
+			className={full ? 'fixed inset-0 z-40 flex flex-col gap-3 bg-base-300 p-4 sm:p-6' : 'flex flex-col gap-4'}
+		>
 			<style>{css}</style>
-			<p className="text-sm text-base-100/60">Hover over a stage, or select it, to see its applications. Select an application to see all its details.</p>
-			{layout.width > view.width + 4 && <p className="-mb-2 text-xs text-base-100/50">Scroll sideways to see all stages.</p>}
+			<div className="flex flex-wrap items-center justify-between gap-3">
+				<p className="max-w-prose text-sm text-base-100/60">Hover over a stage, or select it, to see its applications. Select an application to see all its details.</p>
+				<div role="group" aria-label="Map view" className="flex items-center gap-2">
+					<button type="button" onClick={() => zoomTo([...ZOOM_LEVELS].reverse().find((z) => z < zoom - 0.001) ?? MIN_ZOOM)} disabled={zoom <= MIN_ZOOM} aria-label="Zoom out" title="Zoom out" className={ctrl}>
+						<FaMagnifyingGlassMinus aria-hidden="true" />
+					</button>
+					<button type="button" onClick={() => zoomTo(1)} disabled={zoom === 1} aria-label={`Zoom ${Math.round(zoom * 100)}%. Reset to 100%`} title="Reset the zoom" className={`${ctrl} w-16 tabular-nums`}>
+						{Math.round(zoom * 100)}%
+					</button>
+					<button type="button" onClick={() => zoomTo(ZOOM_LEVELS.find((z) => z > zoom + 0.001) ?? MAX_ZOOM)} disabled={zoom >= MAX_ZOOM} aria-label="Zoom in" title="Zoom in" className={ctrl}>
+						<FaMagnifyingGlassPlus aria-hidden="true" />
+					</button>
+					{full ? (
+						<button ref={exitBtn} type="button" onClick={exitFull} className={`${ctrl} gap-2`}>
+							<FaCompress aria-hidden="true" /> Exit full screen
+						</button>
+					) : (
+						<button ref={fullBtn} type="button" onClick={enterFull} className={`${ctrl} gap-2`}>
+							<FaExpand aria-hidden="true" /> Full screen
+						</button>
+					)}
+				</div>
+			</div>
+			{layout.width * zoom > view.width + 4 && <p className="-mb-2 text-xs text-base-100/50">Scroll to see all stages. Ctrl or Cmd + scroll also zooms.</p>}
 			<div
 				ref={boxRef}
 				onScroll={(e) => setView({ left: e.currentTarget.scrollLeft, width: e.currentTarget.clientWidth })}
-				className="fm-grid relative overflow-x-auto rounded-box border border-secondary/20 bg-[radial-gradient(ellipse_at_center,rgba(147,51,234,0.12),transparent_70%)]">
-				<div className="relative" style={{ width: layout.width, height }} onPointerLeave={(e) => e.pointerType === 'mouse' && hoverClose()}>
+				className={`fm-grid relative overflow-auto rounded-box border border-secondary/20 bg-[radial-gradient(ellipse_at_center,rgba(147,51,234,0.12),transparent_70%)] ${full ? 'min-h-0 flex-1' : 'max-h-[70vh]'}`}>
+				{/* The outer box has the zoomed size, so the scroll bars match the zoom. */}
+				<div className="relative" style={{ width: layout.width * zoom, height: height * zoom }}>
+				<div className="relative origin-top-left" style={{ width: layout.width, height, transform: zoom === 1 ? undefined : `scale(${zoom})` }} onPointerLeave={(e) => e.pointerType === 'mouse' && hoverClose()}>
 					<svg width={layout.width} height={height} className="pointer-events-none absolute inset-0" aria-hidden="true">
 						<defs>
 							<filter id={`${uid}-glow`} x="-20%" y="-50%" width="140%" height="200%">
@@ -247,8 +363,11 @@ export default function FlowMap({
 						</div>
 					)}
 				</div>
+				</div>
 			</div>
 
+			{!full && (
+			<>
 			<button type="button" onClick={() => setShowTable((v) => !v)} aria-expanded={showTable} aria-controls={`${uid}-table`} className="min-h-11 w-fit text-sm text-neutral underline underline-offset-2">
 				{showTable ? 'Hide the data table' : 'Show the data as a table'}
 			</button>
@@ -275,7 +394,10 @@ export default function FlowMap({
 					})}
 				</tbody>
 			</table>
+			</>
+			)}
 
+			{/* Inside the full screen element, so the details also show in full screen. */}
 			<AppDrawer appId={drawer} onClose={() => setDrawer(null)} />
 		</div>
 	);
