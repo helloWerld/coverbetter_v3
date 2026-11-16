@@ -1,10 +1,10 @@
 'use client';
 
-import { useId, useState } from 'react';
+import { useRef, useState } from 'react';
 import { parseLinkedInFiles } from '@/lib/profile/linkedin';
 import { readLinkedInZip } from '@/lib/profile/linkedin-zip';
 import type { Profile } from '@/lib/profile/types';
-import { dateRange, labelClass } from './ui';
+import { dateRange } from './ui';
 
 export type ImportMode = 'replace' | 'add';
 export interface ImportResult {
@@ -15,8 +15,7 @@ export interface ImportResult {
 }
 
 const MAX_ZIP_BYTES = 200 * 1024 * 1024;
-const fileClass =
-	'file-input file-input-bordered min-h-11 w-full bg-base-300 text-base-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-100';
+
 
 export default function ImportPanel({
 	hasData,
@@ -27,7 +26,8 @@ export default function ImportPanel({
 	const [error, setError] = useState('');
 	const [result, setResult] = useState<ImportResult | null>(null);
 	const [mode, setMode] = useState<ImportMode>('add');
-	const zipId = useId();
+	const inputRef = useRef<HTMLInputElement>(null);
+	const [dragging, setDragging] = useState(false);
 
 	async function run(file: File | undefined, read: (f: File) => Promise<ImportResult>) {
 		if (!file) return;
@@ -117,12 +117,41 @@ export default function ImportPanel({
 						<li>Download the ZIP. Pick it below.</li>
 					</ol>
 					<p className="text-sm text-base-100/70">CoverBetter reads the ZIP in your browser. The ZIP does not go to our server.</p>
-					<div>
-						<label htmlFor={zipId} className={labelClass}>
-							LinkedIn ZIP file
-						</label>
-						<input id={zipId} type="file" accept=".zip,application/zip" disabled={busy} className={fileClass} onChange={(e) => fromLinkedIn(e.target.files?.[0])} />
-					</div>
+					{/* The same drop area as the resume upload on Manage Resumes. */}
+					<input
+						ref={inputRef}
+						type="file"
+						accept=".zip,application/zip"
+						className="sr-only"
+						tabIndex={-1}
+						aria-hidden="true"
+						onChange={(e) => {
+							fromLinkedIn(e.target.files?.[0]);
+							e.target.value = '';
+						}}
+					/>
+					<button
+						type="button"
+						onClick={() => inputRef.current?.click()}
+						onDragOver={(e) => {
+							e.preventDefault();
+							setDragging(true);
+						}}
+						onDragLeave={() => setDragging(false)}
+						onDrop={(e) => {
+							e.preventDefault();
+							setDragging(false);
+							fromLinkedIn(e.dataTransfer.files?.[0]);
+						}}
+						disabled={busy}
+						className={`flex min-h-32 w-full flex-col items-center justify-center gap-1 rounded-box border-2 border-dashed p-6 text-center transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary ${
+							dragging ? 'border-secondary bg-secondary/10' : 'border-base-100/30 hover:border-secondary'
+						}`}
+					>
+						<span className="text-base-100">Drop the LinkedIn ZIP file here</span>
+						<span className="text-sm text-base-100/70">The ZIP file from your LinkedIn data email</span>
+						<span className="btn btn-secondary btn-sm pointer-events-none mt-3 min-h-11 px-5">Choose file</span>
+					</button>
 					<p className="text-base-100/70">No LinkedIn data? Fill in the sections below by hand.</p>
 				</div>
 			)}
