@@ -83,7 +83,7 @@ export const features: FeatureData[] = [
     id: 11,
     title: "Career Profile and Tailored Resumes",
     description:
-      "Add your full work history once, or import it from LinkedIn or a resume file. Then pick the best experience for each job.",
+      "Add your full work history once, or import it from LinkedIn. Then pick the best experience for each job.",
     badge: false,
   },
   {

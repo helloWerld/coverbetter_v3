@@ -4,7 +4,6 @@ import { useId, useState } from 'react';
 import { parseLinkedInFiles } from '@/lib/profile/linkedin';
 import { readLinkedInZip } from '@/lib/profile/linkedin-zip';
 import type { Profile } from '@/lib/profile/types';
-import { importResumeFile } from './resume-import';
 import { dateRange, labelClass } from './ui';
 
 export type ImportMode = 'replace' | 'add';
@@ -29,7 +28,6 @@ export default function ImportPanel({
 	const [result, setResult] = useState<ImportResult | null>(null);
 	const [mode, setMode] = useState<ImportMode>('add');
 	const zipId = useId();
-	const resumeId = useId();
 
 	async function run(file: File | undefined, read: (f: File) => Promise<ImportResult>) {
 		if (!file) return;
@@ -54,12 +52,6 @@ export default function ImportPanel({
 			return { profile: out.profile, unsure: [], warnings: out.warnings, source: 'LinkedIn' };
 		});
 
-	const fromResume = (file: File | undefined) =>
-		run(file, async (f) => {
-			const out = await importResumeFile(f);
-			return { profile: out.profile, unsure: out.unsure, warnings: [], source: 'your resume' };
-		});
-
 	function apply() {
 		if (!result) return;
 		onApply(result, hasData ? mode : 'replace');
@@ -72,7 +64,7 @@ export default function ImportPanel({
 		return (
 			<div>
 				<button type="button" className="btn btn-outline min-h-11 border-base-100/30 text-base-100" onClick={() => setOpen(true)}>
-					Import
+					Import from LinkedIn
 				</button>
 			</div>
 		);
@@ -82,7 +74,7 @@ export default function ImportPanel({
 		<section aria-labelledby="import-h" className="rounded-box border border-base-100/10 bg-gradient-to-br from-primary to-base-300 p-4 sm:p-6">
 			<div className="flex items-center justify-between gap-3">
 				<h2 id="import-h" className="text-xl text-base-100">
-					{result ? `Check what we found in ${result.source}` : 'Import your data'}
+					{result ? `Check what we found in ${result.source}` : 'Import from LinkedIn'}
 				</h2>
 				{hasData && (
 					<button
@@ -111,41 +103,22 @@ export default function ImportPanel({
 			{result ? (
 				<Review result={result} hasData={hasData} mode={mode} setMode={setMode} onApply={apply} onCancel={() => setResult(null)} />
 			) : (
-				<div className="mt-4 grid gap-6 md:grid-cols-2">
-					<div className="flex flex-col gap-3">
-						<h3 className="text-base text-base-100">Import from LinkedIn</h3>
-						<ol className="list-decimal space-y-1 pl-5 text-base-100/70">
-							<li>On LinkedIn, open Settings, then Data privacy.</li>
-							<li>Select Get a copy of your data.</li>
-							<li>Pick Profile, Positions, Education, Skills, and Certifications. You can also pick the full archive.</li>
-							<li>Request the archive. LinkedIn sends an email with a ZIP file in a few minutes.</li>
-							<li>Download the ZIP. Pick it below.</li>
-						</ol>
-						<p className="text-sm text-base-100/70">CoverBetter reads the ZIP in your browser. The ZIP does not go to our server.</p>
-						<div>
-							<label htmlFor={zipId} className={labelClass}>
-								LinkedIn ZIP file
-							</label>
-							<input id={zipId} type="file" accept=".zip,application/zip" disabled={busy} className={fileClass} onChange={(e) => fromLinkedIn(e.target.files?.[0])} />
-						</div>
+				<div className="mt-4 flex max-w-2xl flex-col gap-3">
+					<ol className="list-decimal space-y-1 pl-5 text-base-100/70">
+						<li>On LinkedIn, open Settings, then Data privacy.</li>
+						<li>Select Get a copy of your data.</li>
+						<li>Pick Profile, Positions, Education, Skills, and Certifications. You can also pick the full archive.</li>
+						<li>Request the archive. LinkedIn sends an email with a ZIP file in a few minutes.</li>
+						<li>Download the ZIP. Pick it below.</li>
+					</ol>
+					<p className="text-sm text-base-100/70">CoverBetter reads the ZIP in your browser. The ZIP does not go to our server.</p>
+					<div>
+						<label htmlFor={zipId} className={labelClass}>
+							LinkedIn ZIP file
+						</label>
+						<input id={zipId} type="file" accept=".zip,application/zip" disabled={busy} className={fileClass} onChange={(e) => fromLinkedIn(e.target.files?.[0])} />
 					</div>
-					<div className="flex flex-col gap-3">
-						<h3 className="text-base text-base-100">Import from a resume file</h3>
-						<p className="text-base-100/70">Use a PDF or DOCX file. The file can be up to 5 MB. CoverBetter reads it in your browser.</p>
-						<div>
-							<label htmlFor={resumeId} className={labelClass}>
-								Resume file
-							</label>
-							<input
-								id={resumeId}
-								type="file"
-								accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-								disabled={busy}
-								className={fileClass}
-								onChange={(e) => fromResume(e.target.files?.[0])}
-							/>
-						</div>
-					</div>
+					<p className="text-base-100/70">No LinkedIn data? Fill in the sections below by hand.</p>
 				</div>
 			)}
 		</section>

@@ -16,7 +16,7 @@ const STEPS = [
 			{
 				name: 'Build Your Profile',
 				href: '/dashboard/profile',
-				text: 'Add all your jobs, bullets, education, and skills. To start fast, import your LinkedIn data or a resume file. The strength meter tells you what to add next.',
+				text: 'Add all your jobs, bullets, education, and skills. To start fast, import your LinkedIn data. Or type it in by hand. The strength meter tells you what to add next.',
 			},
 			{
 				name: 'Manage Resumes',
@@ -62,7 +62,7 @@ const STEPS = [
 const FREE = [
 	'3 cover letters',
 	'Role tracking and analytics',
-	'Career profile, with LinkedIn and resume import',
+	'Career profile, with LinkedIn import',
 	'Tailored resumes that you build by hand',
 	'Follow-up and thank-you letter templates',
 	'Interview question bank and STAR answer builder',
