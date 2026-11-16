@@ -203,6 +203,7 @@ export default function ProfileEditor({ initial }: Readonly<{ initial: Profile }
 				)}
 
 				<ImportPanel hasData={!empty} onApply={applyImport} />
+				{empty && <p className="-my-2 text-base-100/70">No LinkedIn data? Fill in the sections below by hand.</p>}
 
 				<StrengthMeter profile={profile} onGoTo={goTo} />
 				<BasicsSection profile={profile} />

@@ -116,7 +116,6 @@ export default function ImportPanel({
 						<li>Request the archive. LinkedIn sends an email with a ZIP file in a few minutes.</li>
 						<li>Download the ZIP. Pick it below.</li>
 					</ol>
-					<p className="text-sm text-base-100/70">CoverBetter reads the ZIP in your browser. The ZIP does not go to our server.</p>
 					{/* The same drop area as the resume upload on Manage Resumes. */}
 					<input
 						ref={inputRef}
@@ -152,7 +151,7 @@ export default function ImportPanel({
 						<span className="text-sm text-base-100/70">The ZIP file from your LinkedIn data email</span>
 						<span className="btn btn-secondary btn-sm pointer-events-none mt-3 min-h-11 px-5">Choose file</span>
 					</button>
-					<p className="text-base-100/70">No LinkedIn data? Fill in the sections below by hand.</p>
+					<p className="text-sm text-base-100/70">CoverBetter reads the ZIP in your browser. The ZIP does not go to our server.</p>
 				</div>
 			)}
 		</section>
