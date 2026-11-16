@@ -23,6 +23,7 @@ describe('parseMarkdown', () => {
 			{ text: 'd', italic: true },
 			{ text: ' 5 * 3' },
 		]);
+		expect(parseInline('***both***')).toEqual([{ text: 'both', bold: true, italic: true }]);
 		expect(parseInline('file_name_here')).toEqual([{ text: 'file_name_here' }]);
 	});
 });

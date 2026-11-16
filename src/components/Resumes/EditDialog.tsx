@@ -45,7 +45,7 @@ function EditForm({
 	const [error, setError] = useState<string | null>(null);
 	const [pending, startTransition] = useTransition();
 	const area = useRef<HTMLTextAreaElement>(null);
-	const nextSel = useRef<[number, number] | null>(null);
+	const nextSel = useRef<{ start: number; end: number; scroll: number } | null>(null);
 	const dirty = title !== resume.title || text !== resume.text;
 
 	function apply(fn: (e: Edit) => Edit) {
@@ -53,7 +53,8 @@ function EditForm({
 		if (!el) return;
 		const out = fn({ text, start: el.selectionStart, end: el.selectionEnd });
 		if (out.text.length > MAX_TEXT_CHARS) return;
-		nextSel.current = [out.start, out.end];
+		// Save the scroll position. A new value can move the box to its end.
+		nextSel.current = { start: out.start, end: out.end, scroll: el.scrollTop };
 		setText(out.text);
 	}
 
@@ -63,8 +64,9 @@ function EditForm({
 		const sel = nextSel.current;
 		if (!el || !sel) return;
 		nextSel.current = null;
-		el.focus();
-		el.setSelectionRange(sel[0], sel[1]);
+		el.focus({ preventScroll: true });
+		el.setSelectionRange(sel.start, sel.end);
+		el.scrollTop = sel.scroll;
 	}, [text]);
 
 	function onKey(e: React.KeyboardEvent<HTMLTextAreaElement>) {
@@ -103,10 +105,18 @@ function EditForm({
 						{resume.fileName ? `${resume.fileName} · uploaded` : 'Added'} {formatDate(resume.createdAt)}
 					</p>
 				</div>
-				<div className="flex gap-2 lg:hidden">
-					{tabBtn('write', 'Write')}
-					{tabBtn('preview', 'Preview')}
+				<div className="flex flex-wrap gap-3">
+					<button type="button" onClick={onClose} className={`btn min-h-11 ${outline}`}>
+						{dirty ? 'Cancel' : 'Close'}
+					</button>
+					<button type="submit" disabled={pending || !dirty} className="btn btn-secondary min-h-11">
+						{pending ? 'Saving…' : 'Save changes'}
+					</button>
 				</div>
+			</div>
+			<div className="flex gap-2 lg:hidden">
+				{tabBtn('write', 'Write')}
+				{tabBtn('preview', 'Preview')}
 			</div>
 			{showHint && (
 				<p className="rounded-box border border-secondary/40 bg-secondary/10 p-3 text-sm">
@@ -176,18 +186,10 @@ function EditForm({
 					{error}
 				</p>
 			)}
-			<div className="flex flex-wrap items-center justify-between gap-3">
+			<div>
 				<button type="button" onClick={() => onDelete(resume.id)} className="btn btn-ghost min-h-11 text-error hover:bg-error/10">
 					Delete resume
 				</button>
-				<div className="flex flex-wrap gap-3">
-					<button type="button" onClick={onClose} className={`btn min-h-11 ${outline}`}>
-						{dirty ? 'Cancel' : 'Close'}
-					</button>
-					<button type="submit" disabled={pending || !dirty} className="btn btn-secondary min-h-11">
-						{pending ? 'Saving…' : 'Save changes'}
-					</button>
-				</div>
 			</div>
 		</form>
 	);

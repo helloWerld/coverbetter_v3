@@ -13,12 +13,13 @@ export type Block =
 /** Splits one line into plain, bold, and italic parts. */
 export function parseInline(line: string): Inline[] {
 	const out: Inline[] = [];
-	const re = /\*\*(.+?)\*\*|(?<![\w*])\*(?!\s)(.+?)(?<!\s)\*(?![\w*])|(?<![\w_])_(?!\s)(.+?)(?<!\s)_(?![\w_])/g;
+	const re = /\*\*\*(.+?)\*\*\*|\*\*(.+?)\*\*|(?<![\w*])\*(?!\s)(.+?)(?<!\s)\*(?![\w*])|(?<![\w_])_(?!\s)(.+?)(?<!\s)_(?![\w_])/g;
 	let last = 0;
 	for (const m of line.matchAll(re)) {
 		if (m.index > last) out.push({ text: line.slice(last, m.index) });
-		if (m[1] !== undefined) out.push({ text: m[1], bold: true });
-		else out.push({ text: m[2] ?? m[3], italic: true });
+		if (m[1] !== undefined) out.push({ text: m[1], bold: true, italic: true });
+		else if (m[2] !== undefined) out.push({ text: m[2], bold: true });
+		else out.push({ text: m[3] ?? m[4], italic: true });
 		last = m.index + m[0].length;
 	}
 	if (last < line.length) out.push({ text: line.slice(last) });
