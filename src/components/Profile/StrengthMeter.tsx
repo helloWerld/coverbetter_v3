@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { profileStrength } from '@/lib/profile/strength';
 import type { Profile } from '@/lib/profile/types';
 
@@ -15,13 +15,23 @@ const SECTION_FOR_TIP: Record<string, string> = {
 
 export default function StrengthMeter({ profile, onGoTo }: Readonly<{ profile: Profile; onGoTo: (id: string) => void }>) {
 	const { score, tips } = useMemo(() => profileStrength(profile, new Date()), [profile]);
+	// Closed at first, so the editor stays near the top of the page. The score always shows.
+	const [open, setOpen] = useState(false);
 	return (
 		<section aria-labelledby="strength-h" className="rounded-box border border-base-100/10 bg-gradient-to-br from-primary to-base-300 p-5 sm:p-6">
-			<div className="flex items-baseline justify-between gap-3">
+			<div className="flex flex-wrap items-center justify-between gap-3">
 				<h2 id="strength-h" className="text-xl text-base-100">
-					Profile strength
+					Profile strength <span className="ml-2 tabular-nums text-neutral">{score}/100</span>
 				</h2>
-				<p className="text-2xl tabular-nums text-neutral">{score}/100</p>
+				<button
+					type="button"
+					aria-expanded={open}
+					aria-controls="strength-tips"
+					onClick={() => setOpen((v) => !v)}
+					className="btn btn-sm btn-ghost text-base-100/70 hover:bg-base-200 hover:text-base-100 min-h-11"
+				>
+					{open ? 'Hide the tips' : tips.length > 0 ? `Show ${tips.length} ${tips.length === 1 ? 'tip' : 'tips'}` : 'Show details'}
+				</button>
 			</div>
 			<div
 				role="progressbar"
@@ -33,6 +43,7 @@ export default function StrengthMeter({ profile, onGoTo }: Readonly<{ profile: P
 			>
 				<div className="h-full rounded-full bg-secondary transition-[width] duration-300" style={{ width: `${score}%` }} />
 			</div>
+			<div id="strength-tips" hidden={!open}>
 			{tips.length > 0 ? (
 				<>
 					<p className="mt-4 text-sm text-base-100/70">Do these steps to raise your score.</p>
@@ -53,6 +64,7 @@ export default function StrengthMeter({ profile, onGoTo }: Readonly<{ profile: P
 			) : (
 				<p className="mt-4 text-sm text-base-100/70">Your profile is strong. Keep it current.</p>
 			)}
+			</div>
 		</section>
 	);
 }
